@@ -9,13 +9,20 @@
 #include <ostream>
 #include <stdexcept>
 #include <cmath>
-//#include <assembly.hh>
+#include <assembly.hh>
 
 /** ExpressionNode is the abstract base class for expression nodes. From it the
  * different nullary, unary and binary nodes are derived. */
 class ExpressionNode
 {
+protected:
+    /** Reference to the assembly class. */
+    class Assembly& assembly;
 public:
+
+    ExpressionNode(class Assembly& _assembly) :
+            assembly(_assembly){
+    }
     /// required for virtual functions. in the derived classes the operands are
     /// deleted.
     virtual ~ExpressionNode()
@@ -45,19 +52,19 @@ class ENConstant : public ExpressionNode
     
 public:
     /// construct a constant expression node from a value
-    explicit ENConstant(double _value)
-	: ExpressionNode(), value(_value)
+    explicit ENConstant(double _value, Assembly& assembly1)
+	: ExpressionNode(assembly1), value(_value)
     {
     }
 
     virtual double evaluate() const
     {
-	return value;
+        return value;
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
     {
-	os << indent(depth) << value << std::endl;
+	    os << indent(depth) << value << std::endl;
     }
 };
 
@@ -68,8 +75,8 @@ class ENNegate : public ExpressionNode
     ExpressionNode* 	node;
 
 public:
-    explicit ENNegate(ExpressionNode* _node)
-	: ExpressionNode(), node(_node)
+    explicit ENNegate(ExpressionNode* _node, Assembly& assembly1)
+            : ExpressionNode(assembly1), node(_node)
     {
     }
 
@@ -100,8 +107,8 @@ class ENAdd : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENAdd(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENAdd(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -134,8 +141,8 @@ class ENSubtract : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENSubtract(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENSubtract(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -168,8 +175,8 @@ class ENMultiply : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENMultiply(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENMultiply(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -202,8 +209,8 @@ class ENDivide : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENDivide(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENDivide(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -237,8 +244,8 @@ class ENModulo : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENModulo(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENModulo(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -271,8 +278,8 @@ class ENPower : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENPower(ExpressionNode* _left, ExpressionNode* _right)
-	: ExpressionNode(), left(_left), right(_right)
+    explicit ENPower(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
+            : ExpressionNode(assembly1), left(_left), right(_right)
     {
     }
 
@@ -298,54 +305,47 @@ public:
 /** ImpalaJIT context used to save the parsed expressions. This context is
  * passed along to the impalajit::Driver class and fill during parsing via bison
  * actions. */
-class ExpressionContext
-{
+class ExpressionContext {
 public:
 
     /// type of the variable storage
     typedef std::map<std::string, double> variablemap_type;
 
     /// variable storage. maps variable string to doubles
-    variablemap_type		variables;
+    variablemap_type variables;
 
     /// array of unassigned expressions found by the parser. these are then
     /// outputted to the user.
-    std::vector<ExpressionNode*>	expressions;
+    std::vector<ExpressionNode *> expressions;
 
     /// free the saved expression trees
-    ~ExpressionContext()
-    {
-	clearExpressions();
+    ~ExpressionContext() {
+        clearExpressions();
     }
 
     /// free all saved expression trees
-    void	clearExpressions()
-    {
-	for(unsigned int i = 0; i < expressions.size(); ++i)
-	{
-	    delete expressions[i];
-	}
-	expressions.clear();
+    void clearExpressions() {
+        for (unsigned int i = 0; i < expressions.size(); ++i) {
+            delete expressions[i];
+        }
+        expressions.clear();
     }
 
     /// check if the given variable name exists in the storage
-    bool	existsVariable(const std::string &varname) const
-    {
-	return variables.find(varname) != variables.end();
+    bool existsVariable(const std::string &varname) const {
+        return variables.find(varname) != variables.end();
     }
-    
+
     /// return the given variable from the storage. throws an exception if it
     /// does not exist.
-    double	getVariable(const std::string &varname) const
-    {
-	variablemap_type::const_iterator vi = variables.find(varname);
-	if (vi == variables.end())
-	    throw(std::runtime_error("Unknown variable."));
-	else
-	    return vi->second;
+    double getVariable(const std::string &varname) const {
+        variablemap_type::const_iterator vi = variables.find(varname);
+        if (vi == variables.end())
+            throw (std::runtime_error("Unknown variable."));
+        else
+            return vi->second;
     }
-private:
-    //Assembly assembly;
+    Assembly assembly;
 };
 
 #endif // EXPRESSION_H

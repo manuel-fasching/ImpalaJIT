@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include <assembly.hh>
+
 // forward declaration
 class ExpressionContext;
 

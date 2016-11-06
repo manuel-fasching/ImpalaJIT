@@ -77,8 +77,8 @@
 
 %{
 
-#include "driver.h"
-#include "scanner.h"
+#include <driver.h>
+#include <scanner.h>
 
 /* this "connects" the bison parser in the driver to the flex scanner class
  * object. it defines the yylex() function call to pull the next token from the
@@ -94,11 +94,11 @@
 
 constant : INTEGER
            {
-	       $$ = new ENConstant($1);
+	       $$ = new ENConstant($1, driver.expressionContext.assembly);
 	   }
          | DOUBLE
            {
-	       $$ = new ENConstant($1);
+	       $$ = new ENConstant($1, driver.expressionContext.assembly);
 	   }
 
 variable : STRING
@@ -109,7 +109,7 @@ variable : STRING
 		   YYERROR;
 	       }
 	       else {
-		   $$ = new ENConstant( driver.expressionContext.getVariable(*$1) );
+		   $$ = new ENConstant( driver.expressionContext.getVariable(*$1), driver.expressionContext.assembly );
 		   delete $1;
 	       }
 	   }
@@ -133,7 +133,7 @@ powexpr	: atomexpr
 	  }
         | atomexpr '^' powexpr
           {
-	      $$ = new ENPower($1, $3);
+	      $$ = new ENPower($1, $3, driver.expressionContext.assembly);
 	  }
 
 unaryexpr : powexpr
@@ -146,7 +146,7 @@ unaryexpr : powexpr
 	    }
           | '-' powexpr
             {
-		$$ = new ENNegate($2);
+		$$ = new ENNegate($2, driver.expressionContext.assembly);
 	    }
 
 mulexpr : unaryexpr
@@ -155,15 +155,15 @@ mulexpr : unaryexpr
 	  }
         | mulexpr '*' unaryexpr
           {
-	      $$ = new ENMultiply($1, $3);
+	      $$ = new ENMultiply($1, $3, driver.expressionContext.assembly);
 	  }
         | mulexpr '/' unaryexpr
           {
-	      $$ = new ENDivide($1, $3);
+	      $$ = new ENDivide($1, $3, driver.expressionContext.assembly);
 	  }
         | mulexpr '%' unaryexpr
           {
-	      $$ = new ENModulo($1, $3);
+	      $$ = new ENModulo($1, $3, driver.expressionContext.assembly);
 	  }
 
 addexpr : mulexpr
@@ -172,11 +172,11 @@ addexpr : mulexpr
 	  }
         | addexpr '+' mulexpr
           {
-	      $$ = new ENAdd($1, $3);
+	      $$ = new ENAdd($1, $3, driver.expressionContext.assembly);
 	  }
         | addexpr '-' mulexpr
           {
-	      $$ = new ENSubtract($1, $3);
+	      $$ = new ENSubtract($1, $3, driver.expressionContext.assembly);
 	  }
 
 expr	: addexpr

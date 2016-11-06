@@ -22,7 +22,7 @@
 #endif
 
 #ifndef DASM_FDEF
-#define DASM_FDEF	extern
+#define DASM_FDEF	inline
 #endif
 
 #ifndef DASM_M_GROW

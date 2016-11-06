@@ -58,8 +58,8 @@
 #line 78 "parser.yy" // lalr1.cc:412
 
 
-#include "driver.h"
-#include "scanner.h"
+#include <driver.h>
+#include <scanner.h>
 
 /* this "connects" the bison parser in the driver to the flex scanner class
  * object. it defines the yylex() function call to pull the next token from the
@@ -711,7 +711,7 @@ namespace impalajit {
   case 2:
 #line 96 "parser.yy" // lalr1.cc:859
     {
-	       (yylhs.value.expressionNode) = new ENConstant((yystack_[0].value.integerVal));
+	       (yylhs.value.expressionNode) = new ENConstant((yystack_[0].value.integerVal), driver.expressionContext.assembly);
 	   }
 #line 717 "parser.cc" // lalr1.cc:859
     break;
@@ -719,7 +719,7 @@ namespace impalajit {
   case 3:
 #line 100 "parser.yy" // lalr1.cc:859
     {
-	       (yylhs.value.expressionNode) = new ENConstant((yystack_[0].value.doubleVal));
+	       (yylhs.value.expressionNode) = new ENConstant((yystack_[0].value.doubleVal), driver.expressionContext.assembly);
 	   }
 #line 725 "parser.cc" // lalr1.cc:859
     break;
@@ -733,7 +733,7 @@ namespace impalajit {
 		   YYERROR;
 	       }
 	       else {
-		   (yylhs.value.expressionNode) = new ENConstant( driver.expressionContext.getVariable(*(yystack_[0].value.stringVal)) );
+		   (yylhs.value.expressionNode) = new ENConstant( driver.expressionContext.getVariable(*(yystack_[0].value.stringVal)), driver.expressionContext.assembly );
 		   delete (yystack_[0].value.stringVal);
 	       }
 	   }
@@ -775,7 +775,7 @@ namespace impalajit {
   case 9:
 #line 135 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENPower((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENPower((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 781 "parser.cc" // lalr1.cc:859
     break;
@@ -799,7 +799,7 @@ namespace impalajit {
   case 12:
 #line 148 "parser.yy" // lalr1.cc:859
     {
-		(yylhs.value.expressionNode) = new ENNegate((yystack_[0].value.expressionNode));
+		(yylhs.value.expressionNode) = new ENNegate((yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	    }
 #line 805 "parser.cc" // lalr1.cc:859
     break;
@@ -815,7 +815,7 @@ namespace impalajit {
   case 14:
 #line 157 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENMultiply((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENMultiply((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 821 "parser.cc" // lalr1.cc:859
     break;
@@ -823,7 +823,7 @@ namespace impalajit {
   case 15:
 #line 161 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENDivide((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENDivide((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 829 "parser.cc" // lalr1.cc:859
     break;
@@ -831,7 +831,7 @@ namespace impalajit {
   case 16:
 #line 165 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENModulo((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENModulo((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 837 "parser.cc" // lalr1.cc:859
     break;
@@ -847,7 +847,7 @@ namespace impalajit {
   case 18:
 #line 174 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENAdd((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENAdd((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 853 "parser.cc" // lalr1.cc:859
     break;
@@ -855,7 +855,7 @@ namespace impalajit {
   case 19:
 #line 178 "parser.yy" // lalr1.cc:859
     {
-	      (yylhs.value.expressionNode) = new ENSubtract((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode));
+	      (yylhs.value.expressionNode) = new ENSubtract((yystack_[2].value.expressionNode), (yystack_[0].value.expressionNode), driver.expressionContext.assembly);
 	  }
 #line 861 "parser.cc" // lalr1.cc:859
     break;
