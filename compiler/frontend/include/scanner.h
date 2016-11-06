@@ -20,7 +20,7 @@
 
 #ifndef __FLEX_LEXER_H
 #define yyFlexLexer ImpalaJITFlexLexer
-#include "FlexLexer.h"
+#include <FlexLexer.h>
 #undef yyFlexLexer
 #endif
 

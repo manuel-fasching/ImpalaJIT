@@ -4,7 +4,7 @@ project(ImpalaJIT)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/build")
 
-add_subdirectory(frontend)
+add_subdirectory(compiler)
 add_executable(ImpalaJIT main.cc)
 
-target_link_libraries(ImpalaJIT frontend)
+target_link_libraries(ImpalaJIT compiler)

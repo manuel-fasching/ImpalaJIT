@@ -506,7 +506,7 @@ static yyconst flex_int16_t yy_rule_linenum[7] =
 
 #include <string>
 
-#include "scanner.h"
+#include <scanner.h>
 
 /* import the parser's token type into a local typedef */
 typedef impalajit::Parser::token token;

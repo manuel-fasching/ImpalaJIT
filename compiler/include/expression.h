@@ -9,6 +9,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <cmath>
+//#include <assembly.hh>
 
 /** ExpressionNode is the abstract base class for expression nodes. From it the
  * different nullary, unary and binary nodes are derived. */
@@ -343,6 +344,8 @@ public:
 	else
 	    return vi->second;
     }
+private:
+    //Assembly assembly;
 };
 
 #endif // EXPRESSION_H

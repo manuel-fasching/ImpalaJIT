@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "expression.h"
+#include <expression.h>
 
 %}
 

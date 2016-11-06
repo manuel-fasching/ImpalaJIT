@@ -1,0 +1,39 @@
+//
+// Created by manuel on 06.11.16.
+//
+
+#include <assembly.hh>
+|.if X64
+|.arch x64
+|.else
+|.arch x86
+|.endif
+
+|.section code
+|.globals lbl_
+|.actionlist bf_actions
+
+dasm_State* d;
+void** labels;
+dasm_State** Dst;
+
+Assembly::Assembly(){
+    dasm_init(&d, DASM_MAXSECTION);
+
+    labels = (void**) malloc(lbl__MAX);
+    dasm_setupglobal(&d, labels, lbl__MAX);
+
+    dasm_setup(&d, bf_actions);
+
+    Dst = &d;
+}
+
+dasm_State* Assembly::getValue(double *value) {
+    |  mov rax, value
+    |  ret
+    return d;
+}
+
+Assembly::~Assembly(){
+    dasm_free(&d);
+}

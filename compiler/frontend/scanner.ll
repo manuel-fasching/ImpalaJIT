@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "scanner.h"
+#include <scanner.h>
 
 /* import the parser's token type into a local typedef */
 typedef impalajit::Parser::token token;

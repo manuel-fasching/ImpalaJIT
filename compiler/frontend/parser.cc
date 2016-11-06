@@ -39,7 +39,7 @@
 #include <string>
 #include <vector>
 
-#include "expression.h"
+#include <expression.h>
 
 
 #line 46 "parser.cc" // lalr1.cc:404
