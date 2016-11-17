@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <assembly.hh>
+#include <stdio.h>
 
 /** ExpressionNode is the abstract base class for expression nodes. From it the
  * different nullary, unary and binary nodes are derived. */
@@ -31,7 +32,7 @@ public:
 
     /// evaluate the complete calculation tree and return the floating point
     /// result value
-    virtual double	evaluate() const = 0;
+    virtual void evaluate() = 0;
 
     /// output the expression tree to the given stream. tries to format the
     /// output to make tree levels visible.
@@ -57,9 +58,9 @@ public:
     {
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-        return value;
+        assembly.operandStack.push(&value);
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -85,9 +86,11 @@ public:
 	delete node;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return - node->evaluate();
+        node->evaluate();
+        assembly.operator_=assembly.NEG;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -118,9 +121,12 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return left->evaluate() + right->evaluate();
+	    left->evaluate();
+        right->evaluate();
+        assembly.operator_=assembly.ADD;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -152,9 +158,12 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return left->evaluate() - right->evaluate();
+        left->evaluate();
+        right->evaluate();
+        assembly.operator_=assembly.SUB;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -186,9 +195,12 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return left->evaluate() * right->evaluate();
+        left->evaluate();
+        right->evaluate();
+        assembly.operator_=assembly.MUL;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -220,9 +232,13 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return left->evaluate() / right->evaluate();
+        left->evaluate();
+        right->evaluate();
+        assembly.operator_=assembly.DIV;
+        assembly.compile();
+        
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -255,9 +271,10 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return std::fmod(left->evaluate(), right->evaluate());
+	//return std::fmod(left->evaluate(), right->evaluate());
+        
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -289,9 +306,10 @@ public:
 	delete right;
     }
 
-    virtual double evaluate() const
+    virtual void evaluate()
     {
-	return std::pow(left->evaluate(), right->evaluate());
+	//return std::pow(left->evaluate(), right->evaluate());
+        
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const

@@ -871,11 +871,11 @@ namespace impalajit {
   case 21:
 #line 188 "parser.yy" // lalr1.cc:859
     {
-		 driver.expressionContext.variables[*(yystack_[2].value.stringVal)] = (yystack_[0].value.expressionNode)->evaluate();
+		 /*driver.expressionContext.variables[*(yystack_[2].value.stringVal)] = (yystack_[0].value.expressionNode)->evaluate();
 		 std::cout << "Setting variable " << *(yystack_[2].value.stringVal)
 			   << " = " << driver.expressionContext.variables[*(yystack_[2].value.stringVal)] << "\n";
 		 delete (yystack_[2].value.stringVal);
-		 delete (yystack_[0].value.expressionNode);
+		 delete (yystack_[0].value.expressionNode);*/
 	     }
 #line 881 "parser.cc" // lalr1.cc:859
     break;

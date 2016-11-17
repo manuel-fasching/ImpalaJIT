@@ -32,21 +32,8 @@ int main(int argc, char *argv[])
             }
 
             expressionContext.clearExpressions();
-            bool result = driver.parse_file(argv[ai]);
-            if (result)
-            {
-                std::cout << "Expressions:" << std::endl;
-                for (unsigned int ei = 0; ei < expressionContext.expressions.size(); ++ei)
-                {
-                    std::cout << "[" << ei << "]:" << std::endl;
-                    std::cout << "tree:" << std::endl;
-                    expressionContext.expressions[ei]->print(std::cout);
-                    std::cout << "evaluated: "
-                              << expressionContext.expressions[ei]->evaluate()
-                              << std::endl;
-                }
-            }
-
+            double result = driver.parse_file(argv[ai]);
+            printf("Result: %f", result);
         }
     }
 

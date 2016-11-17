@@ -6,6 +6,7 @@
 
 #include <driver.h>
 #include <scanner.h>
+#include <expression.h>
 
 namespace impalajit {
 
@@ -16,7 +17,7 @@ Driver::Driver(class ExpressionContext& _expressionContext)
 {
 }
 
-bool Driver::parse_stream(std::istream& in, const std::string& sname)
+double Driver::parse_stream(std::istream& in, const std::string& sname)
 {
     streamname = sname;
 
@@ -26,17 +27,22 @@ bool Driver::parse_stream(std::istream& in, const std::string& sname)
 
     Parser parser(*this);
     parser.set_debug_level(trace_parsing);
-    return (parser.parse() == 0);
+    parser.parse();
+    for (unsigned int ei = 0; ei < expressionContext.expressions.size(); ++ei) {
+        expressionContext.expressions[ei]->evaluate();
+    }
+    dasm_gen_func fp = (dasm_gen_func)(expressionContext.assembly.linkAndEncode());
+    return fp();
 }
 
-bool Driver::parse_file(const std::string &filename)
+double Driver::parse_file(const std::string &filename)
 {
     std::ifstream in(filename.c_str());
     if (!in.good()) return false;
     return parse_stream(in, filename);
 }
 
-bool Driver::parse_string(const std::string &input, const std::string& sname)
+double Driver::parse_string(const std::string &input, const std::string& sname)
 {
     std::istringstream iss(input);
     return parse_stream(iss, sname);

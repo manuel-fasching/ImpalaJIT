@@ -3,19 +3,30 @@
 //
 
 #include <assembly.hh>
-|.if X64
+#include <stack>
+#include <stdio.h>
+
 |.arch x64
-|.else
-|.arch x86
-|.endif
 
 |.section code
 |.globals lbl_
 |.actionlist bf_actions
 
+#if _WIN32
+#include <Windows.h>
+#else
+#include <sys/mman.h>
+#if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+#endif
+
+
 dasm_State* d;
 void** labels;
 dasm_State** Dst;
+std::stack<double*> operandStack;
+int operator_;
 
 Assembly::Assembly(){
     dasm_init(&d, DASM_MAXSECTION);
@@ -28,12 +39,114 @@ Assembly::Assembly(){
     Dst = &d;
 }
 
-dasm_State* Assembly::getValue(double *value) {
-    |  mov rax, value
-    |  ret
-    return d;
+void Assembly::compile(){
+
+    switch(operator_){
+        case IDENTITY:
+            {
+                double* value = operandStack.top();
+                operandStack.pop();
+                |  movlpd xmm0, qword [value]
+                |  ret
+
+               break;
+           }
+        case ADD:
+            {
+                double* value1 = operandStack.top();
+                operandStack.pop();
+                double* value2 = operandStack.top();
+                operandStack.pop();
+                double* result = (double*) malloc(sizeof(double));
+
+                | movlpd xmm0, qword [value1]
+                | addsd xmm0, qword [value2]
+                | movlpd qword [result], xmm0
+
+                operandStack.push(result);
+
+                break;
+            }
+         case SUB:
+            {
+                double* value1 = operandStack.top();
+                operandStack.pop();
+                double* value2 = operandStack.top();
+                operandStack.pop();
+                double* result = (double*) malloc(sizeof(double));
+
+                | movlpd xmm0, qword [value2]
+                | subsd xmm0, qword [value1]
+                | movlpd qword [result], xmm0
+
+                operandStack.push(result);
+
+                break;
+            }
+         case MUL:
+            {
+                double* value1 = operandStack.top();
+                operandStack.pop();
+                double* value2 = operandStack.top();
+                operandStack.pop();
+                double* result = (double*) malloc(sizeof(double));
+
+                | movlpd xmm0, qword [value2]
+                | mulsd xmm0, qword [value1]
+                | movlpd qword [result], xmm0
+
+                operandStack.push(result);
+
+                break;
+            }
+         case DIV:
+            {
+                double* value1 = operandStack.top();
+                operandStack.pop();
+                double* value2 = operandStack.top();
+                operandStack.pop();
+                double* result = (double*) malloc(sizeof(double));
+
+                | movlpd xmm0, qword [value2]
+                | divsd xmm0, qword [value1]
+                | movlpd qword [result], xmm0
+
+                operandStack.push(result);
+
+                break;
+            }
+         case NEG:
+            {
+                double* value = operandStack.top();
+                operandStack.pop();
+                double* result = (double*) malloc(sizeof(double));
+                | mov64 rax, 0x8000000000000000
+                | movd xmm1, rax
+                | pxor xmm0, xmm1
+                | movlpd qword [result], xmm0
+
+                operandStack.push(result);
+
+                break;
+            }
+    }
+
+    operator_ = EMPTY;
 }
 
 Assembly::~Assembly(){
     dasm_free(&d);
+}
+
+
+void* Assembly::linkAndEncode(){
+  operator_ = IDENTITY;
+  compile();
+  size_t sz;
+  void* buf;
+  dasm_link(Dst, &sz);
+  buf = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  dasm_encode(Dst, buf);
+  mprotect(buf, sz, PROT_READ | PROT_EXEC);
+  return buf;
 }
