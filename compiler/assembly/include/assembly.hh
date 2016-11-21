@@ -19,14 +19,16 @@ public:
     static const int MUL = 3;
     static const int DIV = 4;
     static const int NEG = 5;
+    static const int SQRT = 6;
+    static const int POW = 7;
 
-    std::stack<double*> operandStack;
     int operator_;
-
 
     Assembly();
 
     void compile();
+
+    void push(double* value);
 
     virtual ~Assembly();
 

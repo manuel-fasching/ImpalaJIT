@@ -54,7 +54,6 @@
  /*** BEGIN EXAMPLE - Change the example grammar's tokens below ***/
 
 %union {
-    int  			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class ExpressionNode*		expressionNode;
@@ -62,15 +61,15 @@
 
 %token			END	     0	"end of file"
 %token			EOL		"end of line"
-%token <integerVal> 	INTEGER		"integer"
 %token <doubleVal> 	DOUBLE		"double"
 %token <stringVal> 	STRING		"string"
+%token <stringVal>	FUNCTION    "function"
 
 %type <expressionNode>	constant variable
 %type <expressionNode>	atomexpr powexpr unaryexpr mulexpr addexpr expr
 
 %destructor { delete $$; } STRING
-%destructor { delete $$; } constant variable
+%destructor { delete $$; } constant variable 
 %destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr
 
  /*** END EXAMPLE - Change the example grammar's tokens above ***/
@@ -92,19 +91,17 @@
 
  /*** BEGIN EXAMPLE - Change the example grammar rules below ***/
 
-constant : INTEGER
+constant :  DOUBLE
            {
-	       $$ = new ENConstant($1, driver.expressionContext.assembly);
-	   }
-         | DOUBLE
-           {
-	       $$ = new ENConstant($1, driver.expressionContext.assembly);
+           double* v = (double*) malloc(sizeof(double));
+           *v = $1;
+	       $$ = new ENConstant(v, driver.expressionContext.assembly);
 	   }
 
 variable : STRING
            {
 	       if (!driver.expressionContext.existsVariable(*$1)) {
-		   error(yyloc, std::string("Unknown variable \"") + *$1 + "\"");
+		   error(yyla.location, std::string("Unknown variable \"") + *$1 + "\"");
 		   delete $1;
 		   YYERROR;
 	       }
@@ -122,10 +119,16 @@ atomexpr : constant
            {
 	       $$ = $1;
 	   }
+	     | FUNCTION '(' expr ')'
+	       {
+	       $$ = new ENSQRT($3, driver.expressionContext.assembly);
+	   }
          | '(' expr ')'
            {
 	       $$ = $2;
 	   }
+	     
+
 
 powexpr	: atomexpr
           {
@@ -161,10 +164,7 @@ mulexpr : unaryexpr
           {
 	      $$ = new ENDivide($1, $3, driver.expressionContext.assembly);
 	  }
-        | mulexpr '%' unaryexpr
-          {
-	      $$ = new ENModulo($1, $3, driver.expressionContext.assembly);
-	  }
+
 
 addexpr : mulexpr
           {
@@ -187,8 +187,6 @@ expr	: addexpr
 assignment : STRING '=' expr
              {
 		 driver.expressionContext.variables[*$1] = $3->evaluate();
-		 std::cout << "Setting variable " << *$1
-			   << " = " << driver.expressionContext.variables[*$1] << "\n";
 		 delete $1;
 		 delete $3;
 	     }
@@ -217,8 +215,7 @@ start	: /* empty */
 %% /*** Additional Code ***/
 
 void impalajit::Parser::error(const Parser::location_type& l,
-							const std::string& m)
+							  const std::string& m)
 {
 	driver.error(l, m);
 }
-

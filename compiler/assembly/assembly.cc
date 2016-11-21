@@ -30,12 +30,9 @@ enum {
 };
 #line 13 "assembly.dasc"
 //|.actionlist bf_actions
-static const unsigned char bf_actions[109] = {
-  102,15,18,4,37,237,195,255,102,15,18,4,37,237,252,242,15,88,4,37,237,102,
-  15,19,4,37,237,255,102,15,18,4,37,237,252,242,15,92,4,37,237,102,15,19,4,
-  37,237,255,102,15,18,4,37,237,252,242,15,89,4,37,237,102,15,19,4,37,237,255,
-  102,15,18,4,37,237,252,242,15,94,4,37,237,102,15,19,4,37,237,255,72,184,237,
-  237,102,72,15,110,200,102,15,252,239,193,102,15,19,4,37,237,255
+static const unsigned char bf_actions[38] = {
+  221,4,37,237,255,221,28,37,237,102,15,18,4,37,237,195,255,222,193,255,222,
+  252,233,255,216,201,255,222,252,249,255,217,224,255,217,252,250,255
 };
 
 #line 14 "assembly.dasc"
@@ -53,7 +50,6 @@ static const unsigned char bf_actions[109] = {
 dasm_State* d;
 void** labels;
 dasm_State** Dst;
-std::stack<double*> operandStack;
 int operator_;
 
 Assembly::Assembly(){
@@ -67,106 +63,69 @@ Assembly::Assembly(){
     Dst = &d;
 }
 
+void Assembly::push(double* value){
+    //| fld qword [value]
+    dasm_put(Dst, 0, value);
+#line 43 "assembly.dasc"
+}
 void Assembly::compile(){
 
     switch(operator_){
         case IDENTITY:
             {
-                double* value = operandStack.top();
-                operandStack.pop();
-                //|  movlpd xmm0, qword [value]
-                //|  ret
-                dasm_put(Dst, 0, value);
-#line 51 "assembly.dasc"
-
+                double* result = (double*) malloc(sizeof(double));
+                //| fstp qword [result]
+                //| movlpd xmm0, qword [result]
+                //| ret
+                dasm_put(Dst, 5, result, result);
+#line 53 "assembly.dasc"
                break;
            }
         case ADD:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                //| movlpd xmm0, qword [value1]
-                //| addsd xmm0, qword [value2]
-                //| movlpd qword [result], xmm0
-                dasm_put(Dst, 8, value1, value2, result);
-#line 65 "assembly.dasc"
-
-                operandStack.push(result);
-
+                //| faddp st1
+                dasm_put(Dst, 17);
+#line 58 "assembly.dasc"
                 break;
             }
          case SUB:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                //| movlpd xmm0, qword [value2]
-                //| subsd xmm0, qword [value1]
-                //| movlpd qword [result], xmm0
-                dasm_put(Dst, 28, value2, value1, result);
-#line 81 "assembly.dasc"
-
-                operandStack.push(result);
-
+                //| fsubp st1
+                dasm_put(Dst, 20);
+#line 63 "assembly.dasc"
                 break;
             }
          case MUL:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                //| movlpd xmm0, qword [value2]
-                //| mulsd xmm0, qword [value1]
-                //| movlpd qword [result], xmm0
-                dasm_put(Dst, 48, value2, value1, result);
-#line 97 "assembly.dasc"
-
-                operandStack.push(result);
-
+                //| fmul st1
+                dasm_put(Dst, 24);
+#line 68 "assembly.dasc"
                 break;
             }
          case DIV:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                //| movlpd xmm0, qword [value2]
-                //| divsd xmm0, qword [value1]
-                //| movlpd qword [result], xmm0
-                dasm_put(Dst, 68, value2, value1, result);
-#line 113 "assembly.dasc"
-
-                operandStack.push(result);
-
+                //| fdivp st1
+                dasm_put(Dst, 27);
+#line 73 "assembly.dasc"
                 break;
             }
          case NEG:
             {
-                double* value = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-                //| mov64 rax, 0x8000000000000000
-                //| movd xmm1, rax
-                //| pxor xmm0, xmm1
-                //| movlpd qword [result], xmm0
-                dasm_put(Dst, 88, (unsigned int)(0x8000000000000000), (unsigned int)((0x8000000000000000)>>32), result);
-#line 127 "assembly.dasc"
-
-                operandStack.push(result);
-
+                //| fchs
+                dasm_put(Dst, 31);
+#line 78 "assembly.dasc"
+                break;
+            }
+         case SQRT:
+            {
+                //| fsqrt
+                dasm_put(Dst, 34);
+#line 83 "assembly.dasc"
+                break;
+            }
+         case POW:
+            {
+                //TODO
                 break;
             }
     }

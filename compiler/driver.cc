@@ -17,7 +17,7 @@ Driver::Driver(class ExpressionContext& _expressionContext)
 {
 }
 
-double Driver::parse_stream(std::istream& in, const std::string& sname)
+dasm_gen_func Driver::parse_stream(std::istream& in, const std::string& sname)
 {
     streamname = sname;
 
@@ -32,29 +32,29 @@ double Driver::parse_stream(std::istream& in, const std::string& sname)
         expressionContext.expressions[ei]->evaluate();
     }
     dasm_gen_func fp = (dasm_gen_func)(expressionContext.assembly.linkAndEncode());
-    return fp();
+    return fp;
 }
 
-double Driver::parse_file(const std::string &filename)
+dasm_gen_func Driver::parse_file(const std::string &filename)
 {
     std::ifstream in(filename.c_str());
-    if (!in.good()) return false;
+    if (!in.good()) throw (std::runtime_error("Bad input file."));
     return parse_stream(in, filename);
 }
 
-double Driver::parse_string(const std::string &input, const std::string& sname)
+dasm_gen_func Driver::parse_string(const std::string &input, const std::string& sname)
 {
     std::istringstream iss(input);
     return parse_stream(iss, sname);
 }
 
-void Driver::error(const class location& l,
-		   const std::string& m)
+void Driver::error(const class location& l, const std::string& m)
 {
     std::cerr << l << ": " << m << std::endl;
 }
 
-void Driver::error(const std::string& m)
+
+    void Driver::error(const std::string& m)
 {
     std::cerr << m << std::endl;
 }

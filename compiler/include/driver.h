@@ -14,6 +14,7 @@ class ExpressionContext;
 
 /** The impalajit namespace is used to encapsulate the three parser classes
  * impalajit::Parser, impalajit::Scanner and impalajit::Driver */
+typedef double (*dasm_gen_func)();
 namespace impalajit {
 
 /** The Driver class brings together all components. It creates an instance of
@@ -22,7 +23,6 @@ namespace impalajit {
  * sequence. Furthermore the driver object is available in the grammar rules as
  * a parameter. Therefore the driver class contains a reference to the
  * structure into which the parsed data is saved. */
-    typedef double (*dasm_gen_func)();
 class Driver
 {
 public:
@@ -43,7 +43,7 @@ public:
      * @param sname	stream name for error messages
      * @return		true if successfully parsed
      */
-    double parse_stream(std::istream& in,
+    dasm_gen_func parse_stream(std::istream& in,
 		      const std::string& sname = "stream input");
 
     /** Invoke the scanner and parser on an input string.
@@ -51,7 +51,7 @@ public:
      * @param sname	stream name for error messages
      * @return		true if successfully parsed
      */
-    double parse_string(const std::string& input,
+    dasm_gen_func parse_string(const std::string& input,
 		      const std::string& sname = "string stream");
 
     /** Invoke the scanner and parser on a file. Use parse_stream with a
@@ -59,7 +59,7 @@ public:
      * @param filename	input file name
      * @return		true if successfully parsed
      */
-    double parse_file(const std::string& filename);
+    dasm_gen_func parse_file(const std::string& filename);
 
     // To demonstrate pure handling of parse errors, instead of
     // simply dumping them on the standard error output, we will pass

@@ -58,20 +58,22 @@ typedef impalajit::Parser::token_type token_type;
 
  /*** BEGIN EXAMPLE - Change the impalajit lexer rules below ***/
 
-[0-9]+ {
-    yylval->integerVal = atoi(yytext);
-    return token::INTEGER;
-}
-
-[0-9]+"."[0-9]* {
+[0-9]+["."[0-9]*]? {
     yylval->doubleVal = atof(yytext);
     return token::DOUBLE;
+}
+
+sqrt {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::FUNCTION;
 }
 
 [A-Za-z][A-Za-z0-9_,.-]* {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::STRING;
 }
+
+
 
  /* gobble up white-spaces */
 [ \t\r]+ {

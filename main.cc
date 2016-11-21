@@ -30,10 +30,16 @@ int main(int argc, char *argv[])
                 std::cerr << "Could not open file: " << argv[ai] << std::endl;
                 return 0;
             }
-
+            double* x = (double*) malloc(sizeof(double));
+            *x=3.0;
             expressionContext.clearExpressions();
-            double result = driver.parse_file(argv[ai]);
-            printf("Result: %f", result);
+            expressionContext.clearVariables();
+            expressionContext.variables["x"]=x;
+            dasm_gen_func result = driver.parse_file(argv[ai]);
+            printf("Result: %f\n", result());
+            expressionContext.clearVariables();
+            *x=4.0;
+            printf("Result: %f\n", result());
         }
     }
 

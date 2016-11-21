@@ -49,18 +49,19 @@ public:
 class ENConstant : public ExpressionNode
 {
     /// the constant value returned
-    double	value;
+    double*	value;
     
 public:
     /// construct a constant expression node from a value
-    explicit ENConstant(double _value, Assembly& assembly1)
+    explicit ENConstant(double* _value, Assembly& assembly1)
 	: ExpressionNode(assembly1), value(_value)
     {
+        printf("Value: %f\n", *_value);
     }
 
     virtual void evaluate()
     {
-        assembly.operandStack.push(&value);
+        assembly.push(value);
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -251,37 +252,33 @@ public:
 
 /** Expression node calculating the remainder of an integer division of two
  * operand nodes. */
-class ENModulo : public ExpressionNode
+class ENSQRT: public ExpressionNode
 {
-    /// left operand
-    ExpressionNode* 	left;
-
     /// right operand
-    ExpressionNode* 	right;
+    ExpressionNode* 	node;
     
 public:
-    explicit ENModulo(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENSQRT(ExpressionNode* _node, Assembly& assembly1)
+            : ExpressionNode(assembly1), node(_node)
     {
     }
 
-    virtual ~ENModulo()
+    virtual ~ENSQRT()
     {
-	delete left;
-	delete right;
+	delete node;
     }
 
     virtual void evaluate()
     {
-	//return std::fmod(left->evaluate(), right->evaluate());
-        
+        node->evaluate();
+        assembly.operator_=assembly.SQRT;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
     {
-	os << indent(depth) << "% modulo" << std::endl;
-	left->print(os, depth+1);
-	right->print(os, depth+1);
+	os << indent(depth) << "sqrt" << std::endl;
+	node->print(os, depth+1);
     }
 };
 
@@ -308,8 +305,10 @@ public:
 
     virtual void evaluate()
     {
-	//return std::pow(left->evaluate(), right->evaluate());
-        
+        right->evaluate();
+        left->evaluate();
+        assembly.operator_=assembly.POW;
+        assembly.compile();
     }
 
     virtual void print(std::ostream &os, unsigned int depth) const
@@ -327,7 +326,7 @@ class ExpressionContext {
 public:
 
     /// type of the variable storage
-    typedef std::map<std::string, double> variablemap_type;
+    typedef std::map<std::string, double*> variablemap_type;
 
     /// variable storage. maps variable string to doubles
     variablemap_type variables;
@@ -339,6 +338,7 @@ public:
     /// free the saved expression trees
     ~ExpressionContext() {
         clearExpressions();
+        clearVariables();
     }
 
     /// free all saved expression trees
@@ -349,6 +349,11 @@ public:
         expressions.clear();
     }
 
+    /// free all variables
+    void clearVariables(){
+        variables.clear();
+    }
+
     /// check if the given variable name exists in the storage
     bool existsVariable(const std::string &varname) const {
         return variables.find(varname) != variables.end();
@@ -356,7 +361,7 @@ public:
 
     /// return the given variable from the storage. throws an exception if it
     /// does not exist.
-    double getVariable(const std::string &varname) const {
+    double* getVariable(const std::string &varname) const {
         variablemap_type::const_iterator vi = variables.find(varname);
         if (vi == variables.end())
             throw (std::runtime_error("Unknown variable."));

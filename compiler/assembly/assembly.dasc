@@ -25,7 +25,6 @@
 dasm_State* d;
 void** labels;
 dasm_State** Dst;
-std::stack<double*> operandStack;
 int operator_;
 
 Assembly::Assembly(){
@@ -39,94 +38,53 @@ Assembly::Assembly(){
     Dst = &d;
 }
 
+void Assembly::push(double* value){
+    | fld qword [value]
+}
 void Assembly::compile(){
 
     switch(operator_){
         case IDENTITY:
             {
-                double* value = operandStack.top();
-                operandStack.pop();
-                |  movlpd xmm0, qword [value]
-                |  ret
-
+                double* result = (double*) malloc(sizeof(double));
+                | fstp qword [result]
+                | movlpd xmm0, qword [result]
+                | ret
                break;
            }
         case ADD:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                | movlpd xmm0, qword [value1]
-                | addsd xmm0, qword [value2]
-                | movlpd qword [result], xmm0
-
-                operandStack.push(result);
-
+                | faddp st1
                 break;
             }
          case SUB:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                | movlpd xmm0, qword [value2]
-                | subsd xmm0, qword [value1]
-                | movlpd qword [result], xmm0
-
-                operandStack.push(result);
-
+                | fsubp st1
                 break;
             }
          case MUL:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                | movlpd xmm0, qword [value2]
-                | mulsd xmm0, qword [value1]
-                | movlpd qword [result], xmm0
-
-                operandStack.push(result);
-
+                | fmul st1
                 break;
             }
          case DIV:
             {
-                double* value1 = operandStack.top();
-                operandStack.pop();
-                double* value2 = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-
-                | movlpd xmm0, qword [value2]
-                | divsd xmm0, qword [value1]
-                | movlpd qword [result], xmm0
-
-                operandStack.push(result);
-
+                | fdivp st1
                 break;
             }
          case NEG:
             {
-                double* value = operandStack.top();
-                operandStack.pop();
-                double* result = (double*) malloc(sizeof(double));
-                | mov64 rax, 0x8000000000000000
-                | movd xmm1, rax
-                | pxor xmm0, xmm1
-                | movlpd qword [result], xmm0
-
-                operandStack.push(result);
-
+                | fchs
+                break;
+            }
+         case SQRT:
+            {
+                | fsqrt
+                break;
+            }
+         case POW:
+            {
+                //TODO
                 break;
             }
     }
