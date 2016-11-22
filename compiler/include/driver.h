@@ -9,12 +9,13 @@
 
 #include <assembly.hh>
 
+#include <dasm_gen_function.hh>
+
 // forward declaration
 class ExpressionContext;
 
 /** The impalajit namespace is used to encapsulate the three parser classes
  * impalajit::Parser, impalajit::Scanner and impalajit::Driver */
-typedef double (*dasm_gen_func)();
 namespace impalajit {
 
 /** The Driver class brings together all components. It creates an instance of

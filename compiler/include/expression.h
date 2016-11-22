@@ -56,7 +56,6 @@ public:
     explicit ENConstant(double* _value, Assembly& assembly1)
 	: ExpressionNode(assembly1), value(_value)
     {
-        printf("Value: %f\n", *_value);
     }
 
     virtual void evaluate()

@@ -125,8 +125,8 @@ void Assembly::compile(){
             }
          case POW:
             {
-                //TODO
-                break;
+                printf("^: Operation not supported");
+                exit(0);
             }
     }
 
