@@ -4,6 +4,41 @@ project(ImpalaJIT)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/build")
 
+macro(translate_bison_file)
+    execute_process(COMMAND bison -o parser.cc parser.yy
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend
+            )
+    execute_process(COMMAND mv stack.hh ./include
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend/
+            )
+    execute_process(COMMAND mv location.hh ./include
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend/
+            )
+    execute_process(COMMAND mv parser.hh ./include
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend/
+            )
+    execute_process(COMMAND mv position.hh ./include
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend/
+            )
+endmacro(translate_bison_file)
+macro(translate_flex_file)
+    execute_process(COMMAND flex -o scanner.cc scanner.ll
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/compiler/frontend
+            )
+endmacro(translate_flex_file)
+macro(translate_dynasm_file)
+    execute_process(COMMAND gcc -o minilua 3rd_party/LuaJIT/src/host/minilua.c -lm
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            )
+    execute_process(COMMAND ./minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/assembly/assembly.cc -D X64 compiler/assembly/assembly.dasc
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            )
+endmacro()
+
+translate_bison_file()
+translate_flex_file()
+translate_dynasm_file()
+
 set(include_dirs
         types
         include
