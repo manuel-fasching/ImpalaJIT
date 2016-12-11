@@ -409,8 +409,8 @@ typedef unsigned char YY_CHAR;
 	(yy_c_buf_p) = yy_cp;
 
 /* %% [4.0] data tables for the DFA and the user's section 1 definitions go here */
-#define YY_NUM_RULES 7
-#define YY_END_OF_BUFFER 8
+#define YY_NUM_RULES 10
+#define YY_END_OF_BUFFER 11
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -418,10 +418,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[19] =
+static yyconst flex_int16_t yy_accept[30] =
     {   0,
-        0,    0,    8,    6,    4,    5,    1,    3,    3,    4,
-        1,    1,    1,    3,    3,    3,    2,    0
+        0,    0,   11,    9,    7,    8,    9,    1,    2,    9,
+        2,    6,    6,    6,    6,    7,    2,    1,    1,    1,
+        6,    6,    4,    6,    6,    6,    5,    3,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -429,17 +430,17 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    1,    4,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    5,    5,    6,    1,    7,    7,    7,
-        7,    7,    7,    7,    7,    7,    7,    1,    1,    1,
-        1,    1,    1,    1,    8,    8,    8,    8,    8,    8,
-        8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        4,    1,    9,    1,    5,    1,    8,    8,    8,    8,
+        1,    2,    4,    5,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    6,    6,    7,    1,    8,    8,    8,
+        8,    8,    8,    8,    8,    8,    8,    1,    1,    9,
+       10,   11,    1,    1,   12,   12,   12,   12,   12,   12,
+       12,   12,   12,   12,   12,   12,   12,   12,   12,   12,
+       12,   12,   12,   12,   12,   12,   12,   12,   12,   12,
+        5,    1,   13,    1,    6,    1,   12,   12,   12,   12,
 
-        8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,    8,   10,   11,   12,   13,    8,    8,    8,    8,
-        8,    8,    1,    1,    1,    1,    1,    1,    1,    1,
+       14,   15,   12,   12,   16,   12,   12,   17,   12,   12,
+       12,   12,   18,   19,   20,   21,   12,   12,   12,   12,
+       12,   12,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -456,43 +457,52 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[14] =
+static yyconst YY_CHAR yy_meta[22] =
     {   0,
-        1,    1,    1,    1,    2,    2,    2,    2,    1,    2,
-        2,    2,    2
+        1,    1,    1,    1,    1,    2,    2,    2,    1,    1,
+        1,    2,    1,    2,    2,    2,    2,    2,    2,    2,
+        2
     } ;
 
-static yyconst flex_uint16_t yy_base[20] =
+static yyconst flex_uint16_t yy_base[31] =
     {   0,
-        0,    0,   25,   26,   22,   26,   10,    0,   13,   20,
-       14,    0,   26,    0,    9,    5,    0,   26,   13
+        0,    0,   41,   42,   38,   42,   29,   17,   28,   27,
+       26,    0,   18,   19,   15,   30,   42,   23,    0,   42,
+        0,    9,    0,    9,   13,    5,    0,    0,   42,   21
     } ;
 
-static yyconst flex_int16_t yy_def[20] =
+static yyconst flex_int16_t yy_def[31] =
     {   0,
-       18,    1,   18,   18,   18,   18,   18,   19,   19,   18,
-        7,    7,   18,   19,   19,   19,   19,    0,   18
+       29,    1,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   30,   30,   30,   30,   29,   29,    8,    8,   29,
+       30,   30,   30,   30,   30,   30,   30,   30,    0,   29
     } ;
 
-static yyconst flex_uint16_t yy_nxt[40] =
+static yyconst flex_uint16_t yy_nxt[64] =
     {   0,
-        4,    5,    6,    4,    4,    4,    7,    8,    4,    8,
-        8,    9,    8,   11,   14,   11,   12,   17,   13,   16,
-       11,   10,   15,   10,   18,    3,   18,   18,   18,   18,
-       18,   18,   18,   18,   18,   18,   18,   18,   18
+        4,    5,    6,    7,    4,    4,    4,    8,    9,   10,
+       11,   12,    4,   13,   12,   14,   12,   12,   12,   15,
+       12,   18,   21,   18,   19,   28,   27,   26,   25,   20,
+       18,   16,   24,   23,   22,   17,   17,   17,   17,   16,
+       29,    3,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29
     } ;
 
-static yyconst flex_int16_t yy_chk[40] =
+static yyconst flex_int16_t yy_chk[64] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    7,   19,    7,    7,   16,    7,   15,
-       11,   10,    9,    5,    3,   18,   18,   18,   18,   18,
-       18,   18,   18,   18,   18,   18,   18,   18,   18
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    8,   30,    8,    8,   26,   25,   24,   22,    8,
+       18,   16,   15,   14,   13,   11,   10,    9,    7,    5,
+        3,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29
     } ;
 
-static yyconst flex_int16_t yy_rule_linenum[7] =
+static yyconst flex_int16_t yy_rule_linenum[10] =
     {   0,
-       61,   66,   71,   79,   84,   90
+       61,   66,   71,   76,   80,   85,   93,   98,  104
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -535,7 +545,7 @@ typedef impalajit::Parser::token_type token_type;
  * yylex is invoked, the begin position is moved onto the end position. */
 #line 48 "scanner.ll"
 #define YY_USER_ACTION  yylloc->columns(yyleng);
-#line 539 "scanner.cc"
+#line 549 "scanner.cc"
 
 #define INITIAL 0
 
@@ -743,7 +753,7 @@ YY_DECL
 
  /*** BEGIN EXAMPLE - Change the impalajit lexer rules below ***/
 
-#line 747 "scanner.cc"
+#line 757 "scanner.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -772,13 +782,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 19 )
+				if ( yy_current_state >= 30 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 18 );
+		while ( yy_current_state != 29 );
 		yy_cp = (yy_last_accepting_cpos);
 		yy_current_state = (yy_last_accepting_state);
 
@@ -797,12 +807,12 @@ do_action:	/* This label is used only to access EOF actions. */
 			{
 			if ( yy_act == 0 )
 				std::cerr << "--scanner backing up\n";
-			else if ( yy_act < 7 )
+			else if ( yy_act < 10 )
 				std::cerr << "--accepting rule at line " << yy_rule_linenum[yy_act] <<
 				         "(\"" << yytext << "\")\n";
-			else if ( yy_act == 7 )
+			else if ( yy_act == 10 )
 				std::cerr << "--accepting default rule (\"" << yytext << "\")\n";
-			else if ( yy_act == 8 )
+			else if ( yy_act == 11 )
 				std::cerr << "--(end of buffer or a NUL)\n";
 			else
 				std::cerr << "--EOF (start condition " << YY_START << ")\n";
@@ -831,7 +841,7 @@ YY_RULE_SETUP
 #line 66 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
-    return token::FUNCTION;
+    return token::CMPOP;
 }
 	YY_BREAK
 case 3:
@@ -839,42 +849,66 @@ YY_RULE_SETUP
 #line 71 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
+    return token::FUNCTION;
+}
+	YY_BREAK
+case 4:
+YY_RULE_SETUP
+#line 76 "scanner.ll"
+{
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::IF;
+}
+	YY_BREAK
+case 5:
+YY_RULE_SETUP
+#line 80 "scanner.ll"
+{
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::ELSE;
+}
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+#line 85 "scanner.ll"
+{
+    yylval->stringVal = new std::string(yytext, yyleng);
     return token::STRING;
 }
 	YY_BREAK
 /* gobble up white-spaces */
-case 4:
+case 7:
 YY_RULE_SETUP
-#line 79 "scanner.ll"
+#line 93 "scanner.ll"
 {
     yylloc->step();
 }
 	YY_BREAK
 /* gobble up end-of-lines */
-case 5:
-/* rule 5 can match eol */
+case 8:
+/* rule 8 can match eol */
 YY_RULE_SETUP
-#line 84 "scanner.ll"
+#line 98 "scanner.ll"
 {
     yylloc->lines(yyleng); yylloc->step();
-    return token::EOL;
+   // return token::EOL;
 }
 	YY_BREAK
 /* pass all other characters up to bison */
-case 6:
+case 9:
 YY_RULE_SETUP
-#line 90 "scanner.ll"
+#line 104 "scanner.ll"
 {
     return static_cast<token_type>(*yytext);
 }
 	YY_BREAK
 /*** END EXAMPLE - Change the impalajit lexer rules above ***/
-case 7:
+case 10:
 YY_RULE_SETUP
-#line 96 "scanner.ll"
+#line 110 "scanner.ll"
 ECHO;
 	YY_BREAK
-#line 878 "scanner.cc"
+#line 912 "scanner.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1312,7 +1346,7 @@ int yyFlexLexer::yy_get_next_buffer()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 19 )
+			if ( yy_current_state >= 30 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1345,11 +1379,11 @@ int yyFlexLexer::yy_get_next_buffer()
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 19 )
+		if ( yy_current_state >= 30 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 18);
+	yy_is_jam = (yy_current_state == 29);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1987,7 +2021,7 @@ void ImpalaJITfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 96 "scanner.ll"
+#line 110 "scanner.ll"
 
 
 

@@ -41,6 +41,21 @@ Assembly::Assembly(){
 void Assembly::push(double* value){
     | fld qword [value]
 }
+void Assembly::addDynamicLabel1(){
+    | 1:
+}
+void Assembly::addDynamicLabel2(){
+    | 2:
+}
+void Assembly::jumpForwardTo1(){
+    | jmp >1
+}
+void Assembly::jumpForwardTo2(){
+    | jmp >2
+}
+void Assembly::conditionalJumpForwardTo1(){
+    | jnz >1
+}
 void Assembly::compile(){
 
     switch(operator_){
@@ -64,7 +79,7 @@ void Assembly::compile(){
             }
          case MUL:
             {
-                | fmul st1
+                | fmulp st1
                 break;
             }
          case DIV:
@@ -84,8 +99,50 @@ void Assembly::compile(){
             }
          case POW:
             {
-                printf("^: Operation not supported");
+                printf("^: Operation not supported yet");
                 exit(0);
+            }
+         case EQ:
+            {
+                | fcomip st1
+                | fpop
+                | jnz >1
+                break;
+            }
+          case NE:
+            {
+                | fcomip st1
+                | fpop
+                | jz >1
+                break;
+            }
+         case GT:
+            {
+                | fcomip st1
+                | fpop
+                | ja >1
+                break;
+            }
+         case LT:
+            {
+                | fcomip st1
+                | fpop
+                | jb >1
+                break;
+            }
+         case GTE:
+            {
+                | fcomip st1
+                | fpop
+                | jb >1
+                break;
+            }
+         case LTE:
+            {
+                | fcomip st1
+                | fpop
+                | jna >1
+                break;
             }
     }
 

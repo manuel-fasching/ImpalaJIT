@@ -126,11 +126,12 @@ namespace impalajit {
     {
     #line 56 "parser.yy" // lalr1.cc:377
 
+	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class ExpressionNode*		expressionNode;
 
-#line 134 "parser.hh" // lalr1.cc:377
+#line 135 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -152,9 +153,13 @@ namespace impalajit {
       {
         END = 0,
         EOL = 258,
-        DOUBLE = 259,
-        STRING = 260,
-        FUNCTION = 261
+        INTEGER = 259,
+        DOUBLE = 260,
+        STRING = 261,
+        FUNCTION = 262,
+        IF = 263,
+        ELSE = 264,
+        CMPOP = 265
       };
     };
 
@@ -342,7 +347,7 @@ namespace impalajit {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -462,12 +467,12 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 43,     ///< Last index in yytable_.
+      yylast_ = 58,     ///< Last index in yytable_.
       yynnts_ = 11,  ///< Number of nonterminal symbols.
       yyfinal_ = 2, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 16  ///< Number of tokens.
+      yyntokens_ = 22  ///< Number of tokens.
     };
 
 
@@ -478,7 +483,7 @@ namespace impalajit {
 
 #line 33 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 482 "parser.hh" // lalr1.cc:377
+#line 487 "parser.hh" // lalr1.cc:377
 
 
 

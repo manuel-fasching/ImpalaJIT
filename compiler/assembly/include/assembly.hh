@@ -22,9 +22,26 @@ public:
     static const int SQRT = 6;
     static const int POW = 7;
 
+    static const int GT = 8;
+    static const int LT = 9;
+    static const int GTE = 10;
+    static const int LTE = 11;
+    static const int EQ = 12;
+    static const int NE = 13;
+
     int operator_;
 
     Assembly();
+
+    void addDynamicLabel1();
+
+    void jumpForwardTo1();
+
+    void addDynamicLabel2();
+
+    void jumpForwardTo2();
+
+    void conditionalJumpForwardTo1();
 
     void compile();
 

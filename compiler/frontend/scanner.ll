@@ -63,9 +63,23 @@ typedef impalajit::Parser::token_type token_type;
     return token::DOUBLE;
 }
 
+(<=|>=|!=|==|>|<) {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::CMPOP;
+}
+
 sqrt {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::FUNCTION;
+}
+
+if {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::IF;
+}
+else {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::ELSE;
 }
 
 [A-Za-z][A-Za-z0-9_,.-]* {
@@ -83,7 +97,7 @@ sqrt {
  /* gobble up end-of-lines */
 \n {
     yylloc->lines(yyleng); yylloc->step();
-    return token::EOL;
+   // return token::EOL;
 }
 
  /* pass all other characters up to bison */

@@ -53,8 +53,8 @@ class ENConstant : public ExpressionNode
     
 public:
     /// construct a constant expression node from a value
-    explicit ENConstant(double* _value, Assembly& assembly1)
-	: ExpressionNode(assembly1), value(_value)
+    explicit ENConstant(double* _value, Assembly& _assembly)
+	: ExpressionNode(_assembly), value(_value)
     {
     }
 
@@ -76,8 +76,8 @@ class ENNegate : public ExpressionNode
     ExpressionNode* 	node;
 
 public:
-    explicit ENNegate(ExpressionNode* _node, Assembly& assembly1)
-            : ExpressionNode(assembly1), node(_node)
+    explicit ENNegate(ExpressionNode* _node, Assembly& _assembly)
+            : ExpressionNode(_assembly), node(_node)
     {
     }
 
@@ -110,8 +110,8 @@ class ENAdd : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENAdd(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENAdd(ExpressionNode* _left, ExpressionNode* _right , Assembly& _assembly)
+            : ExpressionNode(_assembly), left(_left), right(_right)
     {
     }
 
@@ -147,8 +147,8 @@ class ENSubtract : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENSubtract(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENSubtract(ExpressionNode* _left, ExpressionNode* _right , Assembly& _assembly)
+            : ExpressionNode(_assembly), left(_left), right(_right)
     {
     }
 
@@ -184,8 +184,8 @@ class ENMultiply : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENMultiply(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENMultiply(ExpressionNode* _left, ExpressionNode* _right, Assembly& _assembly)
+            : ExpressionNode(_assembly), left(_left), right(_right)
     {
     }
 
@@ -221,8 +221,8 @@ class ENDivide : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENDivide(ExpressionNode* _left, ExpressionNode* _right , Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENDivide(ExpressionNode* _left, ExpressionNode* _right , Assembly& _assembly)
+            : ExpressionNode(_assembly), left(_left), right(_right)
     {
     }
 
@@ -257,8 +257,8 @@ class ENSQRT: public ExpressionNode
     ExpressionNode* 	node;
     
 public:
-    explicit ENSQRT(ExpressionNode* _node, Assembly& assembly1)
-            : ExpressionNode(assembly1), node(_node)
+    explicit ENSQRT(ExpressionNode* _node, Assembly& _assembly)
+            : ExpressionNode(_assembly), node(_node)
     {
     }
 
@@ -281,6 +281,54 @@ public:
     }
 };
 
+
+/** Expression node calculating the remainder of an integer division of two
+ * operand nodes. */
+class ENIfElseStmt: public ExpressionNode
+{
+    /// right operand
+    ExpressionNode* 	left;
+    ExpressionNode* 	right;
+    ExpressionNode*     body_if;
+    ExpressionNode*     body_else;
+    int compareOperator;
+
+public:
+    explicit ENIfElseStmt(ExpressionNode* _left, ExpressionNode* _right, int _compareOperator, ExpressionNode* _body_if, ExpressionNode* _body_else, Assembly& _assembly)
+    
+            : ExpressionNode(_assembly), left(_left), right(_right), compareOperator(_compareOperator), body_if(_body_if), body_else(_body_else)
+    {
+    }
+
+    virtual ~ENIfElseStmt()
+    {
+        delete body_if;
+        delete body_else;
+    }
+
+    virtual void evaluate()
+    {
+        left->evaluate();
+        right->evaluate();
+        assembly.operator_= compareOperator;
+        assembly.compile();
+        body_if->evaluate();
+        assembly.jumpForwardTo2();
+        assembly.addDynamicLabel1();
+        body_else->evaluate();
+        assembly.addDynamicLabel2();
+    }
+
+    virtual void print(std::ostream &os, unsigned int depth) const
+    {
+        os << indent(depth) << "if" << std::endl;
+        left->print(os, depth+1);
+        right->print(os, depth+1);
+        body_if->print(os, depth+1);
+        body_else->print(os, depth+1);
+    }
+};
+
 /** Expression node raising one operand to the power of the second. */
 class ENPower : public ExpressionNode
 {
@@ -291,8 +339,8 @@ class ENPower : public ExpressionNode
     ExpressionNode* 	right;
     
 public:
-    explicit ENPower(ExpressionNode* _left, ExpressionNode* _right, Assembly& assembly1)
-            : ExpressionNode(assembly1), left(_left), right(_right)
+    explicit ENPower(ExpressionNode* _left, ExpressionNode* _right, Assembly& _assembly)
+            : ExpressionNode(_assembly), left(_left), right(_right)
     {
     }
 

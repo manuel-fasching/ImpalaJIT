@@ -54,21 +54,26 @@
  /*** BEGIN EXAMPLE - Change the example grammar's tokens below ***/
 
 %union {
+	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class ExpressionNode*		expressionNode;
 }
 
-%token			END	     0	"end of file"
-%token			EOL		"end of line"
-%token <doubleVal> 	DOUBLE		"double"
-%token <stringVal> 	STRING		"string"
-%token <stringVal>	FUNCTION    "function"
+%token			END	     0				"end of file"
+%token			EOL						"end of line"
+%token <integerVal> 	INTEGER				"integer"
+%token <doubleVal> 	DOUBLE				"double"
+%token <stringVal> 	STRING				"string"
+%token <stringVal>	FUNCTION    		"function"
+%token <stringVal>  IF 					"if block"
+%token <stringVal>  ELSE 				"else block"
+%token <stringVal>  CMPOP               "compare operator"
+
 
 %type <expressionNode>	constant variable
 %type <expressionNode>	atomexpr powexpr unaryexpr mulexpr addexpr expr
 
-%destructor { delete $$; } STRING
 %destructor { delete $$; } constant variable 
 %destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr
 
@@ -119,6 +124,21 @@ atomexpr : constant
            {
 	       $$ = $1;
 	   }
+	     | IF '(' expr CMPOP expr ')' '{' expr '}' ELSE '{' expr '}'
+           {
+          	if((*$4).compare("==")==0)
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.EQ, $8, $12, driver.expressionContext.assembly);
+           	else if((*$4).compare("!=")==0)
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.NE, $8, $12, driver.expressionContext.assembly);
+           	else if((*$4).compare("<")==0)
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.LT, $8, $12, driver.expressionContext.assembly);
+           	else if((*$4).compare(">")==0 )
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.GT, $8, $12, driver.expressionContext.assembly);
+           	else if((*$4).compare("<=")==0)
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.LTE, $8, $12,driver.expressionContext.assembly);
+           	else if((*$4).compare(">=")==0)
+           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.GTE, $8, $12, driver.expressionContext.assembly);
+     }
 	     | FUNCTION '(' expr ')'
 	       {
 	       $$ = new ENSQRT($3, driver.expressionContext.assembly);
@@ -186,16 +206,15 @@ expr	: addexpr
 
 assignment : STRING '=' expr
              {
-		 driver.expressionContext.variables[*$1] = $3->evaluate();
+		/* driver.expressionContext.variables[*$1] = $3->evaluate();
 		 delete $1;
-		 delete $3;
+		 delete $3;*/
 	     }
 
 start	: /* empty */
         | start ';'
         | start EOL
 	| start assignment ';'
-	| start assignment EOL
 	| start assignment END
         | start expr ';'
           {

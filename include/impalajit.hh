@@ -14,7 +14,7 @@ class impalajit::Compiler{
 public:
     enum Error {
         SUCCESS = 0,
-        NO_PATH_SPECIFIED,
+        NO_IMPALAFILE_SPECIFIED,
         BAD_INPUT_FILE,
         COMPILATION_ERROR,
         EMPTY_VARIABLE_NAME,

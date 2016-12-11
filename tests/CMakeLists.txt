@@ -1,0 +1,26 @@
+# Add test executable
+function( add_test_executable name )
+        set( sourceFiles
+                ${name}.cc )
+
+    add_executable( test_${name}.o ${sourceFiles} )
+    add_test(${name} test_${name}.o)
+
+    # Link with asagi
+    target_link_libraries( test_${name}.o impalajit)
+endfunction( add_test_executable )
+
+add_test_executable(conditionals_eq_true)
+add_test_executable(conditionals_eq_false)
+add_test_executable(conditionals_lt_true)
+add_test_executable(conditionals_lt_false)
+add_test_executable(conditionals_gt_true)
+add_test_executable(conditionals_gt_false)
+add_test_executable(conditionals_neq_true)
+add_test_executable(conditionals_neq_false)
+add_test_executable(conditionals_lte_true_1)
+add_test_executable(conditionals_lte_true_2)
+add_test_executable(conditionals_lte_false)
+add_test_executable(conditionals_gte_true_1)
+add_test_executable(conditionals_gte_true_2)
+add_test_executable(conditionals_gte_false)

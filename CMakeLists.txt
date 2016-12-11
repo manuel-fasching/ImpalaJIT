@@ -39,6 +39,9 @@ translate_bison_file()
 translate_flex_file()
 translate_dynasm_file()
 
+enable_testing()
+add_subdirectory( tests )
+
 set(include_dirs
         types
         include
