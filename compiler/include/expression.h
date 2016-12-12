@@ -308,8 +308,8 @@ public:
 
     virtual void evaluate()
     {
-        left->evaluate();
         right->evaluate();
+        left->evaluate();
         assembly.operator_= compareOperator;
         assembly.compile();
         body_if->evaluate();

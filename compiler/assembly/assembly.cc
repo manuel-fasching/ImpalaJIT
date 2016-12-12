@@ -30,13 +30,14 @@ enum {
 };
 #line 13 "compiler/assembly/assembly.dasc"
 //|.actionlist bf_actions
-static const unsigned char bf_actions[109] = {
+static const unsigned char bf_actions[119] = {
   221,4,37,237,255,248,1,255,248,2,255,252,233,244,247,255,252,233,244,248,
   255,15,133,244,247,255,221,28,37,237,102,15,18,4,37,237,195,255,222,193,255,
   222,252,233,255,222,201,255,222,252,249,255,217,224,255,217,252,250,255,223,
   252,241,221,216,15,133,244,247,255,223,252,241,221,216,15,132,244,247,255,
-  223,252,241,221,216,15,135,244,247,255,223,252,241,221,216,15,130,244,247,
-  255,223,252,241,221,216,15,134,244,247,255
+  223,252,241,221,216,15,134,244,247,255,223,252,241,221,216,15,131,244,247,
+  255,223,252,241,221,216,15,130,244,247,255,223,252,241,221,216,15,135,244,
+  247,255
 };
 
 #line 14 "compiler/assembly/assembly.dasc"
@@ -179,7 +180,7 @@ void Assembly::compile(){
             {
                 //| fcomip st1
                 //| fpop
-                //| ja >1
+                //| jbe >1
                 dasm_put(Dst, 79);
 #line 124 "compiler/assembly/assembly.dasc"
                 break;
@@ -188,7 +189,7 @@ void Assembly::compile(){
             {
                 //| fcomip st1
                 //| fpop
-                //| jb >1
+                //| jae >1
                 dasm_put(Dst, 89);
 #line 131 "compiler/assembly/assembly.dasc"
                 break;
@@ -198,7 +199,7 @@ void Assembly::compile(){
                 //| fcomip st1
                 //| fpop
                 //| jb >1
-                dasm_put(Dst, 89);
+                dasm_put(Dst, 99);
 #line 138 "compiler/assembly/assembly.dasc"
                 break;
             }
@@ -206,8 +207,8 @@ void Assembly::compile(){
             {
                 //| fcomip st1
                 //| fpop
-                //| jna >1
-                dasm_put(Dst, 99);
+                //| ja >1
+                dasm_put(Dst, 109);
 #line 145 "compiler/assembly/assembly.dasc"
                 break;
             }

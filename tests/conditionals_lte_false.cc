@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    int expection = 1.0;
+    double expection = 0.0;
 
     setenv("IMPALA_FILE","impala_files/conditional_lte_false.impala", 1);
 

@@ -120,14 +120,14 @@ void Assembly::compile(){
             {
                 | fcomip st1
                 | fpop
-                | ja >1
+                | jbe >1
                 break;
             }
          case LT:
             {
                 | fcomip st1
                 | fpop
-                | jb >1
+                | jae >1
                 break;
             }
          case GTE:
@@ -141,7 +141,7 @@ void Assembly::compile(){
             {
                 | fcomip st1
                 | fpop
-                | jna >1
+                | ja >1
                 break;
             }
     }
