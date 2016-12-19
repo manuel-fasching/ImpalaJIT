@@ -40,22 +40,118 @@ Assembly::Assembly(){
 
 void Assembly::push(double* value){
     | fld qword [value]
+    printf("fld qword [%f] \n", *value);
 }
 void Assembly::addDynamicLabel1(){
     | 1:
+    printf("1: \n");
 }
 void Assembly::addDynamicLabel2(){
     | 2:
+    printf("2: \n");
+}
+void Assembly::addDynamicLabel3(){
+    | 3:
+    printf("3: \n");
 }
 void Assembly::jumpForwardTo1(){
     | jmp >1
+    printf("jmp >1 \n");
 }
 void Assembly::jumpForwardTo2(){
     | jmp >2
+    printf("jmp >2 \n");
 }
-void Assembly::conditionalJumpForwardTo1(){
-    | jnz >1
+void Assembly::jumpForwardTo3(){
+    | jmp >3
+    printf("jmp >3 \n");
 }
+
+void Assembly::conditionalJumpForwardTo2IfFalse(){
+    switch(operator_){
+          case EQ:
+            {
+                | jne >2
+                printf("jne >2 \n");
+                break;
+            }
+          case NE:
+            {
+                | je >2
+                printf("je >2 \n");
+                break;
+            }
+         case GT:
+            {
+                | jbe >2
+                printf("jbe >2 \n");
+                break;
+            }
+         case LT:
+            {
+                | jae >2
+                printf("jae >2 \n");
+                break;
+            }
+         case GTE:
+            {
+                | jb >2
+                printf("jb >2 \n");
+                break;
+            }
+         case LTE:
+            {
+                | ja >2
+                printf("ja >2 \n");
+                break;
+            }
+    }
+}
+
+
+void Assembly::conditionalJumpForwardTo1IfTrue(){
+    switch(operator_){
+          case EQ:
+            {
+                | je >1
+                printf("je >1 \n");
+                break;
+            }
+          case NE:
+            {
+                | jne >1
+                printf("jne >1 \n");
+                break;
+            }
+         case GT:
+            {
+                | ja >1
+                printf("ja >1 \n");
+                break;
+            }
+         case LT:
+            {
+                | jb >1
+                printf("jb >1 \n");
+                break;
+            }
+         case GTE:
+            {
+                | jge >1
+                printf("jge >1 \n");
+                break;
+            }
+         case LTE:
+            {
+                | jbe >1
+                printf("jbe >1 \n");
+                break;
+            }
+    }
+}
+
+
+
 void Assembly::compile(){
 
     switch(operator_){
@@ -65,36 +161,45 @@ void Assembly::compile(){
                 | fstp qword [result]
                 | movlpd xmm0, qword [result]
                 | ret
+                printf("fstp qword %f \n", *result);
+                printf("movlpd xmm0, qword [%f] \n", *result);
+                printf("ret \n");
                break;
            }
         case ADD:
             {
                 | faddp st1
+                printf("faddp st1 \n");
                 break;
             }
          case SUB:
             {
                 | fsubp st1
+                printf("fsubp st1 \n");
                 break;
             }
          case MUL:
             {
                 | fmulp st1
+                printf("fmulp st1 \n");
                 break;
             }
          case DIV:
             {
                 | fdivp st1
+                printf("fdivp st1 \n");
                 break;
             }
          case NEG:
             {
                 | fchs
+                printf("fchs \n");
                 break;
             }
          case SQRT:
             {
                 | fsqrt
+                printf("fsqrt \n");
                 break;
             }
          case POW:
@@ -106,42 +211,48 @@ void Assembly::compile(){
             {
                 | fcomip st1
                 | fpop
-                | jnz >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
           case NE:
             {
                 | fcomip st1
                 | fpop
-                | jz >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
-         case GT:
+          case GT:
             {
                 | fcomip st1
                 | fpop
-                | jbe >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
-         case LT:
+          case LT:
             {
                 | fcomip st1
                 | fpop
-                | jae >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
-         case GTE:
+          case GTE:
             {
                 | fcomip st1
                 | fpop
-                | jb >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
-         case LTE:
+          case LTE:
             {
                 | fcomip st1
                 | fpop
-                | ja >1
+                printf("fcomip st1 \n");
+                printf("fpop \n");
                 break;
             }
     }

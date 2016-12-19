@@ -108,7 +108,7 @@
 # define YYDEBUG 1
 #endif
 
-#line 33 "parser.yy" // lalr1.cc:377
+#line 36 "parser.yy" // lalr1.cc:377
 namespace impalajit {
 #line 114 "parser.hh" // lalr1.cc:377
 
@@ -124,14 +124,15 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 56 "parser.yy" // lalr1.cc:377
+    #line 59 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
-    class ExpressionNode*		expressionNode;
+    class Node*		node;
+    class Node**	nodeArray;
 
-#line 135 "parser.hh" // lalr1.cc:377
+#line 136 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -159,7 +160,10 @@ namespace impalajit {
         FUNCTION = 262,
         IF = 263,
         ELSE = 264,
-        CMPOP = 265
+        OR = 265,
+        AND = 266,
+        BOOLOP = 267,
+        CMPOP = 268
       };
     };
 
@@ -368,7 +372,7 @@ namespace impalajit {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short int yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -467,12 +471,12 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 58,     ///< Last index in yytable_.
-      yynnts_ = 11,  ///< Number of nonterminal symbols.
+      yylast_ = 77,     ///< Last index in yytable_.
+      yynnts_ = 15,  ///< Number of nonterminal symbols.
       yyfinal_ = 2, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 22  ///< Number of tokens.
+      yyntokens_ = 25  ///< Number of tokens.
     };
 
 
@@ -481,9 +485,9 @@ namespace impalajit {
   };
 
 
-#line 33 "parser.yy" // lalr1.cc:377
+#line 36 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 487 "parser.hh" // lalr1.cc:377
+#line 491 "parser.hh" // lalr1.cc:377
 
 
 

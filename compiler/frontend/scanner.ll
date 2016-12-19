@@ -56,23 +56,63 @@ typedef impalajit::Parser::token_type token_type;
     yylloc->step();
 %}
 
- /*** BEGIN EXAMPLE - Change the impalajit lexer rules below ***/
-
+ /*** Numbers ***/
 [0-9]+["."[0-9]*]? {
     yylval->doubleVal = atof(yytext);
     return token::DOUBLE;
 }
 
-(<=|>=|!=|==|>|<) {
-    yylval->stringVal = new std::string(yytext, yyleng);
+
+ /*** COMPARE OPERATORS ***/
+(<=) {
+    yylval->integerVal = 11;
+    return token::CMPOP;
+}
+(>=) {
+    yylval->integerVal = 10;
+    return token::CMPOP;
+}
+(==) {
+    yylval->integerVal = 12;
+    return token::CMPOP;
+}
+(!=) {
+    yylval->integerVal = 13;
+    return token::CMPOP;
+}
+(<) {
+    yylval->integerVal = 9;
+    return token::CMPOP;
+}
+(>) {
+    yylval->integerVal = 8;
     return token::CMPOP;
 }
 
+
+
+ /*** BOOL OPERATORS ***/
+(&&) {
+    yylval->integerVal = 14;
+    return token::BOOLOP;
+}
+(\|\|) {
+    yylval->integerVal = 15;
+    return token::BOOLOP;
+}
+
+
+
+ /*** Functions ***/
 sqrt {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::FUNCTION;
 }
 
+
+
+
+ /*** Conditionals ***/
 if {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::IF;
@@ -81,6 +121,9 @@ else {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::ELSE;
 }
+
+
+
 
 [A-Za-z][A-Za-z0-9_,.-]* {
     yylval->stringVal = new std::string(yytext, yyleng);

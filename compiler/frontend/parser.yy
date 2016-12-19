@@ -8,6 +8,9 @@
 #include <vector>
 
 #include <expression.h>
+#include <basic_expression.h>
+#include <comparison_expression.h>
+#include <complex_expression.h>
 
 %}
 
@@ -57,7 +60,8 @@
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
-    class ExpressionNode*		expressionNode;
+    class Node*		node;
+    class Node**	nodeArray;
 }
 
 %token			END	     0				"end of file"
@@ -68,14 +72,17 @@
 %token <stringVal>	FUNCTION    		"function"
 %token <stringVal>  IF 					"if block"
 %token <stringVal>  ELSE 				"else block"
-%token <stringVal>  CMPOP               "compare operator"
+%token <integerVal>  OR               	"or operator"
+%token <integerVal>  AND               	"and operator"
+%token <integerVal>  BOOLOP              "bool operator"
+%token <integerVal> CMPOP				"compare operator"
 
 
-%type <expressionNode>	constant variable
-%type <expressionNode>	atomexpr powexpr unaryexpr mulexpr addexpr expr
+%type <node>	constant variable
+%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr condition booleanand booleanor ifstmt
 
 %destructor { delete $$; } constant variable 
-%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr
+%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr condition booleanand booleanor ifstmt
 
  /*** END EXAMPLE - Change the example grammar's tokens above ***/
 
@@ -97,137 +104,213 @@
  /*** BEGIN EXAMPLE - Change the example grammar rules below ***/
 
 constant :  DOUBLE
-           {
-           double* v = (double*) malloc(sizeof(double));
-           *v = $1;
-	       $$ = new ENConstant(v, driver.expressionContext.assembly);
-	   }
+			{
+	           double* v = (double*) malloc(sizeof(double));
+	           *v = $1;
+		       $$ = new ENConstant(v, driver.expressionContext.assembly);
+	   		}
+
 
 variable : STRING
-           {
-	       if (!driver.expressionContext.existsVariable(*$1)) {
-		   error(yyla.location, std::string("Unknown variable \"") + *$1 + "\"");
-		   delete $1;
-		   YYERROR;
-	       }
-	       else {
-		   $$ = new ENConstant( driver.expressionContext.getVariable(*$1), driver.expressionContext.assembly );
-		   delete $1;
-	       }
-	   }
+           	{
+		       	if (!driver.expressionContext.existsVariable(*$1)) 
+		       	{
+					error(yyla.location, std::string("Unknown variable \"") + *$1 + "\"");
+					delete $1;
+			   		YYERROR;
+	       		}
+	       		else 
+	       		{
+				   $$ = new ENConstant( driver.expressionContext.getVariable(*$1), driver.expressionContext.assembly );
+				   delete $1;
+	       		}
+	   		}
+
 
 atomexpr : constant
-           {
-	       $$ = $1;
-	   }
-         | variable
-           {
-	       $$ = $1;
-	   }
-	     | IF '(' expr CMPOP expr ')' '{' expr '}' ELSE '{' expr '}'
-           {
-          	if((*$4).compare("==")==0)
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.EQ, $8, $12, driver.expressionContext.assembly);
-           	else if((*$4).compare("!=")==0)
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.NE, $8, $12, driver.expressionContext.assembly);
-           	else if((*$4).compare("<")==0)
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.LT, $8, $12, driver.expressionContext.assembly);
-           	else if((*$4).compare(">")==0 )
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.GT, $8, $12, driver.expressionContext.assembly);
-           	else if((*$4).compare("<=")==0)
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.LTE, $8, $12,driver.expressionContext.assembly);
-           	else if((*$4).compare(">=")==0)
-           		$$ = new ENIfElseStmt($3, $5, driver.expressionContext.assembly.GTE, $8, $12, driver.expressionContext.assembly);
-     }
-	     | FUNCTION '(' expr ')'
-	       {
-	       $$ = new ENSQRT($3, driver.expressionContext.assembly);
-	   }
-         | '(' expr ')'
-           {
-	       $$ = $2;
-	   }
+           	{
+	       		$$ = $1;
+		   	}
+	       	
+	       	| variable
+	       	{
+		       	$$ = $1;
+		   	}
+		   	
+		   	| FUNCTION '(' expr ')'
+		   	{
+		       	$$ = new ENSQRT($3, driver.expressionContext.assembly);
+		   	}
+	        
+	        | '(' expr ')'
+	        {
+		       	$$ = $2;
+		   	}
 	     
 
 
 powexpr	: atomexpr
-          {
-	      $$ = $1;
-	  }
-        | atomexpr '^' powexpr
-          {
-	      $$ = new ENPower($1, $3, driver.expressionContext.assembly);
-	  }
+          	{
+	      		$$ = $1;
+	  		}
+        	
+        	| atomexpr '^' powexpr
+          	{
+	      		$$ = new ENPower($1, $3, driver.expressionContext.assembly);
+	  		}
 
 unaryexpr : powexpr
             {
-		$$ = $1;
-	    }
-          | '+' powexpr
-            {
-		$$ = $2;
-	    }
-          | '-' powexpr
-            {
-		$$ = new ENNegate($2, driver.expressionContext.assembly);
-	    }
+				$$ = $1;
+			}
+		    
+		    | '+' powexpr
+	        {
+				$$ = $2;
+			}
+		    
+		    | '-' powexpr
+		    {
+				$$ = new ENNegate($2, driver.expressionContext.assembly);
+			}
 
 mulexpr : unaryexpr
-          {
-	      $$ = $1;
-	  }
-        | mulexpr '*' unaryexpr
-          {
-	      $$ = new ENMultiply($1, $3, driver.expressionContext.assembly);
-	  }
-        | mulexpr '/' unaryexpr
-          {
-	      $$ = new ENDivide($1, $3, driver.expressionContext.assembly);
-	  }
+          	{
+	      		$$ = $1;
+		  	}
+	        
+	        | mulexpr '*' unaryexpr
+	        {
+		      	$$ = new ENMultiply($1, $3, driver.expressionContext.assembly);
+		  	}
+	        
+	        | mulexpr '/' unaryexpr
+	        {
+		  	    $$ = new ENDivide($1, $3, driver.expressionContext.assembly);
+		  	}
 
 
 addexpr : mulexpr
-          {
-	      $$ = $1;
-	  }
-        | addexpr '+' mulexpr
-          {
-	      $$ = new ENAdd($1, $3, driver.expressionContext.assembly);
-	  }
-        | addexpr '-' mulexpr
-          {
-	      $$ = new ENSubtract($1, $3, driver.expressionContext.assembly);
-	  }
+          	{
+	      		$$ = $1;
+		  	}
+	      
+	      	| addexpr '+' mulexpr
+	      	{
+		      	$$ = new ENAdd($1, $3, driver.expressionContext.assembly);
+		  	}
+	      	
+	      	| addexpr '-' mulexpr
+	      	{
+		      	$$ = new ENSubtract($1, $3, driver.expressionContext.assembly);
+		  	}
+
 
 expr	: addexpr
-          {
-	      $$ = $1;
-	  }
+          	{
+	      		$$ = $1;
+	  		}
+
 
 assignment : STRING '=' expr
              {
-		/* driver.expressionContext.variables[*$1] = $3->evaluate();
+		 /*driver.expressionContext.variables[*$1] = $3->evaluate();
 		 delete $1;
 		 delete $3;*/
 	     }
 
+
+condition : expr CMPOP expr 
+			{
+				$$ = new CNComparison($1, $3, $2, driver.expressionContext.assembly);
+			}
+
+
+booleanand : condition AND condition 
+			{
+				$$ = new CNBooleanANDJunction($1, $3, driver.expressionContext.assembly);
+			}
+			
+			| booleanand AND condition 
+			{
+				$$ = new CNBooleanANDJunction($1, $3, driver.expressionContext.assembly);
+			}
+			
+			/*| booleanand AND booleanand 
+			{
+				$$ = new CNBooleanJunction($1, $3, $2, driver.expressionContext.assembly);
+			}*/
+			| '(' booleanor ')' 
+			{
+				$$ = $2;
+			}
+
+
+booleanor : condition 
+			{
+				$$ = new CNBoolean($1, driver.expressionContext.assembly);
+			}
+			
+			| booleanand 
+			{
+				$$ = new CNBoolean($1, driver.expressionContext.assembly);
+			}
+			
+			| booleanand OR booleanand 
+			{
+				$$ = new CNBooleanORJunction($1, $3, driver.expressionContext.assembly);
+			}
+			
+			/*| booleanor OR booleanor
+			{
+				$$ = new CNBooleanJunction($1, $3, $2, driver.expressionContext.assembly);
+			}*/
+
+
+ifstmt	:	IF '(' booleanor ')' '{' expr '}'
+			{
+				$$ = new CxNIfStmt($3, $6, driver.expressionContext.assembly);
+			}
+			
+			| IF '(' booleanor ')' '{' expr '}' ELSE '{' expr '}'
+			{
+				$$ = new CxNIfElseStmt($3, $6, $10, driver.expressionContext.assembly);
+			}
+
+
 start	: /* empty */
-        | start ';'
-        | start EOL
-	| start assignment ';'
-	| start assignment END
-        | start expr ';'
-          {
-	      driver.expressionContext.expressions.push_back($2);
-	  }
-        | start expr EOL
-          {
-	      driver.expressionContext.expressions.push_back($2);
-	  }
-        | start expr END
-          {
-	      driver.expressionContext.expressions.push_back($2);
-	  }
+	        | start ';'
+	        
+	        | start EOL
+			
+			| start assignment ';'
+			
+			| start assignment END
+	        
+	        | start expr ';'
+	        {
+		      	driver.expressionContext.expressions.push_back($2);
+		  	}
+	        
+	        | start expr EOL
+	        {
+		      	driver.expressionContext.expressions.push_back($2);
+		  	}
+	        
+	        | start expr END
+	        {
+		      	driver.expressionContext.expressions.push_back($2);
+		  	}
+			
+			| start ifstmt EOL
+			{
+		      	driver.expressionContext.expressions.push_back($2);
+		  	}
+			
+			| start ifstmt END
+			{
+		      	driver.expressionContext.expressions.push_back($2);
+		  	}
 
  /*** END EXAMPLE - Change the example grammar rules above ***/
 

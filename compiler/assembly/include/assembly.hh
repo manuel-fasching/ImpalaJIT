@@ -29,19 +29,29 @@ public:
     static const int EQ = 12;
     static const int NE = 13;
 
+    static const int AND = 14;
+    static const int OR = 15;
+
+
     int operator_;
 
     Assembly();
 
     void addDynamicLabel1();
 
-    void jumpForwardTo1();
-
     void addDynamicLabel2();
+
+    void addDynamicLabel3();
+
+    void jumpForwardTo1();
 
     void jumpForwardTo2();
 
-    void conditionalJumpForwardTo1();
+    void jumpForwardTo3();
+
+    void conditionalJumpForwardTo2IfFalse();
+
+    void conditionalJumpForwardTo1IfTrue();
 
     void compile();
 
