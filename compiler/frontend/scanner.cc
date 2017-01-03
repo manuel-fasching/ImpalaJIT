@@ -894,7 +894,7 @@ YY_RULE_SETUP
 #line 95 "scanner.ll"
 {
     yylval->integerVal = 14;
-    return token::BOOLOP;
+    return token::AND;
 }
 	YY_BREAK
 case 9:
@@ -902,7 +902,7 @@ YY_RULE_SETUP
 #line 99 "scanner.ll"
 {
     yylval->integerVal = 15;
-    return token::BOOLOP;
+    return token::OR;
 }
 	YY_BREAK
 /*** Functions ***/

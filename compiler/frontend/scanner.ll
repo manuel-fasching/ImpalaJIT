@@ -94,11 +94,11 @@ typedef impalajit::Parser::token_type token_type;
  /*** BOOL OPERATORS ***/
 (&&) {
     yylval->integerVal = 14;
-    return token::BOOLOP;
+    return token::AND;
 }
 (\|\|) {
     yylval->integerVal = 15;
-    return token::BOOLOP;
+    return token::OR;
 }
 
 

@@ -162,8 +162,7 @@ namespace impalajit {
         ELSE = 264,
         OR = 265,
         AND = 266,
-        BOOLOP = 267,
-        CMPOP = 268
+        CMPOP = 267
       };
     };
 
@@ -351,7 +350,7 @@ namespace impalajit {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const signed char yycheck_[];
+  static const unsigned char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -471,12 +470,12 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 77,     ///< Last index in yytable_.
+      yylast_ = 76,     ///< Last index in yytable_.
       yynnts_ = 15,  ///< Number of nonterminal symbols.
       yyfinal_ = 2, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 25  ///< Number of tokens.
+      yyntokens_ = 24  ///< Number of tokens.
     };
 
 
@@ -487,7 +486,7 @@ namespace impalajit {
 
 #line 36 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 491 "parser.hh" // lalr1.cc:377
+#line 490 "parser.hh" // lalr1.cc:377
 
 
 

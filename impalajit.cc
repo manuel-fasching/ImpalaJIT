@@ -10,8 +10,10 @@
 #include "expression.h"
 #include "driver.h"
 
+
 ExpressionContext expressionContext;
 impalajit::Driver driver(expressionContext);
+
 
 dasm_gen_func impalajit::Compiler::compile(){
     char* fileName = std::getenv(ENV_VARIABLE_NAME);

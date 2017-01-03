@@ -37,21 +37,15 @@ public:
 
     Assembly();
 
-    void addDynamicLabel1();
+    void addLocalLabel(int labelNumber);
 
-    void addDynamicLabel2();
+    void jumpForwardTo(int labelNumber);
 
-    void addDynamicLabel3();
+    void jumpBackwardTo(int labelNumber);
 
-    void jumpForwardTo1();
+    void conditionalJumpForwardTo(int labelNumber, bool condition);
 
-    void jumpForwardTo2();
-
-    void jumpForwardTo3();
-
-    void conditionalJumpForwardTo2IfFalse();
-
-    void conditionalJumpForwardTo1IfTrue();
+    void conditionalJumpBackwardTo(int labelNumber, bool condition);
 
     void compile();
 

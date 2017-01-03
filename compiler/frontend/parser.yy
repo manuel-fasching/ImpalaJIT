@@ -74,15 +74,14 @@
 %token <stringVal>  ELSE 				"else block"
 %token <integerVal>  OR               	"or operator"
 %token <integerVal>  AND               	"and operator"
-%token <integerVal>  BOOLOP              "bool operator"
 %token <integerVal> CMPOP				"compare operator"
 
 
 %type <node>	constant variable
-%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr condition booleanand booleanor ifstmt
+%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt
 
 %destructor { delete $$; } constant variable 
-%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr condition booleanand booleanor ifstmt
+%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt
 
  /*** END EXAMPLE - Change the example grammar's tokens above ***/
 
@@ -219,53 +218,52 @@ assignment : STRING '=' expr
 		 delete $3;*/
 	     }
 
-
-condition : expr CMPOP expr 
+ 
+atomcondition : expr CMPOP expr 
 			{
 				$$ = new CNComparison($1, $3, $2, driver.expressionContext.assembly);
 			}
 
-
-booleanand : condition AND condition 
-			{
-				$$ = new CNBooleanANDJunction($1, $3, driver.expressionContext.assembly);
-			}
-			
-			| booleanand AND condition 
-			{
-				$$ = new CNBooleanANDJunction($1, $3, driver.expressionContext.assembly);
-			}
-			
-			/*| booleanand AND booleanand 
-			{
-				$$ = new CNBooleanJunction($1, $3, $2, driver.expressionContext.assembly);
-			}*/
-			| '(' booleanor ')' 
+			| '(' booleanor ')'
 			{
 				$$ = $2;
 			}
 
 
-booleanor : condition 
+booleanand : booleanand AND atomcondition
 			{
-				$$ = new CNBoolean($1, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+			}
+			
+			| atomcondition AND atomcondition 
+			{
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+			}
+			
+			
+
+
+booleanor : atomcondition 
+			{
+				$$ = new BooleanJunctionNode($1, driver.expressionContext.assembly);
 			}
 			
 			| booleanand 
 			{
-				$$ = new CNBoolean($1, driver.expressionContext.assembly);
+				$$ = $1;
 			}
-			
-			| booleanand OR booleanand 
-			{
-				$$ = new CNBooleanORJunction($1, $3, driver.expressionContext.assembly);
-			}
-			
-			/*| booleanor OR booleanor
-			{
-				$$ = new CNBooleanJunction($1, $3, $2, driver.expressionContext.assembly);
-			}*/
 
+			| booleanor OR atomcondition 
+			{
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+			}
+
+			| booleanor OR booleanand
+			{
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+			}
+
+			
 
 ifstmt	:	IF '(' booleanor ')' '{' expr '}'
 			{
@@ -304,13 +302,13 @@ start	: /* empty */
 			
 			| start ifstmt EOL
 			{
-		      	driver.expressionContext.expressions.push_back($2);
-		  	}
+				driver.expressionContext.expressions.push_back($2);
+			}
 			
 			| start ifstmt END
 			{
-		      	driver.expressionContext.expressions.push_back($2);
-		  	}
+				driver.expressionContext.expressions.push_back($2);
+			}
 
  /*** END EXAMPLE - Change the example grammar rules above ***/
 

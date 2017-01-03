@@ -8,26 +8,9 @@
 #include <expression.h>
 #include <comparison_expression.h>
 #include <basic_expression.h>
+#include <boolean_expression.h>
 
-class ComplexNode : public Node
-{
-public:
-
-    ComplexNode(class Assembly& _assembly)
-            : Node(_assembly){
-    }
-    virtual ~ComplexNode()
-    {
-    }
-
-    virtual void evaluate() = 0;
-
-    virtual int getOperator() = 0;
-};
-
-
-
-class CxNIfStmt : public ComplexNode
+class CxNIfStmt : public Node
 {
     Node*   condition;
     Node*     body_if;
@@ -36,33 +19,38 @@ public:
 
     explicit CxNIfStmt(Node* _condition, Node* _body_if, Assembly& _assembly)
 
-            : ComplexNode(_assembly), condition(_condition), body_if(_body_if)
+            : Node(_assembly), condition(_condition), body_if(_body_if)
     {
     }
 
-    virtual ~CxNIfStmt()
+    ~CxNIfStmt()
     {
         delete condition;
         delete body_if;
     }
 
-    virtual void evaluate()
+    void evaluate()
     {
+        int label1 = 1;
+        int label2 = 9;
+
+
+        ((BooleanJunctionNode*) condition)->label1 = &label1;
+        ((BooleanJunctionNode*) condition)->label2 = &label2;
+
         condition->evaluate();
-        /*for( unsigned int a = 0; a < sizeof(body_if)/sizeof(body_if[0]); a = a + 1 )
-            body_if[a]->evaluate();*/
+        assembly.addLocalLabel(label1);
         body_if->evaluate();
-        /*if(elsePresent)
-            assembly.jumpForwardTo3();*/
-        assembly.addDynamicLabel2();
+        assembly.addLocalLabel(label2);
     }
+
     virtual int getOperator(){
         return -1;
     }
 };
 
 
-class CxNIfElseStmt : public ComplexNode
+class CxNIfElseStmt : public Node
 {
     Node*   condition;
     Node*     body_if;
@@ -72,7 +60,7 @@ public:
 
     explicit CxNIfElseStmt(Node* _condition, Node* _body_if, Node* _body_else, Assembly& _assembly)
 
-            : ComplexNode(_assembly), condition(_condition), body_if(_body_if), body_else(_body_else)
+            : Node(_assembly), condition(_condition), body_if(_body_if), body_else(_body_else)
     {
     }
 
@@ -85,12 +73,19 @@ public:
 
     virtual void evaluate()
     {
+        int label1 = 1;
+        int label2 = 8;
+        int label3 = 9;
+
+        ((BooleanJunctionNode*) condition)->label1 = &label1;
+        ((BooleanJunctionNode*) condition)->label2 = &label2;
         condition->evaluate();
+        assembly.addLocalLabel(label1);
         body_if->evaluate();
-        assembly.jumpForwardTo3();
-        assembly.addDynamicLabel2();
+        assembly.jumpForwardTo(label3);
+        assembly.addLocalLabel(label2);
         body_else->evaluate();
-        assembly.addDynamicLabel3();
+        assembly.addLocalLabel(label3);
     }
 
     virtual int getOperator(){
