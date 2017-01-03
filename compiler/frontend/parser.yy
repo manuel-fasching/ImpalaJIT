@@ -212,11 +212,11 @@ expr	: addexpr
 
 
 assignment : STRING '=' expr
-             {
-		 /*driver.expressionContext.variables[*$1] = $3->evaluate();
-		 delete $1;
-		 delete $3;*/
-	     }
+            {
+            	driver.expressionContext.addVariable(*$1, $3);
+		 		delete $1;
+		 		delete $3;
+	     	}
 
  
 atomcondition : expr CMPOP expr 

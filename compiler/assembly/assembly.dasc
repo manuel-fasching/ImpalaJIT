@@ -44,6 +44,12 @@ void Assembly::push(double* value){
     printf("fld qword [%f] \n", *value);
 }
 
+double* Assembly::pull() {
+    double* container = (double*) malloc(sizeof(double));
+    | fstp qword [container]
+    return container;
+}
+
 void Assembly::addLocalLabel(int labelNumber) {
     switch(labelNumber) {
         case 1:

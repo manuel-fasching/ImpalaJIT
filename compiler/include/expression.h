@@ -67,6 +67,11 @@ public:
         variables.clear();
     }
 
+    void addVariable(const std::string &varname, Node* node) {
+        node->evaluate();
+        variables[varname] = assembly.pull();
+    }
+
     /// check if the given variable name exists in the storage
     bool existsVariable(const std::string &varname) const {
         return variables.find(varname) != variables.end();

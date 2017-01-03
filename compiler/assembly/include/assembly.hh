@@ -51,6 +51,8 @@ public:
 
     void push(double* value);
 
+    double* pull();
+
     virtual ~Assembly();
 
     void* linkAndEncode();

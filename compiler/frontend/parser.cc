@@ -891,10 +891,10 @@ namespace impalajit {
   case 20:
 #line 215 "parser.yy" // lalr1.cc:859
     {
-		 /*driver.expressionContext.variables[*$1] = $3->evaluate();
-		 delete $1;
-		 delete $3;*/
-	     }
+            	driver.expressionContext.addVariable(*(yystack_[2].value.stringVal), (yystack_[0].value.node));
+		 		delete (yystack_[2].value.stringVal);
+		 		delete (yystack_[0].value.node);
+	     	}
 #line 899 "parser.cc" // lalr1.cc:859
     break;
 
