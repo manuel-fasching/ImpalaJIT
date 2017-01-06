@@ -47,6 +47,7 @@ void Assembly::push(double* value){
 double* Assembly::pull() {
     double* container = (double*) malloc(sizeof(double));
     | fstp qword [container]
+    printf("fstp qword [%f] \n", *container);
     return container;
 }
 

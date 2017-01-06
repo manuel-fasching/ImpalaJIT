@@ -125,11 +125,10 @@ else {
 
 
 
-[A-Za-z][A-Za-z0-9_,.-]* {
+[A-Za-z][A-Za-z0-9_]* {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::STRING;
 }
-
 
 
  /* gobble up white-spaces */

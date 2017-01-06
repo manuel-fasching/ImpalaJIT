@@ -44,6 +44,35 @@ public:
 
 };
 
+class ENVariable : public ExpressionNode
+{
+    std::map<std::string, double*>& variables;
+    std::string & name;
+public:
+    explicit ENVariable(std::map<std::string, double*>& _variables, std::string & _name, Assembly& _assembly)
+            : ExpressionNode(_assembly), variables(_variables), name(_name)
+    {
+    }
+
+    virtual ~ENVariable()
+    {
+    }
+
+    virtual void evaluate()
+    {
+        std::map<std::string, double*>::const_iterator vi = variables.find(name);
+        if (vi == variables.end())
+            throw (std::runtime_error("Unknown variable."));
+        else
+            assembly.push(vi->second);
+    }
+
+    virtual int getOperator(){
+        return -1;
+    }
+
+};
+
 class ENNegate : public ExpressionNode
 {
     Node* 	node;

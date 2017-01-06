@@ -38,6 +38,8 @@ public:
 class ExpressionContext {
 public:
 
+    std::string* name;
+
     /// type of the variable storage
     typedef std::map<std::string, double*> variablemap_type;
 
@@ -47,6 +49,8 @@ public:
     /// array of unassigned expressions found by the parser. these are then
     /// outputted to the user.
     std::vector<Node *> expressions;
+
+    Assembly assembly;
 
     /// free the saved expression trees
     ~ExpressionContext() {
@@ -65,6 +69,10 @@ public:
     /// free all variables
     void clearVariables(){
         variables.clear();
+    }
+
+    void addParameter(const std::string &name){
+        variables[name] = (double*) malloc(sizeof(double));
     }
 
     void addVariable(const std::string &varname, Node* node) {
@@ -86,7 +94,6 @@ public:
         else
             return vi->second;
     }
-    Assembly assembly;
 };
 
 #endif // EXPRESSION_H

@@ -26,8 +26,9 @@ dasm_gen_func impalajit::Compiler::compile(){
     return driver.parse_file(fileName);
 }
 
-impalajit::Compiler::impalajit_error impalajit::Compiler::setVariable(char* name, double* buffer){
-    expressionContext.variables[name] = buffer;
+impalajit::Compiler::impalajit_error impalajit::Compiler::setVariable(std::string name, double value){
+    double* buffer = expressionContext.getVariable(name);
+    *buffer = value;
 }
 
 void impalajit::Compiler::clearVariables() {

@@ -62,7 +62,7 @@ set(source_files ${source_files}
         compiler/include/driver.h
         compiler/include/expression.h
         impalajit.cc
-        compiler/include/basic_expression.h compiler/include/comparison_expression.h compiler/include/complex_expression.h compiler/include/boolean_expression.h)
+        compiler/include/basic_expression.h compiler/include/comparison_expression.h compiler/include/complex_expression.h compiler/include/boolean_expression.h compiler/include/assignment_expression.h)
 
 install(FILES include/impalajit.hh
         DESTINATION include )

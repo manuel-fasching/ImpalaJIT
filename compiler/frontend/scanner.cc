@@ -432,16 +432,16 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    4,    5,    1,    1,    1,    6,    1,    1,
-        1,    1,    1,    7,    7,    8,    1,    9,    9,    9,
-        9,    9,    9,    9,    9,    9,    9,    1,    1,   10,
-       11,   12,    1,    1,   13,   13,   13,   13,   13,   13,
-       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
-       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
-        5,    1,   14,    1,    7,    1,   13,   13,   13,   13,
+        1,    1,    1,    1,    1,    5,    1,    7,    7,    7,
+        7,    7,    7,    7,    7,    7,    7,    1,    1,    8,
+        9,   10,    1,    1,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+       11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
+        5,    1,   12,    1,   13,    1,   11,   11,   11,   11,
 
-       15,   16,   13,   13,   17,   13,   13,   18,   13,   13,
-       13,   13,   19,   20,   21,   22,   13,   13,   13,   13,
-       13,   13,    1,   23,    1,    1,    1,    1,    1,    1,
+       14,   15,   11,   11,   16,   11,   11,   17,   11,   11,
+       11,   11,   18,   19,   20,   21,   11,   11,   11,   11,
+       11,   11,    1,   22,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -458,55 +458,57 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[24] =
+static yyconst YY_CHAR yy_meta[23] =
     {   0,
-        1,    1,    1,    1,    1,    1,    2,    2,    2,    1,
-        1,    1,    2,    1,    2,    2,    2,    2,    2,    2,
-        2,    2,    1
+        1,    1,    1,    1,    1,    1,    2,    1,    1,    1,
+        2,    1,    2,    2,    2,    2,    2,    2,    2,    2,
+        2,    1
     } ;
 
 static yyconst flex_uint16_t yy_base[38] =
     {   0,
-        0,    0,   45,   46,   42,   46,   32,   36,   19,   30,
-       29,   28,    0,   20,   21,   17,   12,   32,   46,   46,
-       23,    0,   46,   46,   46,   46,    0,   10,    0,   10,
-       46,   14,    4,    0,    0,   46,   23
+        0,    0,   48,   49,   45,   49,   37,   39,   18,   35,
+       34,   33,    0,   24,   25,   21,   16,   35,   49,   49,
+       19,   22,   49,   49,   49,   49,    0,   16,    0,   16,
+       49,   19,   11,    0,    0,   49,   26
     } ;
 
 static yyconst flex_int16_t yy_def[38] =
     {   0,
        36,    1,   36,   36,   36,   36,   36,   36,   36,   36,
        36,   36,   37,   37,   37,   37,   36,   36,   36,   36,
-        9,    9,   36,   36,   36,   36,   37,   37,   37,   37,
+       36,   36,   36,   36,   36,   36,   37,   37,   37,   37,
        36,   37,   37,   37,   37,    0,   36
     } ;
 
-static yyconst flex_uint16_t yy_nxt[70] =
+static yyconst flex_uint16_t yy_nxt[72] =
     {   0,
-        4,    5,    6,    7,    4,    8,    4,    4,    9,   10,
-       11,   12,   13,    4,   14,   13,   15,   13,   13,   13,
-       16,   13,   17,   21,   27,   35,   21,   22,   34,   33,
-       32,   21,   23,   18,   31,   30,   29,   28,   26,   25,
-       24,   20,   19,   18,   36,    3,   36,   36,   36,   36,
+        4,    5,    6,    7,    4,    8,    9,   10,   11,   12,
+       13,    4,    4,   14,   13,   15,   13,   13,   13,   16,
+       13,   17,   21,   21,   22,   21,   21,   27,   22,   23,
+       23,   35,   34,   23,   33,   32,   18,   31,   30,   29,
+       28,   26,   25,   24,   20,   19,   18,   36,    3,   36,
        36,   36,   36,   36,   36,   36,   36,   36,   36,   36,
-       36,   36,   36,   36,   36,   36,   36,   36,   36
+       36,   36,   36,   36,   36,   36,   36,   36,   36,   36,
+       36
     } ;
 
-static yyconst flex_int16_t yy_chk[70] =
+static yyconst flex_int16_t yy_chk[72] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    9,   37,   33,    9,    9,   32,   30,
-       28,   21,    9,   18,   17,   16,   15,   14,   12,   11,
-       10,    8,    7,    5,    3,   36,   36,   36,   36,   36,
+        1,    1,    9,   21,    9,   21,   22,   37,   22,    9,
+       21,   33,   32,   22,   30,   28,   18,   17,   16,   15,
+       14,   12,   11,   10,    8,    7,    5,    3,   36,   36,
        36,   36,   36,   36,   36,   36,   36,   36,   36,   36,
-       36,   36,   36,   36,   36,   36,   36,   36,   36
+       36,   36,   36,   36,   36,   36,   36,   36,   36,   36,
+       36
     } ;
 
 static yyconst flex_int16_t yy_rule_linenum[17] =
     {   0,
        60,   67,   71,   75,   79,   83,   87,   95,   99,  107,
-      116,  120,  128,  136,  141,  147
+      116,  120,  128,  135,  140,  146
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -549,7 +551,7 @@ typedef impalajit::Parser::token_type token_type;
  * yylex is invoked, the begin position is moved onto the end position. */
 #line 48 "scanner.ll"
 #define YY_USER_ACTION  yylloc->columns(yyleng);
-#line 553 "scanner.cc"
+#line 555 "scanner.cc"
 
 #define INITIAL 0
 
@@ -756,7 +758,7 @@ YY_DECL
 
 
  /*** Numbers ***/
-#line 760 "scanner.cc"
+#line 762 "scanner.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -942,7 +944,7 @@ YY_RULE_SETUP
 /* gobble up white-spaces */
 case 14:
 YY_RULE_SETUP
-#line 136 "scanner.ll"
+#line 135 "scanner.ll"
 {
     yylloc->step();
 }
@@ -951,7 +953,7 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 141 "scanner.ll"
+#line 140 "scanner.ll"
 {
     yylloc->lines(yyleng); yylloc->step();
    // return token::EOL;
@@ -960,7 +962,7 @@ YY_RULE_SETUP
 /* pass all other characters up to bison */
 case 16:
 YY_RULE_SETUP
-#line 147 "scanner.ll"
+#line 146 "scanner.ll"
 {
     return static_cast<token_type>(*yytext);
 }
@@ -968,10 +970,10 @@ YY_RULE_SETUP
 /*** END EXAMPLE - Change the impalajit lexer rules above ***/
 case 17:
 YY_RULE_SETUP
-#line 153 "scanner.ll"
+#line 152 "scanner.ll"
 ECHO;
 	YY_BREAK
-#line 975 "scanner.cc"
+#line 977 "scanner.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2084,7 +2086,7 @@ void ImpalaJITfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 153 "scanner.ll"
+#line 152 "scanner.ll"
 
 
 

@@ -11,6 +11,7 @@
 #include <basic_expression.h>
 #include <comparison_expression.h>
 #include <complex_expression.h>
+#include <assignment_expression.h>
 
 %}
 
@@ -61,7 +62,6 @@
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
-    class Node**	nodeArray;
 }
 
 %token			END	     0				"end of file"
@@ -75,13 +75,14 @@
 %token <integerVal>  OR               	"or operator"
 %token <integerVal>  AND               	"and operator"
 %token <integerVal> CMPOP				"compare operator"
+%token <stringVal> COMMA				","
 
 
 %type <node>	constant variable
-%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt
+%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment conditional_body
 
 %destructor { delete $$; } constant variable 
-%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt
+%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment conditional_body
 
  /*** END EXAMPLE - Change the example grammar's tokens above ***/
 
@@ -102,6 +103,54 @@
 
  /*** BEGIN EXAMPLE - Change the example grammar rules below ***/
 
+
+function : STRING '(' parameter_list ')' '{' function_body '}'
+			{
+			}
+
+parameter_list : STRING
+			{
+				driver.expressionContext.addParameter(*$1);
+			}
+
+			|
+			parameter_list ',' STRING 
+			{
+				driver.expressionContext.addParameter(*$3);
+			}
+
+function_body : expr ';'
+			{
+				driver.expressionContext.expressions.push_back($1);
+			}
+
+			| ifstmt 
+			{
+				driver.expressionContext.expressions.push_back($1);
+			}
+
+			| assignment ';'
+			{
+				driver.expressionContext.expressions.push_back($1);
+			}
+
+			| function_body expr ';'
+			{
+				driver.expressionContext.expressions.push_back($2);
+			}
+
+			| function_body ifstmt 
+			{
+				printf("If Stmt\n");
+				driver.expressionContext.expressions.push_back($2);
+			}
+
+			| function_body assignment ';'
+			{
+				driver.expressionContext.expressions.push_back($2);
+			}
+
+
 constant :  DOUBLE
 			{
 	           double* v = (double*) malloc(sizeof(double));
@@ -112,17 +161,7 @@ constant :  DOUBLE
 
 variable : STRING
            	{
-		       	if (!driver.expressionContext.existsVariable(*$1)) 
-		       	{
-					error(yyla.location, std::string("Unknown variable \"") + *$1 + "\"");
-					delete $1;
-			   		YYERROR;
-	       		}
-	       		else 
-	       		{
-				   $$ = new ENConstant( driver.expressionContext.getVariable(*$1), driver.expressionContext.assembly );
-				   delete $1;
-	       		}
+	       		$$ = new ENVariable(driver.expressionContext.variables, *$1, driver.expressionContext.assembly);
 	   		}
 
 
@@ -213,13 +252,11 @@ expr	: addexpr
 
 assignment : STRING '=' expr
             {
-            	driver.expressionContext.addVariable(*$1, $3);
-		 		delete $1;
-		 		delete $3;
+		 		$$ = new AssignmentExpression(*$1, $3, driver.expressionContext.variables, driver.expressionContext.assembly);
 	     	}
 
  
-atomcondition : expr CMPOP expr 
+atomcondition : expr CMPOP expr
 			{
 				$$ = new CNComparison($1, $3, $2, driver.expressionContext.assembly);
 			}
@@ -264,51 +301,32 @@ booleanor : atomcondition
 			}
 
 			
+conditional_body : assignment ';'
+			{
+				$$ = $1;
+			}
 
-ifstmt	:	IF '(' booleanor ')' '{' expr '}'
+			| expr ';'
+			{
+				$$ =$1;
+			}
+
+
+ifstmt	:	IF '(' booleanor ')' '{' conditional_body '}'
 			{
 				$$ = new CxNIfStmt($3, $6, driver.expressionContext.assembly);
 			}
 			
-			| IF '(' booleanor ')' '{' expr '}' ELSE '{' expr '}'
+			| IF '(' booleanor ')' '{' conditional_body '}' ELSE '{' conditional_body '}'
 			{
 				$$ = new CxNIfElseStmt($3, $6, $10, driver.expressionContext.assembly);
 			}
+		
 
-
-start	: /* empty */
-	        | start ';'
-	        
-	        | start EOL
-			
-			| start assignment ';'
-			
-			| start assignment END
-	        
-	        | start expr ';'
-	        {
-		      	driver.expressionContext.expressions.push_back($2);
-		  	}
-	        
-	        | start expr EOL
-	        {
-		      	driver.expressionContext.expressions.push_back($2);
-		  	}
-	        
-	        | start expr END
-	        {
-		      	driver.expressionContext.expressions.push_back($2);
-		  	}
-			
-			| start ifstmt EOL
+start	: /* empty */	        	        
+	        | start function END
 			{
-				driver.expressionContext.expressions.push_back($2);
-			}
-			
-			| start ifstmt END
-			{
-				driver.expressionContext.expressions.push_back($2);
-			}
+		  	}
 
  /*** END EXAMPLE - Change the example grammar rules above ***/
 

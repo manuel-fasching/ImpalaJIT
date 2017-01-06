@@ -3,6 +3,9 @@
 
 #define ENV_VARIABLE_NAME "IMPALA_FILE"
 
+
+#include <string>
+
 typedef double (*dasm_gen_func)();
 
 namespace impalajit{
@@ -26,7 +29,7 @@ public:
 
     virtual ~Compiler(){}
 
-    virtual impalajit_error setVariable(char* name, double* buffer);
+    virtual impalajit_error setVariable(std::string name, double value);
     virtual void clearVariables();
 
     virtual dasm_gen_func compile();

@@ -43,9 +43,10 @@
 #include <basic_expression.h>
 #include <comparison_expression.h>
 #include <complex_expression.h>
+#include <assignment_expression.h>
 
 
-#line 49 "parser.cc" // lalr1.cc:404
+#line 50 "parser.cc" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -58,7 +59,7 @@
 #include "parser.hh"
 
 // User implementation prologue.
-#line 88 "parser.yy" // lalr1.cc:412
+#line 89 "parser.yy" // lalr1.cc:412
 
 
 #include <driver.h>
@@ -71,7 +72,7 @@
 #define yylex driver.lexer->lex
 
 
-#line 75 "parser.cc" // lalr1.cc:412
+#line 76 "parser.cc" // lalr1.cc:412
 
 
 #ifndef YY_
@@ -155,9 +156,9 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-#line 36 "parser.yy" // lalr1.cc:479
+#line 37 "parser.yy" // lalr1.cc:479
 namespace impalajit {
-#line 161 "parser.cc" // lalr1.cc:479
+#line 162 "parser.cc" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -406,88 +407,102 @@ namespace impalajit {
     // User destructor.
     switch (yysym.type_get ())
     {
-            case 25: // constant
-
-#line 83 "parser.yy" // lalr1.cc:614
-        { delete (yysym.value.node); }
-#line 414 "parser.cc" // lalr1.cc:614
-        break;
-
-      case 26: // variable
-
-#line 83 "parser.yy" // lalr1.cc:614
-        { delete (yysym.value.node); }
-#line 421 "parser.cc" // lalr1.cc:614
-        break;
-
-      case 27: // atomexpr
+            case 30: // constant
 
 #line 84 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 428 "parser.cc" // lalr1.cc:614
+#line 415 "parser.cc" // lalr1.cc:614
         break;
 
-      case 28: // powexpr
+      case 31: // variable
 
 #line 84 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 435 "parser.cc" // lalr1.cc:614
+#line 422 "parser.cc" // lalr1.cc:614
         break;
 
-      case 29: // unaryexpr
+      case 32: // atomexpr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 442 "parser.cc" // lalr1.cc:614
+#line 429 "parser.cc" // lalr1.cc:614
         break;
 
-      case 30: // mulexpr
+      case 33: // powexpr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 449 "parser.cc" // lalr1.cc:614
+#line 436 "parser.cc" // lalr1.cc:614
         break;
 
-      case 31: // addexpr
+      case 34: // unaryexpr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 456 "parser.cc" // lalr1.cc:614
+#line 443 "parser.cc" // lalr1.cc:614
         break;
 
-      case 32: // expr
+      case 35: // mulexpr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 463 "parser.cc" // lalr1.cc:614
+#line 450 "parser.cc" // lalr1.cc:614
         break;
 
-      case 34: // atomcondition
+      case 36: // addexpr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 470 "parser.cc" // lalr1.cc:614
+#line 457 "parser.cc" // lalr1.cc:614
         break;
 
-      case 35: // booleanand
+      case 37: // expr
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 477 "parser.cc" // lalr1.cc:614
+#line 464 "parser.cc" // lalr1.cc:614
         break;
 
-      case 36: // booleanor
+      case 38: // assignment
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 484 "parser.cc" // lalr1.cc:614
+#line 471 "parser.cc" // lalr1.cc:614
         break;
 
-      case 37: // ifstmt
+      case 39: // atomcondition
 
-#line 84 "parser.yy" // lalr1.cc:614
+#line 85 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
-#line 491 "parser.cc" // lalr1.cc:614
+#line 478 "parser.cc" // lalr1.cc:614
+        break;
+
+      case 40: // booleanand
+
+#line 85 "parser.yy" // lalr1.cc:614
+        { delete (yysym.value.node); }
+#line 485 "parser.cc" // lalr1.cc:614
+        break;
+
+      case 41: // booleanor
+
+#line 85 "parser.yy" // lalr1.cc:614
+        { delete (yysym.value.node); }
+#line 492 "parser.cc" // lalr1.cc:614
+        break;
+
+      case 42: // conditional_body
+
+#line 85 "parser.yy" // lalr1.cc:614
+        { delete (yysym.value.node); }
+#line 499 "parser.cc" // lalr1.cc:614
+        break;
+
+      case 43: // ifstmt
+
+#line 85 "parser.yy" // lalr1.cc:614
+        { delete (yysym.value.node); }
+#line 506 "parser.cc" // lalr1.cc:614
         break;
 
 
@@ -619,13 +634,13 @@ namespace impalajit {
 
 
     // User initialization code.
-    #line 44 "parser.yy" // lalr1.cc:741
+    #line 45 "parser.yy" // lalr1.cc:741
 {
     // initialize the initial location object
     yyla.location.begin.filename = yyla.location.end.filename = &driver.streamname;
 }
 
-#line 629 "parser.cc" // lalr1.cc:741
+#line 644 "parser.cc" // lalr1.cc:741
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -733,293 +748,336 @@ namespace impalajit {
           switch (yyn)
             {
   case 2:
-#line 106 "parser.yy" // lalr1.cc:859
+#line 108 "parser.yy" // lalr1.cc:859
+    {
+			}
+#line 755 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 3:
+#line 112 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.addParameter(*(yystack_[0].value.stringVal));
+			}
+#line 763 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 4:
+#line 118 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.addParameter(*(yystack_[0].value.stringVal));
+			}
+#line 771 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 5:
+#line 123 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+			}
+#line 779 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 6:
+#line 128 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.expressions.push_back((yystack_[0].value.node));
+			}
+#line 787 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 7:
+#line 133 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+			}
+#line 795 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 8:
+#line 138 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+			}
+#line 803 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 9:
+#line 143 "parser.yy" // lalr1.cc:859
+    {
+				printf("If Stmt\n");
+				driver.expressionContext.expressions.push_back((yystack_[0].value.node));
+			}
+#line 812 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 10:
+#line 149 "parser.yy" // lalr1.cc:859
+    {
+				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+			}
+#line 820 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 11:
+#line 155 "parser.yy" // lalr1.cc:859
     {
 	           double* v = (double*) malloc(sizeof(double));
 	           *v = (yystack_[0].value.doubleVal);
 		       (yylhs.value.node) = new ENConstant(v, driver.expressionContext.assembly);
 	   		}
-#line 743 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 3:
-#line 114 "parser.yy" // lalr1.cc:859
-    {
-		       	if (!driver.expressionContext.existsVariable(*(yystack_[0].value.stringVal))) 
-		       	{
-					error(yyla.location, std::string("Unknown variable \"") + *(yystack_[0].value.stringVal) + "\"");
-					delete (yystack_[0].value.stringVal);
-			   		YYERROR;
-	       		}
-	       		else 
-	       		{
-				   (yylhs.value.node) = new ENConstant( driver.expressionContext.getVariable(*(yystack_[0].value.stringVal)), driver.expressionContext.assembly );
-				   delete (yystack_[0].value.stringVal);
-	       		}
-	   		}
-#line 761 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 4:
-#line 130 "parser.yy" // lalr1.cc:859
-    {
-	       		(yylhs.value.node) = (yystack_[0].value.node);
-		   	}
-#line 769 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 5:
-#line 135 "parser.yy" // lalr1.cc:859
-    {
-		       	(yylhs.value.node) = (yystack_[0].value.node);
-		   	}
-#line 777 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 6:
-#line 140 "parser.yy" // lalr1.cc:859
-    {
-		       	(yylhs.value.node) = new ENSQRT((yystack_[1].value.node), driver.expressionContext.assembly);
-		   	}
-#line 785 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 7:
-#line 145 "parser.yy" // lalr1.cc:859
-    {
-		       	(yylhs.value.node) = (yystack_[1].value.node);
-		   	}
-#line 793 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 8:
-#line 152 "parser.yy" // lalr1.cc:859
-    {
-	      		(yylhs.value.node) = (yystack_[0].value.node);
-	  		}
-#line 801 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 9:
-#line 157 "parser.yy" // lalr1.cc:859
-    {
-	      		(yylhs.value.node) = new ENPower((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
-	  		}
-#line 809 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 10:
-#line 162 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[0].value.node);
-			}
-#line 817 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 11:
-#line 167 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[0].value.node);
-			}
-#line 825 "parser.cc" // lalr1.cc:859
+#line 830 "parser.cc" // lalr1.cc:859
     break;
 
   case 12:
-#line 172 "parser.yy" // lalr1.cc:859
+#line 163 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new ENNegate((yystack_[0].value.node), driver.expressionContext.assembly);
-			}
-#line 833 "parser.cc" // lalr1.cc:859
+	       		(yylhs.value.node) = new ENVariable(driver.expressionContext.variables, *(yystack_[0].value.stringVal), driver.expressionContext.assembly);
+	   		}
+#line 838 "parser.cc" // lalr1.cc:859
     break;
 
   case 13:
-#line 177 "parser.yy" // lalr1.cc:859
+#line 169 "parser.yy" // lalr1.cc:859
     {
-	      		(yylhs.value.node) = (yystack_[0].value.node);
-		  	}
-#line 841 "parser.cc" // lalr1.cc:859
+	       		(yylhs.value.node) = (yystack_[0].value.node);
+		   	}
+#line 846 "parser.cc" // lalr1.cc:859
     break;
 
   case 14:
-#line 182 "parser.yy" // lalr1.cc:859
+#line 174 "parser.yy" // lalr1.cc:859
     {
-		      	(yylhs.value.node) = new ENMultiply((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
-		  	}
-#line 849 "parser.cc" // lalr1.cc:859
+		       	(yylhs.value.node) = (yystack_[0].value.node);
+		   	}
+#line 854 "parser.cc" // lalr1.cc:859
     break;
 
   case 15:
-#line 187 "parser.yy" // lalr1.cc:859
+#line 179 "parser.yy" // lalr1.cc:859
     {
-		  	    (yylhs.value.node) = new ENDivide((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
-		  	}
-#line 857 "parser.cc" // lalr1.cc:859
+		       	(yylhs.value.node) = new ENSQRT((yystack_[1].value.node), driver.expressionContext.assembly);
+		   	}
+#line 862 "parser.cc" // lalr1.cc:859
     break;
 
   case 16:
-#line 193 "parser.yy" // lalr1.cc:859
+#line 184 "parser.yy" // lalr1.cc:859
     {
-	      		(yylhs.value.node) = (yystack_[0].value.node);
-		  	}
-#line 865 "parser.cc" // lalr1.cc:859
+		       	(yylhs.value.node) = (yystack_[1].value.node);
+		   	}
+#line 870 "parser.cc" // lalr1.cc:859
     break;
 
   case 17:
-#line 198 "parser.yy" // lalr1.cc:859
-    {
-		      	(yylhs.value.node) = new ENAdd((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
-		  	}
-#line 873 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 18:
-#line 203 "parser.yy" // lalr1.cc:859
-    {
-		      	(yylhs.value.node) = new ENSubtract((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
-		  	}
-#line 881 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 19:
-#line 209 "parser.yy" // lalr1.cc:859
+#line 191 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 	  		}
-#line 889 "parser.cc" // lalr1.cc:859
+#line 878 "parser.cc" // lalr1.cc:859
     break;
 
-  case 20:
-#line 215 "parser.yy" // lalr1.cc:859
+  case 18:
+#line 196 "parser.yy" // lalr1.cc:859
     {
-            	driver.expressionContext.addVariable(*(yystack_[2].value.stringVal), (yystack_[0].value.node));
-		 		delete (yystack_[2].value.stringVal);
-		 		delete (yystack_[0].value.node);
-	     	}
-#line 899 "parser.cc" // lalr1.cc:859
+	      		(yylhs.value.node) = new ENPower((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+	  		}
+#line 886 "parser.cc" // lalr1.cc:859
     break;
 
-  case 21:
-#line 223 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new CNComparison((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
-			}
-#line 907 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 22:
-#line 228 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[1].value.node);
-			}
-#line 915 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 23:
-#line 234 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
-			}
-#line 923 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 24:
-#line 239 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
-			}
-#line 931 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 25:
-#line 247 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[0].value.node), driver.expressionContext.assembly);
-			}
-#line 939 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 26:
-#line 252 "parser.yy" // lalr1.cc:859
+  case 19:
+#line 201 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
-#line 947 "parser.cc" // lalr1.cc:859
+#line 894 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 20:
+#line 206 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[0].value.node);
+			}
+#line 902 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 21:
+#line 211 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = new ENNegate((yystack_[0].value.node), driver.expressionContext.assembly);
+			}
+#line 910 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 22:
+#line 216 "parser.yy" // lalr1.cc:859
+    {
+	      		(yylhs.value.node) = (yystack_[0].value.node);
+		  	}
+#line 918 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 23:
+#line 221 "parser.yy" // lalr1.cc:859
+    {
+		      	(yylhs.value.node) = new ENMultiply((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		  	}
+#line 926 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 24:
+#line 226 "parser.yy" // lalr1.cc:859
+    {
+		  	    (yylhs.value.node) = new ENDivide((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		  	}
+#line 934 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 25:
+#line 232 "parser.yy" // lalr1.cc:859
+    {
+	      		(yylhs.value.node) = (yystack_[0].value.node);
+		  	}
+#line 942 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 26:
+#line 237 "parser.yy" // lalr1.cc:859
+    {
+		      	(yylhs.value.node) = new ENAdd((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		  	}
+#line 950 "parser.cc" // lalr1.cc:859
     break;
 
   case 27:
-#line 257 "parser.yy" // lalr1.cc:859
+#line 242 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
-			}
-#line 955 "parser.cc" // lalr1.cc:859
+		      	(yylhs.value.node) = new ENSubtract((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		  	}
+#line 958 "parser.cc" // lalr1.cc:859
     break;
 
   case 28:
-#line 262 "parser.yy" // lalr1.cc:859
+#line 248 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
-			}
-#line 963 "parser.cc" // lalr1.cc:859
+	      		(yylhs.value.node) = (yystack_[0].value.node);
+	  		}
+#line 966 "parser.cc" // lalr1.cc:859
     break;
 
   case 29:
-#line 269 "parser.yy" // lalr1.cc:859
+#line 254 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new CxNIfStmt((yystack_[4].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
-			}
-#line 971 "parser.cc" // lalr1.cc:859
+		 		(yylhs.value.node) = new AssignmentExpression(*(yystack_[2].value.stringVal), (yystack_[0].value.node), driver.expressionContext.variables, driver.expressionContext.assembly);
+	     	}
+#line 974 "parser.cc" // lalr1.cc:859
     break;
 
   case 30:
-#line 274 "parser.yy" // lalr1.cc:859
+#line 260 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new CxNIfElseStmt((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
+				(yylhs.value.node) = new CNComparison((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
 			}
-#line 979 "parser.cc" // lalr1.cc:859
+#line 982 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 31:
+#line 265 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[1].value.node);
+			}
+#line 990 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 32:
+#line 271 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+			}
+#line 998 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 33:
+#line 276 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+			}
+#line 1006 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 34:
+#line 284 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[0].value.node), driver.expressionContext.assembly);
+			}
+#line 1014 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 35:
+#line 289 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[0].value.node);
+			}
+#line 1022 "parser.cc" // lalr1.cc:859
     break;
 
   case 36:
-#line 289 "parser.yy" // lalr1.cc:859
+#line 294 "parser.yy" // lalr1.cc:859
     {
-		      	driver.expressionContext.expressions.push_back((yystack_[1].value.node));
-		  	}
-#line 987 "parser.cc" // lalr1.cc:859
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+			}
+#line 1030 "parser.cc" // lalr1.cc:859
     break;
 
   case 37:
-#line 294 "parser.yy" // lalr1.cc:859
+#line 299 "parser.yy" // lalr1.cc:859
     {
-		      	driver.expressionContext.expressions.push_back((yystack_[1].value.node));
-		  	}
-#line 995 "parser.cc" // lalr1.cc:859
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+			}
+#line 1038 "parser.cc" // lalr1.cc:859
     break;
 
   case 38:
-#line 299 "parser.yy" // lalr1.cc:859
+#line 305 "parser.yy" // lalr1.cc:859
     {
-		      	driver.expressionContext.expressions.push_back((yystack_[1].value.node));
-		  	}
-#line 1003 "parser.cc" // lalr1.cc:859
+				(yylhs.value.node) = (yystack_[1].value.node);
+			}
+#line 1046 "parser.cc" // lalr1.cc:859
     break;
 
   case 39:
-#line 304 "parser.yy" // lalr1.cc:859
+#line 310 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				(yylhs.value.node) =(yystack_[1].value.node);
 			}
-#line 1011 "parser.cc" // lalr1.cc:859
+#line 1054 "parser.cc" // lalr1.cc:859
     break;
 
   case 40:
-#line 309 "parser.yy" // lalr1.cc:859
+#line 316 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				(yylhs.value.node) = new CxNIfStmt((yystack_[4].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
 			}
-#line 1019 "parser.cc" // lalr1.cc:859
+#line 1062 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 41:
+#line 321 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = new CxNIfElseStmt((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
+			}
+#line 1070 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 43:
+#line 328 "parser.yy" // lalr1.cc:859
+    {
+		  	}
+#line 1077 "parser.cc" // lalr1.cc:859
     break;
 
 
-#line 1023 "parser.cc" // lalr1.cc:859
+#line 1081 "parser.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -1274,107 +1332,116 @@ namespace impalajit {
   }
 
 
-  const signed char Parser::yypact_ninf_ = -16;
+  const signed char Parser::yypact_ninf_ = -18;
 
   const signed char Parser::yytable_ninf_ = -1;
 
   const signed char
   Parser::yypact_[] =
   {
-     -16,     3,   -16,   -16,   -16,   -15,    10,    24,    22,    52,
-      52,   -16,   -16,   -16,    37,   -16,   -16,    13,    33,     1,
-       2,    12,    22,    22,    38,   -16,    27,   -16,   -16,    52,
-      22,    22,    22,    22,   -16,   -16,   -16,   -16,   -16,   -16,
-     -16,   -16,    39,    38,    49,    55,    57,    20,   -16,   -16,
-     -16,   -16,    13,    13,   -16,    48,    26,    22,    38,    38,
-      38,    51,   -16,   -16,   -16,   -16,    55,    57,    22,    47,
-      61,    53,    22,    54,   -16
+     -18,    63,   -18,    -9,    43,    12,   -18,   -18,    24,     8,
+      22,     9,   -18,   -18,    25,    39,    54,    27,    52,    52,
+       5,   -18,   -18,    60,   -18,   -18,    41,    55,    62,    64,
+     -18,    27,    27,    30,   -18,    67,   -18,   -18,   -18,    65,
+      66,   -18,    52,    27,    27,    27,    27,   -18,   -18,   -18,
+      71,    30,    75,    77,    78,    -7,   -18,   -18,   -18,   -18,
+     -18,   -18,    41,    41,   -18,    -8,    45,    27,    30,    30,
+      30,    74,   -18,   -18,   -18,   -18,    77,    78,    40,    72,
+      73,    76,   -18,   -18,    85,    79,    40,    80,   -18
   };
 
   const unsigned char
   Parser::yydefact_[] =
   {
-      31,     0,     1,    33,     2,     3,     0,     0,     0,     0,
-       0,    32,     4,     5,     8,    10,    13,    16,    19,     0,
-       0,     0,     0,     0,     0,     3,     0,    11,    12,     0,
-       0,     0,     0,     0,    38,    37,    36,    35,    34,    40,
-      39,    20,     0,     0,     0,    25,    26,     0,     7,     9,
-      14,    15,    17,    18,     6,     0,     0,     0,     0,     0,
-       0,     0,    22,    21,    24,    23,    27,    28,     0,     0,
-      29,     0,     0,     0,    30
+      42,     0,     1,     0,     0,     0,    43,     3,     0,     0,
+       0,     0,     4,    11,    12,     0,     0,     0,     0,     0,
+       0,    13,    14,    17,    19,    22,    25,    28,     0,     0,
+       6,     0,     0,     0,    12,     0,    20,    21,     2,     0,
+       0,     9,     0,     0,     0,     0,     0,     5,     7,    29,
+       0,     0,     0,    34,    35,     0,    16,     8,    10,    18,
+      23,    24,    26,    27,    15,     0,     0,     0,     0,     0,
+       0,     0,    31,    30,    33,    32,    36,    37,     0,     0,
+       0,     0,    39,    38,    40,     0,     0,     0,    41
   };
 
   const signed char
   Parser::yypgoto_[] =
   {
-     -16,   -16,   -16,   -16,     4,   -13,    31,   -16,    -1,   -16,
-     -12,    15,    30,   -16,   -16
+     -18,   -18,   -18,   -18,   -18,   -18,   -18,   -17,    35,    28,
+     -18,   -11,    18,     2,    26,    47,    13,    81,   -18
   };
 
   const signed char
   Parser::yydefgoto_[] =
   {
-      -1,    12,    13,    14,    15,    16,    17,    18,    44,    20,
-      45,    46,    47,    21,     1
+      -1,     4,     8,    20,    21,    22,    23,    24,    25,    26,
+      27,    52,    80,    53,    54,    55,    81,    30,     1
   };
 
   const unsigned char
   Parser::yytable_[] =
   {
-      19,    34,    37,     2,    35,    22,     3,    26,     4,     5,
-       6,     7,    39,    27,    28,    40,     8,    50,    51,     9,
-      10,    41,    42,    23,    36,    38,    11,     4,    25,     6,
-      60,    30,    31,    49,    61,     8,    60,    24,     9,    10,
-      62,    48,    55,     4,    25,     6,    64,    65,    66,    32,
-      33,    43,    29,    54,     9,    10,    63,     4,    25,     6,
-      57,    57,    48,    52,    53,     8,    58,    69,    59,    70,
-      71,    73,    68,    56,    72,    67,    74
+      28,    36,    37,    70,    67,     5,    35,    56,    71,    39,
+      13,    14,    15,    16,    13,    14,    15,    16,     7,    17,
+      49,    50,    38,    17,    11,    59,    18,    19,    12,    29,
+      18,    19,    13,    34,    15,    13,    34,    15,    40,     9,
+      65,    17,    10,     6,    51,    13,    14,    15,    18,    19,
+      31,    18,    19,    32,    17,    70,    73,    13,    34,    15,
+      72,    18,    19,     2,    43,    44,    17,    79,    33,     3,
+      74,    75,    76,    62,    63,    79,    45,    46,    60,    61,
+      42,    47,    56,    48,    57,    58,    64,    67,    68,    69,
+      78,    82,    83,    84,    85,    86,    77,    88,    66,    87,
+       0,    41
   };
 
-  const unsigned char
+  const signed char
   Parser::yycheck_[] =
   {
-       1,     0,     0,     0,     3,    20,     3,     8,     5,     6,
-       7,     8,     0,     9,    10,     3,    13,    30,    31,    16,
-      17,    22,    23,    13,    23,    23,    23,     5,     6,     7,
-      10,    18,    19,    29,    14,    13,    10,    13,    16,    17,
-      14,    14,    43,     5,     6,     7,    58,    59,    60,    16,
-      17,    13,    15,    14,    16,    17,    57,     5,     6,     7,
-      12,    12,    14,    32,    33,    13,    11,    68,    11,    22,
-       9,    72,    21,    43,    21,    60,    22
+      11,    18,    19,    10,    12,    14,    17,    15,    15,    20,
+       5,     6,     7,     8,     5,     6,     7,     8,     6,    14,
+      31,    32,    17,    14,    16,    42,    21,    22,     6,    11,
+      21,    22,     5,     6,     7,     5,     6,     7,    20,    15,
+      51,    14,    18,     0,    14,     5,     6,     7,    21,    22,
+      25,    21,    22,    14,    14,    10,    67,     5,     6,     7,
+      15,    21,    22,     0,    23,    24,    14,    78,    14,     6,
+      68,    69,    70,    45,    46,    86,    21,    22,    43,    44,
+      20,    19,    15,    19,    19,    19,    15,    12,    11,    11,
+      16,    19,    19,    17,     9,    16,    70,    17,    51,    86,
+      -1,    20
   };
 
   const unsigned char
   Parser::yystos_[] =
   {
-       0,    38,     0,     3,     5,     6,     7,     8,    13,    16,
-      17,    23,    25,    26,    27,    28,    29,    30,    31,    32,
-      33,    37,    20,    13,    13,     6,    32,    28,    28,    15,
-      18,    19,    16,    17,     0,     3,    23,     0,    23,     0,
-       3,    32,    32,    13,    32,    34,    35,    36,    14,    28,
-      29,    29,    30,    30,    14,    32,    36,    12,    11,    11,
-      10,    14,    14,    32,    34,    34,    34,    35,    21,    32,
-      22,     9,    21,    32,    22
+       0,    44,     0,     6,    27,    14,     0,     6,    28,    15,
+      18,    16,     6,     5,     6,     7,     8,    14,    21,    22,
+      29,    30,    31,    32,    33,    34,    35,    36,    37,    38,
+      43,    25,    14,    14,     6,    37,    33,    33,    17,    37,
+      38,    43,    20,    23,    24,    21,    22,    19,    19,    37,
+      37,    14,    37,    39,    40,    41,    15,    19,    19,    33,
+      34,    34,    35,    35,    15,    37,    41,    12,    11,    11,
+      10,    15,    15,    37,    39,    39,    39,    40,    16,    37,
+      38,    42,    19,    19,    17,     9,    16,    42,    17
   };
 
   const unsigned char
   Parser::yyr1_[] =
   {
-       0,    24,    25,    26,    27,    27,    27,    27,    28,    28,
-      29,    29,    29,    30,    30,    30,    31,    31,    31,    32,
-      33,    34,    34,    35,    35,    36,    36,    36,    36,    37,
-      37,    38,    38,    38,    38,    38,    38,    38,    38,    38,
-      38
+       0,    26,    27,    28,    28,    29,    29,    29,    29,    29,
+      29,    30,    31,    32,    32,    32,    32,    33,    33,    34,
+      34,    34,    35,    35,    35,    36,    36,    36,    37,    38,
+      39,    39,    40,    40,    41,    41,    41,    41,    42,    42,
+      43,    43,    44,    44
   };
 
   const unsigned char
   Parser::yyr2_[] =
   {
-       0,     2,     1,     1,     1,     1,     4,     3,     1,     3,
-       1,     2,     2,     1,     3,     3,     1,     3,     3,     1,
-       3,     3,     3,     3,     3,     1,     1,     3,     3,     7,
-      11,     0,     2,     2,     3,     3,     3,     3,     3,     3,
-       3
+       0,     2,     7,     1,     3,     2,     1,     2,     3,     2,
+       3,     1,     1,     1,     1,     4,     3,     1,     3,     1,
+       2,     2,     1,     3,     3,     1,     3,     3,     1,     3,
+       3,     3,     3,     3,     1,     1,     3,     3,     2,     2,
+       7,    11,     0,     3
   };
 
 
@@ -1387,10 +1454,11 @@ namespace impalajit {
   "\"end of file\"", "error", "$undefined", "\"end of line\"",
   "\"integer\"", "\"double\"", "\"string\"", "\"function\"",
   "\"if block\"", "\"else block\"", "\"or operator\"", "\"and operator\"",
-  "\"compare operator\"", "'('", "')'", "'^'", "'+'", "'-'", "'*'", "'/'",
-  "'='", "'{'", "'}'", "';'", "$accept", "constant", "variable",
-  "atomexpr", "powexpr", "unaryexpr", "mulexpr", "addexpr", "expr",
-  "assignment", "atomcondition", "booleanand", "booleanor", "ifstmt",
+  "\"compare operator\"", "\",\"", "'('", "')'", "'{'", "'}'", "','",
+  "';'", "'^'", "'+'", "'-'", "'*'", "'/'", "'='", "$accept", "function",
+  "parameter_list", "function_body", "constant", "variable", "atomexpr",
+  "powexpr", "unaryexpr", "mulexpr", "addexpr", "expr", "assignment",
+  "atomcondition", "booleanand", "booleanor", "conditional_body", "ifstmt",
   "start", YY_NULLPTR
   };
 
@@ -1398,11 +1466,11 @@ namespace impalajit {
   const unsigned short int
   Parser::yyrline_[] =
   {
-       0,   105,   105,   113,   129,   134,   139,   144,   151,   156,
-     161,   166,   171,   176,   181,   186,   192,   197,   202,   208,
-     214,   222,   227,   233,   238,   246,   251,   256,   261,   268,
-     273,   279,   280,   282,   284,   286,   288,   293,   298,   303,
-     308
+       0,   107,   107,   111,   117,   122,   127,   132,   137,   142,
+     148,   154,   162,   168,   173,   178,   183,   190,   195,   200,
+     205,   210,   215,   220,   225,   231,   236,   241,   247,   253,
+     259,   264,   270,   275,   283,   288,   293,   298,   304,   309,
+     315,   320,   326,   327
   };
 
   // Print the state stack on the debug stream.
@@ -1447,15 +1515,15 @@ namespace impalajit {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      13,    14,    18,    16,     2,    17,     2,    19,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    23,
-       2,    20,     2,     2,     2,     2,     2,     2,     2,     2,
+      14,    15,    23,    21,    18,    22,     2,    24,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    19,
+       2,    25,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    15,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    20,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    21,     2,    22,     2,     2,     2,     2,
+       2,     2,     2,    16,     2,    17,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1469,9 +1537,9 @@ namespace impalajit {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9,    10,    11,    12,    13
     };
-    const unsigned int user_token_number_max_ = 267;
+    const unsigned int user_token_number_max_ = 268;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1482,10 +1550,10 @@ namespace impalajit {
       return undef_token_;
   }
 
-#line 36 "parser.yy" // lalr1.cc:1167
+#line 37 "parser.yy" // lalr1.cc:1167
 } // impalajit
-#line 1488 "parser.cc" // lalr1.cc:1167
-#line 315 "parser.yy" // lalr1.cc:1168
+#line 1556 "parser.cc" // lalr1.cc:1167
+#line 333 "parser.yy" // lalr1.cc:1168
  /*** Additional Code ***/
 
 void impalajit::Parser::error(const Parser::location_type& l,

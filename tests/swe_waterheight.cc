@@ -11,15 +11,10 @@ int main(int argc, char** argv) {
     setenv("IMPALA_FILE","impala_files/swe_waterheight.impala", 1);
 
     impalajit::Compiler compiler;
-    double* buf_x = (double*) malloc(sizeof(double));
-    double* buf_y = (double*) malloc(sizeof(double));
-    *buf_x=50.0;
-    *buf_y=50.0;
-
-    compiler.setVariable("x", buf_x);
-    compiler.setVariable("y", buf_y);
-
     dasm_gen_func function = compiler.compile();
+
+    compiler.setVariable("x", 50);
+    compiler.setVariable("y", 50);
 
     if((function())==expection)
         return 0;

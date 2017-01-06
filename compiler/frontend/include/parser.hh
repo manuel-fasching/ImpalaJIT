@@ -108,7 +108,7 @@
 # define YYDEBUG 1
 #endif
 
-#line 36 "parser.yy" // lalr1.cc:377
+#line 37 "parser.yy" // lalr1.cc:377
 namespace impalajit {
 #line 114 "parser.hh" // lalr1.cc:377
 
@@ -124,15 +124,14 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 59 "parser.yy" // lalr1.cc:377
+    #line 60 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
-    class Node**	nodeArray;
 
-#line 136 "parser.hh" // lalr1.cc:377
+#line 135 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -162,7 +161,8 @@ namespace impalajit {
         ELSE = 264,
         OR = 265,
         AND = 266,
-        CMPOP = 267
+        CMPOP = 267,
+        COMMA = 268
       };
     };
 
@@ -350,7 +350,7 @@ namespace impalajit {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -470,12 +470,12 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 76,     ///< Last index in yytable_.
-      yynnts_ = 15,  ///< Number of nonterminal symbols.
+      yylast_ = 101,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyfinal_ = 2, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 24  ///< Number of tokens.
+      yyntokens_ = 26  ///< Number of tokens.
     };
 
 
@@ -484,7 +484,7 @@ namespace impalajit {
   };
 
 
-#line 36 "parser.yy" // lalr1.cc:377
+#line 37 "parser.yy" // lalr1.cc:377
 } // impalajit
 #line 490 "parser.hh" // lalr1.cc:377
 
