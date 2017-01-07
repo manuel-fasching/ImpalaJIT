@@ -61,8 +61,8 @@ public:
                 ((BooleanJunctionNode *) right)->label1 = label1;
                 ((BooleanJunctionNode *) right)->label2 = label2;
                 right->evaluate();
-                assembly.addLocalLabel(*label2);
-                (*label2)--;
+                //assembly.addLocalLabel(*label2);
+                //(*label2)--;
             } else if (right->getOperator() == assembly.OR && boolOperator == assembly.AND) {
                 ((BooleanJunctionNode *) right)->label1 = label1;
                 ((BooleanJunctionNode *) right)->label2 = label2;
@@ -76,18 +76,20 @@ public:
             } else if (right->getOperator() != assembly.OR && right->getOperator() != assembly.AND) {
                 right->evaluate();
                 assembly.operator_ = right->getOperator();
-                if (boolOperator == assembly.OR)
+                if (boolOperator == assembly.OR) {
                     assembly.conditionalJumpForwardTo(*label1, true);
-                else
+                }
+                else {
                     assembly.conditionalJumpForwardTo(*label2, false);
+                }
             }
         }
         if (left->getOperator() == assembly.AND && boolOperator == assembly.OR) {
             ((BooleanJunctionNode *) left)->label1 = label1;
             ((BooleanJunctionNode *) left)->label2 = label2;
             left->evaluate();
-            assembly.addLocalLabel(*label2);
-            (*label2)--;
+            //assembly.addLocalLabel(*label2);
+            //(*label2)--;
         } else if (left->getOperator() == assembly.OR && boolOperator == assembly.AND) {
             ((BooleanJunctionNode *) left)->label1 = label1;
             ((BooleanJunctionNode *) left)->label2 = label2;
@@ -104,8 +106,10 @@ public:
             if (boolOperator == assembly.OR) {
                 assembly.conditionalJumpForwardTo(*label1, true);
                 assembly.jumpForwardTo(*label2);
-            } else
+            }
+            else {
                 assembly.conditionalJumpForwardTo(*label2, false);
+            }
         }
 
 
