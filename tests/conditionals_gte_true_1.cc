@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     impalajit::Compiler compiler;
     dasm_gen_func function = compiler.compile();
 
+    printf("Result: %f\n", function());
     if((function())==expection)
         return 0;
     return 1;

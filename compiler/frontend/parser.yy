@@ -108,6 +108,11 @@ function : STRING '(' parameter_list ')' '{' function_body '}'
 			{
 			}
 
+			|
+			STRING '(' ')' '{' function_body '}'
+			{
+			}
+
 parameter_list : STRING
 			{
 				driver.expressionContext.addParameter(*$1);

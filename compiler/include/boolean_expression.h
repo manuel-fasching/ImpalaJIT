@@ -45,7 +45,7 @@ public:
     }
 
     BooleanJunctionNode(Node* _left, class Assembly& _assembly)
-            : Node(_assembly), left(_left), boolOperator(assembly.OR)
+            : Node(_assembly), left(_left), boolOperator(assembly.AND)
     {
     }
 
