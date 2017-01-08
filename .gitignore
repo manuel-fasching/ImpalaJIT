@@ -1,13 +1,4 @@
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Makefile
-cmake_install.cmake
-install_manifest.txt
-CTestTestfile.cmake
 .idea
-ImpalaJIT
-*.a
 minilua
-tests/*.o
-Testing
+build
+lib/*

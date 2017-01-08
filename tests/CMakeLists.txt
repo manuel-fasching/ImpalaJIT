@@ -1,3 +1,6 @@
+link_directories(${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 # Add test executable
 function( add_test_executable name )
         set( sourceFiles

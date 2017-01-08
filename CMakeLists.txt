@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(ImpalaJIT)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/build")
+#set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/build")
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 macro(translate_bison_file)
     execute_process(COMMAND bison -o parser.cc parser.yy
@@ -62,10 +63,17 @@ set(source_files ${source_files}
         compiler/include/driver.h
         compiler/include/expression.h
         impalajit.cc
-        compiler/include/basic_expression.h compiler/include/comparison_expression.h compiler/include/complex_expression.h compiler/include/boolean_expression.h compiler/include/assignment_expression.h)
+        compiler/include/basic_expression.h
+        compiler/include/comparison_expression.h
+        compiler/include/complex_expression.h
+        compiler/include/boolean_expression.h
+        compiler/include/assignment_expression.h)
 
-install(FILES include/impalajit.hh
-        DESTINATION include )
+#install(FILES include/impalajit.hh
+#        DESTINATION include )
+
+
 add_library( impalajit STATIC ${source_files})
-install( TARGETS impalajit DESTINATION lib)
+
+#install( TARGETS impalajit DESTINATION lib)
 

@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char** argv) {
     double expection = 0.0;
 
-    setenv("IMPALA_FILE","impala_files/conditional_gt_false.impala", 1);
+    setenv("IMPALA_FILE","../../tests/impala_files/conditional_gt_false.impala", 1);
 
     impalajit::Compiler compiler;
     dasm_gen_func function = compiler.compile();
