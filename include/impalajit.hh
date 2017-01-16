@@ -3,10 +3,8 @@
 
 #define ENV_VARIABLE_NAME "IMPALA_FILE"
 
-
 #include <string>
-
-typedef double (*dasm_gen_func)();
+#include "impalajit/types.hh"
 
 namespace impalajit{
     class Compiler;

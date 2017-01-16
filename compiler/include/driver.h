@@ -9,7 +9,7 @@
 
 #include <assembly.hh>
 
-#include <dasm_gen_function.hh>
+#include <types.hh>
 
 // forward declaration
 class ExpressionContext;

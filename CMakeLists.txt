@@ -44,12 +44,11 @@ enable_testing()
 add_subdirectory( tests )
 
 set(include_dirs
-        types
         include
+        include/impalajit
         compiler/include
         compiler/assembly/include
         compiler/frontend/include
-        types
         )
 
 include_directories(${include_dirs})
@@ -63,14 +62,17 @@ set(source_files ${source_files}
         compiler/include/driver.h
         compiler/include/expression.h
         impalajit.cc
+        impalajit_f90.cc
         compiler/include/basic_expression.h
         compiler/include/comparison_expression.h
         compiler/include/complex_expression.h
         compiler/include/boolean_expression.h
         compiler/include/assignment_expression.h)
 
-#install(FILES include/impalajit.hh
-#        DESTINATION include )
+#install(FILES include/impalajit.hh include/impalajit_f90.h
+        DESTINATION include )
+#install(FILES include/impalajit/types.hh
+        DESTINATION include/impalajit )
 
 
 add_library( impalajit STATIC ${source_files})
