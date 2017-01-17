@@ -62,20 +62,19 @@ set(source_files ${source_files}
         compiler/include/driver.h
         compiler/include/expression.h
         impalajit.cc
-        impalajit_f90.cc
         compiler/include/basic_expression.h
         compiler/include/comparison_expression.h
         compiler/include/complex_expression.h
         compiler/include/boolean_expression.h
         compiler/include/assignment_expression.h)
 
-#install(FILES include/impalajit.hh include/impalajit_f90.h
+install(FILES include/impalajit.hh
         DESTINATION include )
-#install(FILES include/impalajit/types.hh
+install(FILES include/impalajit/types.hh
         DESTINATION include/impalajit )
 
 
 add_library( impalajit STATIC ${source_files})
 
-#install( TARGETS impalajit DESTINATION lib)
+install( TARGETS impalajit DESTINATION lib)
 
