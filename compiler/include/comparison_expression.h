@@ -12,8 +12,8 @@ class CompareNode : public Node
 {
 
 public:
-    CompareNode(class Assembly& _assembly)
-            : Node(_assembly)
+    CompareNode(class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : Node(_assembly, _expressionContext)
     {
     }
 
@@ -36,8 +36,8 @@ class CNComparison : public CompareNode
     int       compareOperator;
 
 public:
-    explicit CNComparison(Node* _left, Node* _right, int _compareOperator, Assembly& _assembly)
-            : CompareNode(_assembly), left(_left), right(_right), compareOperator(_compareOperator)
+    explicit CNComparison(Node* _left, Node* _right, int _compareOperator, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : CompareNode(_assembly, _expressionContext), left(_left), right(_right), compareOperator(_compareOperator)
     {
     }
     virtual ~CNComparison()
@@ -49,7 +49,7 @@ public:
         right->evaluate();
         left->evaluate();
         assembly.operator_ = compareOperator;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){

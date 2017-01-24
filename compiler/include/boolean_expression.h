@@ -11,8 +11,8 @@ class BooleanNode : public Node {
     Node* node;
 
 public:
-    BooleanNode(Node* _node,  class Assembly& _assembly)
-            : Node(_assembly), node(_node)
+    BooleanNode(Node* _node,  class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : Node(_assembly, _expressionContext), node(_node)
     {
     }
 
@@ -39,13 +39,13 @@ class BooleanJunctionNode : public Node {
 public:
     int* label1;
     int* label2;
-    BooleanJunctionNode(Node* _left, Node* _right, int _boolOperator, class Assembly& _assembly)
-            : Node(_assembly), left(_left), right(_right), boolOperator(_boolOperator)
+    BooleanJunctionNode(Node* _left, Node* _right, int _boolOperator, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : Node(_assembly, _expressionContext), left(_left), right(_right), boolOperator(_boolOperator)
     {
     }
 
-    BooleanJunctionNode(Node* _left, class Assembly& _assembly)
-            : Node(_assembly), left(_left), boolOperator(assembly.AND)
+    BooleanJunctionNode(Node* _left, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : Node(_assembly, _expressionContext), left(_left), boolOperator(assembly.AND)
     {
     }
 

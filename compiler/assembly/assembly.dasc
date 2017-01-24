@@ -6,49 +6,119 @@
 #include <stack>
 #include <stdio.h>
 
+
 |.arch x64
 
 |.section code
 |.globals lbl_
-|.actionlist bf_actions
+|.actionlist impala_actions
 
-#if _WIN32
-#include <Windows.h>
-#else
 #include <sys/mman.h>
 
 #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
 #define MAP_ANONYMOUS MAP_ANON
 #endif
-#endif
 
 
 dasm_State* d;
 void** labels;
-dasm_State** Dst;
 int operator_;
+int parameterCount;
+dasm_State** Dst;
 
-Assembly::Assembly(){
+
+Assembly::~Assembly(){
+}
+
+void Assembly::initialize() {
     dasm_init(&d, DASM_MAXSECTION);
 
     labels = (void**) malloc(lbl__MAX);
     dasm_setupglobal(&d, labels, lbl__MAX);
 
-    dasm_setup(&d, bf_actions);
+    dasm_setup(&d, impala_actions);
 
     Dst = &d;
 }
 
-void Assembly::push(double* value){
-    | fld qword [value]
-    // printf("fld qword [%f] \n", *value);
+void Assembly::prologue(){
+
+    | push rbp
+    | mov rbp, rsp
+    | mov rax, rbp
+    | sub rax, 16
 }
 
-double* Assembly::pull() {
-    double* container = (double*) malloc(sizeof(double));
-    | fstp qword [container]
-    // printf("fstp qword [%f] \n", *container);
-    return container;
+void Assembly::pushConstantToFPUStack(double *value){
+    | fld qword [value]
+}
+
+void Assembly::storeLocalVariable() {
+    | fstp qword [rax]
+    | sub rax, 8
+}
+
+void Assembly::pushParameterToFPUStack(int index) {
+    switch(index){
+        case 0:
+            {
+                | movlpd qword [rbp-8], xmm0
+                | fld qword [rbp-8]
+                break;
+            }
+        case 1:
+            {
+                | movlpd qword [rbp-8], xmm1
+                | fld qword [rbp-8]
+                break;
+            }
+        case 2:
+            {
+                | movlpd qword [rbp-8], xmm2
+                | fld qword [rbp-8]
+                break;
+            }
+        case 3:
+            {
+                | movlpd qword [rbp-8], xmm3
+                | fld qword [rbp-8]
+                break;
+            }
+        case 4:
+            {
+                | movlpd qword [rbp-8], xmm4
+                | fld qword [rbp-8]
+                break;
+            }
+        case 5:
+            {
+                | movlpd qword [rbp-8], xmm5
+                | fld qword [rbp-8]
+                break;
+            }
+        case 6:
+            {
+                | movlpd qword [rbp-8], xmm6
+                | fld qword [rbp-8]
+                break;
+            }
+        case 7:
+            {
+                | movlpd qword [rbp-8], xmm7
+                | fld qword [rbp-8]
+                break;
+            }
+        default:
+            {
+                | fld qword [rbp+(8+(index-7)*8)];
+            }
+    }
+
+}
+
+void Assembly::pushLocalVariableToFPUStack(int index) {
+// printf("Val: %u\n", index);
+    | fld qword [rbp-(16+index*8)];
 }
 
 void Assembly::addLocalLabel(int labelNumber) {
@@ -788,20 +858,9 @@ void Assembly::conditionalJumpBackwardTo(int labelNumber, bool condition){
 }
 
 
-void Assembly::compile(){
+void Assembly::performCalculation(){
 
     switch(operator_){
-        case IDENTITY:
-            {
-                double* result = (double*) malloc(sizeof(double));
-                | fstp qword [result]
-                | movlpd xmm0, qword [result]
-                | ret
-                // printf("fstp qword %f \n", *result);
-                // printf("movlpd xmm0, qword [%f] \n", *result);
-                // printf("ret \n");
-               break;
-           }
         case ADD:
             {
                 | faddp st1
@@ -896,19 +955,26 @@ void Assembly::compile(){
     operator_ = EMPTY;
 }
 
-Assembly::~Assembly(){
-    dasm_free(&d);
+
+
+void Assembly::extractResult(){
+     | fstp qword [rbp-8]
+     | movlpd xmm0, qword [rbp-8]
 }
 
 
-void* Assembly::linkAndEncode(){
-  operator_ = IDENTITY;
-  compile();
+void Assembly::epilogue(){
+    | pop rbp
+    | ret
+}
+
+dasm_gen_func Assembly::linkAndEncode(){
   size_t sz;
   void* buf;
   dasm_link(Dst, &sz);
   buf = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   dasm_encode(Dst, buf);
   mprotect(buf, sz, PROT_READ | PROT_EXEC);
-  return buf;
+  dasm_free(&d);
+  return (dasm_gen_func) buf;
 }

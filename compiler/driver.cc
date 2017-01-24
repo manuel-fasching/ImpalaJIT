@@ -6,32 +6,30 @@
 
 #include <driver.h>
 #include <scanner.h>
-#include <expression.h>
 
 namespace impalajit {
-
-Driver::Driver(class ExpressionContext& _expressionContext)
-    : trace_scanning(false),
-      trace_parsing(false),
-      expressionContext(_expressionContext)
-{
-}
 
 dasm_gen_func Driver::parse_stream(std::istream& in, const std::string& sname)
 {
     streamname = sname;
 
     Scanner scanner(&in);
-    scanner.set_debug(trace_scanning);
+    scanner.set_debug(false);
     this->lexer = &scanner;
 
     Parser parser(*this);
-    parser.set_debug_level(trace_parsing);
+    parser.set_debug_level(false);
     parser.parse();
-    for (unsigned int ei = 0; ei < expressionContext.expressions.size(); ++ei) {
-        expressionContext.expressions[ei]->evaluate();
-    }
-    dasm_gen_func fp = (dasm_gen_func)(expressionContext.assembly.linkAndEncode());
+
+    assembly.initialize();
+    assembly.prologue();
+
+    expressionContext.evaluateAst();
+
+    assembly.extractResult();
+    assembly.epilogue();
+
+    dasm_gen_func fp = assembly.linkAndEncode();
     return fp;
 }
 

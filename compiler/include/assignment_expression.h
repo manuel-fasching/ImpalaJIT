@@ -10,11 +10,9 @@ class AssignmentExpression : public Node
 {
 public:
     Node* node;
-    std::string& name;
-    std::map<std::string, double*>& variables;
 
-    AssignmentExpression(std::string &_name, Node* _node, std::map<std::string, double*>& _variables, class Assembly& _assembly)
-            : Node(_assembly), name(_name), node(_node), variables(_variables)
+    AssignmentExpression(Node* _node, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : node(_node), Node(_assembly, _expressionContext)
     {
     }
 
@@ -24,9 +22,8 @@ public:
     }
 
     virtual void evaluate() {
-        printf("assignment");
         node->evaluate();
-        variables[name] = assembly.pull();
+        assembly.storeLocalVariable();
     }
 
     virtual int getOperator() {

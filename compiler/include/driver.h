@@ -10,9 +10,7 @@
 #include <assembly.hh>
 
 #include <types.hh>
-
-// forward declaration
-class ExpressionContext;
+#include <expression.h>
 
 /** The impalajit namespace is used to encapsulate the three parser classes
  * impalajit::Parser, impalajit::Scanner and impalajit::Driver */
@@ -27,14 +25,6 @@ namespace impalajit {
 class Driver
 {
 public:
-    /// construct a new parser driver context
-    Driver(class ExpressionContext& expressionContext);
-
-    /// enable debug output in the flex scanner
-    bool trace_scanning;
-
-    /// enable debug output in the bison parser
-    bool trace_parsing;
 
     /// stream name (file or input stream) used for error messages.
     std::string streamname;
@@ -80,7 +70,9 @@ public:
 
     /** Reference to the expression context filled during parsing of the
      * expressions. */
-    class ExpressionContext& expressionContext;
+    ExpressionContext expressionContext;
+
+    Assembly assembly;
 };
 
 } // namespace impalajit

@@ -780,7 +780,7 @@ namespace impalajit {
   case 6:
 #line 128 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				driver.expressionContext.addNode((yystack_[1].value.node));
 			}
 #line 786 "parser.cc" // lalr1.cc:859
     break;
@@ -788,7 +788,7 @@ namespace impalajit {
   case 7:
 #line 133 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[0].value.node));
+				driver.expressionContext.addNode((yystack_[0].value.node));
 			}
 #line 794 "parser.cc" // lalr1.cc:859
     break;
@@ -796,7 +796,7 @@ namespace impalajit {
   case 8:
 #line 138 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				driver.expressionContext.addNode((yystack_[1].value.node));
 			}
 #line 802 "parser.cc" // lalr1.cc:859
     break;
@@ -804,7 +804,7 @@ namespace impalajit {
   case 9:
 #line 143 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				driver.expressionContext.addNode((yystack_[1].value.node));
 			}
 #line 810 "parser.cc" // lalr1.cc:859
     break;
@@ -813,7 +813,7 @@ namespace impalajit {
 #line 148 "parser.yy" // lalr1.cc:859
     {
 				printf("If Stmt\n");
-				driver.expressionContext.expressions.push_back((yystack_[0].value.node));
+				driver.expressionContext.addNode((yystack_[0].value.node));
 			}
 #line 819 "parser.cc" // lalr1.cc:859
     break;
@@ -821,7 +821,7 @@ namespace impalajit {
   case 11:
 #line 154 "parser.yy" // lalr1.cc:859
     {
-				driver.expressionContext.expressions.push_back((yystack_[1].value.node));
+				driver.expressionContext.addNode((yystack_[1].value.node));
 			}
 #line 827 "parser.cc" // lalr1.cc:859
     break;
@@ -829,262 +829,261 @@ namespace impalajit {
   case 12:
 #line 160 "parser.yy" // lalr1.cc:859
     {
-	           double* v = (double*) malloc(sizeof(double));
-	           *v = (yystack_[0].value.doubleVal);
-		       (yylhs.value.node) = new ENConstant(v, driver.expressionContext.assembly);
+		        (yylhs.value.node) = new ENConstant((yystack_[0].value.doubleVal), driver.assembly, driver.expressionContext);
 	   		}
-#line 837 "parser.cc" // lalr1.cc:859
+#line 835 "parser.cc" // lalr1.cc:859
     break;
 
   case 13:
-#line 168 "parser.yy" // lalr1.cc:859
+#line 166 "parser.yy" // lalr1.cc:859
     {
-	       		(yylhs.value.node) = new ENVariable(driver.expressionContext.variables, *(yystack_[0].value.stringVal), driver.expressionContext.assembly);
+	       		(yylhs.value.node) = new ENVariable(*(yystack_[0].value.stringVal), driver.assembly, driver.expressionContext);
 	   		}
-#line 845 "parser.cc" // lalr1.cc:859
+#line 843 "parser.cc" // lalr1.cc:859
     break;
 
   case 14:
-#line 174 "parser.yy" // lalr1.cc:859
+#line 172 "parser.yy" // lalr1.cc:859
     {
 	       		(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
-#line 853 "parser.cc" // lalr1.cc:859
+#line 851 "parser.cc" // lalr1.cc:859
     break;
 
   case 15:
-#line 179 "parser.yy" // lalr1.cc:859
+#line 177 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
-#line 861 "parser.cc" // lalr1.cc:859
+#line 859 "parser.cc" // lalr1.cc:859
     break;
 
   case 16:
-#line 184 "parser.yy" // lalr1.cc:859
+#line 182 "parser.yy" // lalr1.cc:859
     {
-		       	(yylhs.value.node) = new ENSQRT((yystack_[1].value.node), driver.expressionContext.assembly);
+		       	(yylhs.value.node) = new ENSQRT((yystack_[1].value.node), driver.assembly, driver.expressionContext);
 		   	}
-#line 869 "parser.cc" // lalr1.cc:859
+#line 867 "parser.cc" // lalr1.cc:859
     break;
 
   case 17:
-#line 189 "parser.yy" // lalr1.cc:859
+#line 187 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[1].value.node);
 		   	}
-#line 877 "parser.cc" // lalr1.cc:859
+#line 875 "parser.cc" // lalr1.cc:859
     break;
 
   case 18:
-#line 196 "parser.yy" // lalr1.cc:859
+#line 194 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 	  		}
-#line 885 "parser.cc" // lalr1.cc:859
+#line 883 "parser.cc" // lalr1.cc:859
     break;
 
   case 19:
-#line 201 "parser.yy" // lalr1.cc:859
+#line 199 "parser.yy" // lalr1.cc:859
     {
-	      		(yylhs.value.node) = new ENPower((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+	      		(yylhs.value.node) = new ENPower((yystack_[2].value.node), (yystack_[0].value.node), driver.assembly, driver.expressionContext);
 	  		}
-#line 893 "parser.cc" // lalr1.cc:859
+#line 891 "parser.cc" // lalr1.cc:859
     break;
 
   case 20:
-#line 206 "parser.yy" // lalr1.cc:859
+#line 204 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
-#line 901 "parser.cc" // lalr1.cc:859
+#line 899 "parser.cc" // lalr1.cc:859
     break;
 
   case 21:
-#line 211 "parser.yy" // lalr1.cc:859
+#line 209 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
-#line 909 "parser.cc" // lalr1.cc:859
+#line 907 "parser.cc" // lalr1.cc:859
     break;
 
   case 22:
-#line 216 "parser.yy" // lalr1.cc:859
+#line 214 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new ENNegate((yystack_[0].value.node), driver.expressionContext.assembly);
+				(yylhs.value.node) = new ENNegate((yystack_[0].value.node), driver.assembly, driver.expressionContext);
 			}
-#line 917 "parser.cc" // lalr1.cc:859
+#line 915 "parser.cc" // lalr1.cc:859
     break;
 
   case 23:
-#line 221 "parser.yy" // lalr1.cc:859
+#line 219 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 		  	}
-#line 925 "parser.cc" // lalr1.cc:859
+#line 923 "parser.cc" // lalr1.cc:859
     break;
 
   case 24:
-#line 226 "parser.yy" // lalr1.cc:859
+#line 224 "parser.yy" // lalr1.cc:859
     {
-		      	(yylhs.value.node) = new ENMultiply((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		      	(yylhs.value.node) = new ENMultiply((yystack_[2].value.node), (yystack_[0].value.node), driver.assembly, driver.expressionContext);
 		  	}
-#line 933 "parser.cc" // lalr1.cc:859
+#line 931 "parser.cc" // lalr1.cc:859
     break;
 
   case 25:
-#line 231 "parser.yy" // lalr1.cc:859
+#line 229 "parser.yy" // lalr1.cc:859
     {
-		  	    (yylhs.value.node) = new ENDivide((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		  	    (yylhs.value.node) = new ENDivide((yystack_[2].value.node), (yystack_[0].value.node), driver.assembly, driver.expressionContext);
 		  	}
-#line 941 "parser.cc" // lalr1.cc:859
+#line 939 "parser.cc" // lalr1.cc:859
     break;
 
   case 26:
-#line 237 "parser.yy" // lalr1.cc:859
+#line 235 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 		  	}
-#line 949 "parser.cc" // lalr1.cc:859
+#line 947 "parser.cc" // lalr1.cc:859
     break;
 
   case 27:
-#line 242 "parser.yy" // lalr1.cc:859
+#line 240 "parser.yy" // lalr1.cc:859
     {
-		      	(yylhs.value.node) = new ENAdd((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		      	(yylhs.value.node) = new ENAdd((yystack_[2].value.node), (yystack_[0].value.node), driver.assembly, driver.expressionContext);
 		  	}
-#line 957 "parser.cc" // lalr1.cc:859
+#line 955 "parser.cc" // lalr1.cc:859
     break;
 
   case 28:
-#line 247 "parser.yy" // lalr1.cc:859
+#line 245 "parser.yy" // lalr1.cc:859
     {
-		      	(yylhs.value.node) = new ENSubtract((yystack_[2].value.node), (yystack_[0].value.node), driver.expressionContext.assembly);
+		      	(yylhs.value.node) = new ENSubtract((yystack_[2].value.node), (yystack_[0].value.node), driver.assembly, driver.expressionContext);
 		  	}
-#line 965 "parser.cc" // lalr1.cc:859
+#line 963 "parser.cc" // lalr1.cc:859
     break;
 
   case 29:
-#line 253 "parser.yy" // lalr1.cc:859
+#line 251 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 	  		}
-#line 973 "parser.cc" // lalr1.cc:859
+#line 971 "parser.cc" // lalr1.cc:859
     break;
 
   case 30:
-#line 259 "parser.yy" // lalr1.cc:859
+#line 257 "parser.yy" // lalr1.cc:859
     {
-		 		(yylhs.value.node) = new AssignmentExpression(*(yystack_[2].value.stringVal), (yystack_[0].value.node), driver.expressionContext.variables, driver.expressionContext.assembly);
+		 		driver.expressionContext.addVariable(*(yystack_[2].value.stringVal));
+		 		(yylhs.value.node) = new AssignmentExpression((yystack_[0].value.node), driver.assembly, driver.expressionContext);
 	     	}
-#line 981 "parser.cc" // lalr1.cc:859
+#line 980 "parser.cc" // lalr1.cc:859
     break;
 
   case 31:
-#line 265 "parser.yy" // lalr1.cc:859
+#line 264 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new CNComparison((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+				(yylhs.value.node) = new CNComparison((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.assembly, driver.expressionContext);
 			}
-#line 989 "parser.cc" // lalr1.cc:859
+#line 988 "parser.cc" // lalr1.cc:859
     break;
 
   case 32:
-#line 270 "parser.yy" // lalr1.cc:859
+#line 269 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 			}
-#line 997 "parser.cc" // lalr1.cc:859
+#line 996 "parser.cc" // lalr1.cc:859
     break;
 
   case 33:
-#line 276 "parser.yy" // lalr1.cc:859
+#line 275 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.assembly, driver.expressionContext);
 			}
-#line 1005 "parser.cc" // lalr1.cc:859
+#line 1004 "parser.cc" // lalr1.cc:859
     break;
 
   case 34:
-#line 281 "parser.yy" // lalr1.cc:859
+#line 280 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.assembly, driver.expressionContext);
 			}
-#line 1013 "parser.cc" // lalr1.cc:859
+#line 1012 "parser.cc" // lalr1.cc:859
     break;
 
   case 35:
-#line 289 "parser.yy" // lalr1.cc:859
+#line 288 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[0].value.node), driver.expressionContext.assembly);
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[0].value.node), driver.assembly, driver.expressionContext);
 			}
-#line 1021 "parser.cc" // lalr1.cc:859
+#line 1020 "parser.cc" // lalr1.cc:859
     break;
 
   case 36:
-#line 294 "parser.yy" // lalr1.cc:859
+#line 293 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
-#line 1029 "parser.cc" // lalr1.cc:859
+#line 1028 "parser.cc" // lalr1.cc:859
     break;
 
   case 37:
-#line 299 "parser.yy" // lalr1.cc:859
+#line 298 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.assembly, driver.expressionContext);
 			}
-#line 1037 "parser.cc" // lalr1.cc:859
+#line 1036 "parser.cc" // lalr1.cc:859
     break;
 
   case 38:
-#line 304 "parser.yy" // lalr1.cc:859
+#line 303 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.expressionContext.assembly);
+				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), (yystack_[1].value.integerVal), driver.assembly, driver.expressionContext);
 			}
-#line 1045 "parser.cc" // lalr1.cc:859
+#line 1044 "parser.cc" // lalr1.cc:859
     break;
 
   case 39:
-#line 310 "parser.yy" // lalr1.cc:859
+#line 309 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 			}
-#line 1053 "parser.cc" // lalr1.cc:859
+#line 1052 "parser.cc" // lalr1.cc:859
     break;
 
   case 40:
-#line 315 "parser.yy" // lalr1.cc:859
+#line 314 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) =(yystack_[1].value.node);
 			}
-#line 1061 "parser.cc" // lalr1.cc:859
+#line 1060 "parser.cc" // lalr1.cc:859
     break;
 
   case 41:
-#line 321 "parser.yy" // lalr1.cc:859
+#line 320 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new CxNIfStmt((yystack_[4].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
+				(yylhs.value.node) = new CxNIfStmt((yystack_[4].value.node), (yystack_[1].value.node), driver.assembly, driver.expressionContext);
 			}
-#line 1069 "parser.cc" // lalr1.cc:859
+#line 1068 "parser.cc" // lalr1.cc:859
     break;
 
   case 42:
-#line 326 "parser.yy" // lalr1.cc:859
+#line 325 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new CxNIfElseStmt((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node), driver.expressionContext.assembly);
+				(yylhs.value.node) = new CxNIfElseStmt((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node), driver.assembly, driver.expressionContext);
 			}
-#line 1077 "parser.cc" // lalr1.cc:859
+#line 1076 "parser.cc" // lalr1.cc:859
     break;
 
   case 44:
-#line 333 "parser.yy" // lalr1.cc:859
+#line 332 "parser.yy" // lalr1.cc:859
     {
 		  	}
-#line 1084 "parser.cc" // lalr1.cc:859
+#line 1083 "parser.cc" // lalr1.cc:859
     break;
 
 
-#line 1088 "parser.cc" // lalr1.cc:859
+#line 1087 "parser.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -1479,10 +1478,10 @@ namespace impalajit {
   Parser::yyrline_[] =
   {
        0,   107,   107,   112,   116,   122,   127,   132,   137,   142,
-     147,   153,   159,   167,   173,   178,   183,   188,   195,   200,
-     205,   210,   215,   220,   225,   230,   236,   241,   246,   252,
-     258,   264,   269,   275,   280,   288,   293,   298,   303,   309,
-     314,   320,   325,   331,   332
+     147,   153,   159,   165,   171,   176,   181,   186,   193,   198,
+     203,   208,   213,   218,   223,   228,   234,   239,   244,   250,
+     256,   263,   268,   274,   279,   287,   292,   297,   302,   308,
+     313,   319,   324,   330,   331
   };
 
   // Print the state stack on the debug stream.
@@ -1564,9 +1563,10 @@ namespace impalajit {
 
 #line 37 "parser.yy" // lalr1.cc:1167
 } // impalajit
-#line 1568 "parser.cc" // lalr1.cc:1167
-#line 338 "parser.yy" // lalr1.cc:1168
+#line 1567 "parser.cc" // lalr1.cc:1167
+#line 337 "parser.yy" // lalr1.cc:1168
  /*** Additional Code ***/
+
 
 void impalajit::Parser::error(const Parser::location_type& l,
 							  const std::string& m)

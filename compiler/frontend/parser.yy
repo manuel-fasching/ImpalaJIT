@@ -126,47 +126,45 @@ parameter_list : STRING
 
 function_body : expr ';'
 			{
-				driver.expressionContext.expressions.push_back($1);
+				driver.expressionContext.addNode($1);
 			}
 
 			| ifstmt 
 			{
-				driver.expressionContext.expressions.push_back($1);
+				driver.expressionContext.addNode($1);
 			}
 
 			| assignment ';'
 			{
-				driver.expressionContext.expressions.push_back($1);
+				driver.expressionContext.addNode($1);
 			}
 
 			| function_body expr ';'
 			{
-				driver.expressionContext.expressions.push_back($2);
+				driver.expressionContext.addNode($2);
 			}
 
 			| function_body ifstmt 
 			{
 				printf("If Stmt\n");
-				driver.expressionContext.expressions.push_back($2);
+				driver.expressionContext.addNode($2);
 			}
 
 			| function_body assignment ';'
 			{
-				driver.expressionContext.expressions.push_back($2);
+				driver.expressionContext.addNode($2);
 			}
 
 
 constant :  DOUBLE
 			{
-	           double* v = (double*) malloc(sizeof(double));
-	           *v = $1;
-		       $$ = new ENConstant(v, driver.expressionContext.assembly);
+		        $$ = new ENConstant($1, driver.assembly, driver.expressionContext);
 	   		}
 
 
 variable : STRING
            	{
-	       		$$ = new ENVariable(driver.expressionContext.variables, *$1, driver.expressionContext.assembly);
+	       		$$ = new ENVariable(*$1, driver.assembly, driver.expressionContext);
 	   		}
 
 
@@ -182,7 +180,7 @@ atomexpr : constant
 		   	
 		   	| FUNCTION '(' expr ')'
 		   	{
-		       	$$ = new ENSQRT($3, driver.expressionContext.assembly);
+		       	$$ = new ENSQRT($3, driver.assembly, driver.expressionContext);
 		   	}
 	        
 	        | '(' expr ')'
@@ -199,7 +197,7 @@ powexpr	: atomexpr
         	
         	| atomexpr '^' powexpr
           	{
-	      		$$ = new ENPower($1, $3, driver.expressionContext.assembly);
+	      		$$ = new ENPower($1, $3, driver.assembly, driver.expressionContext);
 	  		}
 
 unaryexpr : powexpr
@@ -214,7 +212,7 @@ unaryexpr : powexpr
 		    
 		    | '-' powexpr
 		    {
-				$$ = new ENNegate($2, driver.expressionContext.assembly);
+				$$ = new ENNegate($2, driver.assembly, driver.expressionContext);
 			}
 
 mulexpr : unaryexpr
@@ -224,12 +222,12 @@ mulexpr : unaryexpr
 	        
 	        | mulexpr '*' unaryexpr
 	        {
-		      	$$ = new ENMultiply($1, $3, driver.expressionContext.assembly);
+		      	$$ = new ENMultiply($1, $3, driver.assembly, driver.expressionContext);
 		  	}
 	        
 	        | mulexpr '/' unaryexpr
 	        {
-		  	    $$ = new ENDivide($1, $3, driver.expressionContext.assembly);
+		  	    $$ = new ENDivide($1, $3, driver.assembly, driver.expressionContext);
 		  	}
 
 
@@ -240,12 +238,12 @@ addexpr : mulexpr
 	      
 	      	| addexpr '+' mulexpr
 	      	{
-		      	$$ = new ENAdd($1, $3, driver.expressionContext.assembly);
+		      	$$ = new ENAdd($1, $3, driver.assembly, driver.expressionContext);
 		  	}
 	      	
 	      	| addexpr '-' mulexpr
 	      	{
-		      	$$ = new ENSubtract($1, $3, driver.expressionContext.assembly);
+		      	$$ = new ENSubtract($1, $3, driver.assembly, driver.expressionContext);
 		  	}
 
 
@@ -257,13 +255,14 @@ expr	: addexpr
 
 assignment : STRING '=' expr
             {
-		 		$$ = new AssignmentExpression(*$1, $3, driver.expressionContext.variables, driver.expressionContext.assembly);
+		 		driver.expressionContext.addVariable(*$1);
+		 		$$ = new AssignmentExpression($3, driver.assembly, driver.expressionContext);
 	     	}
 
  
 atomcondition : expr CMPOP expr
 			{
-				$$ = new CNComparison($1, $3, $2, driver.expressionContext.assembly);
+				$$ = new CNComparison($1, $3, $2, driver.assembly, driver.expressionContext);
 			}
 
 			| '(' booleanor ')'
@@ -274,12 +273,12 @@ atomcondition : expr CMPOP expr
 
 booleanand : booleanand AND atomcondition
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
 			}
 			
 			| atomcondition AND atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
 			}
 			
 			
@@ -287,7 +286,7 @@ booleanand : booleanand AND atomcondition
 
 booleanor : atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, driver.assembly, driver.expressionContext);
 			}
 			
 			| booleanand 
@@ -297,12 +296,12 @@ booleanor : atomcondition
 
 			| booleanor OR atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
 			}
 
 			| booleanor OR booleanand
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.expressionContext.assembly);
+				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
 			}
 
 			
@@ -319,12 +318,12 @@ conditional_body : assignment ';'
 
 ifstmt	:	IF '(' booleanor ')' '{' conditional_body '}'
 			{
-				$$ = new CxNIfStmt($3, $6, driver.expressionContext.assembly);
+				$$ = new CxNIfStmt($3, $6, driver.assembly, driver.expressionContext);
 			}
 			
 			| IF '(' booleanor ')' '{' conditional_body '}' ELSE '{' conditional_body '}'
 			{
-				$$ = new CxNIfElseStmt($3, $6, $10, driver.expressionContext.assembly);
+				$$ = new CxNIfElseStmt($3, $6, $10, driver.assembly, driver.expressionContext);
 			}
 		
 
@@ -336,6 +335,7 @@ start	: /* empty */
  /*** END EXAMPLE - Change the example grammar rules above ***/
 
 %% /*** Additional Code ***/
+
 
 void impalajit::Parser::error(const Parser::location_type& l,
 							  const std::string& m)

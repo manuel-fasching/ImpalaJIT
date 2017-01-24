@@ -26,9 +26,6 @@ public:
 
     virtual ~Compiler(){}
 
-    virtual Error setVariable(std::string name, double value);
-    virtual void clearVariables();
-
     virtual dasm_gen_func compile();
 };
 
@@ -47,14 +44,13 @@ typedef enum {
 } impalajit_error;
 #endif
 
+//C Interface
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     impalajit_compiler * impalajit_compiler_create();
-
-    impalajit_error impalajit_compiler_set_variable(impalajit_compiler* handle, const char name[], double value);
-    void impalajit_compiler_clear_variables(impalajit_compiler* handle);
 
     dasm_gen_func impalajit_compiler_compile(impalajit_compiler* handle);
 

@@ -8,6 +8,8 @@
 #include <dasm_proto.h>
 #include <dasm_x86.h>
 #include <stack>
+#include "impalajit/types.hh"
+
 
 class Assembly {
 
@@ -35,7 +37,23 @@ public:
 
     int operator_;
 
-    Assembly();
+    virtual ~Assembly();
+
+    void initialize();
+
+    void prologue();
+
+    void epilogue();
+
+    void pushParameterToFPUStack(int index);
+
+    void pushLocalVariableToFPUStack(int index);
+
+    void pushConstantToFPUStack(double *value);
+
+    void storeLocalVariable();
+
+    void performCalculation();
 
     void addLocalLabel(int labelNumber);
 
@@ -47,20 +65,13 @@ public:
 
     void conditionalJumpBackwardTo(int labelNumber, bool condition);
 
-    void compile();
+    void extractResult();
 
-    void push(double* value);
-
-    double* pull();
-
-    virtual ~Assembly();
-
-    void* linkAndEncode();
+    dasm_gen_func linkAndEncode();
 
 private:
     dasm_State *d;
     void **labels;
-    dasm_State **Dst;
 };
 
 #endif //IMPALAJIT_ASSEMBLY_HH

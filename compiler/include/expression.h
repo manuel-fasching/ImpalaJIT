@@ -11,15 +11,19 @@
 #include <cmath>
 #include <assembly.hh>
 #include <stdio.h>
+#include <algorithm>
+#include <iostream>
+#include <set>
 
 class Node
 {
 protected:
-    class Assembly& assembly;
+    class Assembly &assembly;
+    class ExpressionContext &expressionContext;
 
 public:
-    Node(class Assembly& _assembly)
-            : assembly(_assembly)
+    Node(class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : assembly(_assembly), expressionContext(_expressionContext)
     {
     }
     virtual ~ Node()
@@ -32,68 +36,73 @@ public:
 
 };
 
-/** ImpalaJIT context used to save the parsed expressions. This context is
- * passed along to the impalajit::Driver class and fill during parsing via bison
- * actions. */
 class ExpressionContext {
+private:
+    std::set<unsigned long> parameters;
+    std::set<unsigned long> variables;
+    std::vector<Node *> ast;
+
+    unsigned long computeHash(const char* str)
+    {
+        unsigned long hash = 5381;
+        int c;
+
+        while (c = *str++)
+            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+        return hash;
+    }
+
 public:
-
-    std::string* name;
-
-    /// type of the variable storage
-    typedef std::map<std::string, double*> variablemap_type;
-
-    /// variable storage. maps variable string to doubles
-    variablemap_type variables;
-
-    /// array of unassigned expressions found by the parser. these are then
-    /// outputted to the user.
-    std::vector<Node *> expressions;
-
-    Assembly assembly;
-
-    /// free the saved expression trees
     ~ExpressionContext() {
-        clearExpressions();
-        clearVariables();
-    }
-
-    /// free all saved expression trees
-    void clearExpressions() {
-        for (unsigned int i = 0; i < expressions.size(); ++i) {
-            delete expressions[i];
+        for(std::vector<Node*>::iterator it = ast.begin(); it != ast.end(); ++it) {
+            delete (*it);
         }
-        expressions.clear();
     }
 
-    /// free all variables
-    void clearVariables(){
-        variables.clear();
+    void addParameter(std::string& name){
+        unsigned long hash = computeHash(name.c_str());
+        parameters.insert(hash);
     }
 
-    void addParameter(const std::string &name){
-        variables[name] = (double*) malloc(sizeof(double));
+    void addVariable(std::string& name){
+        unsigned long hash = computeHash(name.c_str());
+        variables.insert(hash);
     }
 
-    void addVariable(const std::string &varname, Node* node) {
-        node->evaluate();
-        variables[varname] = assembly.pull();
+    void addNode(Node* node){
+        ast.push_back(node);
     }
 
-    /// check if the given variable name exists in the storage
-    bool existsVariable(const std::string &varname) const {
-        return variables.find(varname) != variables.end();
+    void evaluateAst(){
+        for(std::vector<Node*>::iterator it = ast.begin(); it != ast.end(); ++it) {
+            (*it)->evaluate();
+        }
     }
 
-    /// return the given variable from the storage. throws an exception if it
-    /// does not exist.
-    double* getVariable(const std::string &varname) const {
-        variablemap_type::const_iterator vi = variables.find(varname);
-        if (vi == variables.end())
-            throw (std::runtime_error("Unknown variable."));
-        else
-            return vi->second;
+    int getIndexOfParameter(std::string& name){
+        unsigned long hash = computeHash(name.c_str());
+        std::set<unsigned long>::iterator it = std::find(parameters.begin(), parameters.end(), hash);
+        if (it == parameters.end()) {
+            throw std::runtime_error("Parameter not found");
+        }
+        else{
+            return std::distance(parameters.begin(), it);
+        }
     }
+
+    int getIndexOfVariable(std::string& name){
+        unsigned long hash = computeHash(name.c_str());
+        std::set<unsigned long>::iterator it = std::find(variables.begin(), variables.end(), hash);
+        if (it == variables.end()) {
+            throw std::runtime_error("Parameter not found");
+        }
+        else{
+            return std::distance(variables.begin(), it);
+        }
+    }
+
+
 };
 
 #endif // EXPRESSION_H

@@ -6,12 +6,14 @@
 #define IMPALAJIT_BASIC_EXPRESSION_H_HH
 
 #include <expression.h>
+#include <algorithm>
+
 class ExpressionNode : public Node
 {
 public:
 
-    ExpressionNode(class Assembly& _assembly)
-            : Node(_assembly){
+    ExpressionNode(class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : Node(_assembly, _expressionContext){
     }
     virtual ~ExpressionNode()
     {
@@ -25,17 +27,17 @@ public:
 
 class ENConstant : public ExpressionNode
 {
-    double*	value;
+    double value;
 
 public:
-    explicit ENConstant(double* _value, Assembly& _assembly)
-            : ExpressionNode(_assembly), value(_value)
+    explicit ENConstant(double _value, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), value(_value)
     {
     }
 
     virtual void evaluate()
     {
-        assembly.push(value);
+        assembly.pushConstantToFPUStack(&value);
     }
 
     virtual int getOperator(){
@@ -46,11 +48,10 @@ public:
 
 class ENVariable : public ExpressionNode
 {
-    std::map<std::string, double*>& variables;
-    std::string & name;
+    std::string& name;
 public:
-    explicit ENVariable(std::map<std::string, double*>& _variables, std::string & _name, Assembly& _assembly)
-            : ExpressionNode(_assembly), variables(_variables), name(_name)
+    explicit ENVariable(std::string& _name, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), name(_name)
     {
     }
 
@@ -60,11 +61,16 @@ public:
 
     virtual void evaluate()
     {
-        std::map<std::string, double*>::const_iterator vi = variables.find(name);
-        if (vi == variables.end())
-            throw (std::runtime_error("Unknown variable."));
-        else
-            assembly.push(vi->second);
+        try{
+            int index = expressionContext.getIndexOfParameter(name);
+            assembly.pushParameterToFPUStack(index);
+            return;
+        }
+        catch(std::exception& e){
+        }
+        int index = expressionContext.getIndexOfVariable(name);
+        assembly.pushLocalVariableToFPUStack(index);
+        return;
     }
 
     virtual int getOperator(){
@@ -78,8 +84,8 @@ class ENNegate : public ExpressionNode
     Node* 	node;
 
 public:
-    explicit ENNegate(Node* _node, Assembly& _assembly)
-            : ExpressionNode(_assembly), node(_node)
+    explicit ENNegate(Node* _node, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), node(_node)
     {
     }
 
@@ -92,7 +98,7 @@ public:
     {
         node->evaluate();
         assembly.operator_=assembly.NEG;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -106,8 +112,8 @@ class ENAdd : public ExpressionNode
     Node* 	right;
 
 public:
-    explicit ENAdd(Node* _left, Node* _right , Assembly& _assembly)
-            : ExpressionNode(_assembly), left(_left), right(_right)
+    explicit ENAdd(Node* _left, Node* _right , class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), left(_left), right(_right)
     {
     }
 
@@ -122,7 +128,7 @@ public:
         left->evaluate();
         right->evaluate();
         assembly.operator_=assembly.ADD;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -137,8 +143,8 @@ class ENSubtract : public ExpressionNode
     Node* 	right;
 
 public:
-    explicit ENSubtract(Node* _left, Node* _right , Assembly& _assembly)
-            : ExpressionNode(_assembly), left(_left), right(_right)
+    explicit ENSubtract(Node* _left, Node* _right , class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), left(_left), right(_right)
     {
     }
 
@@ -153,7 +159,7 @@ public:
         left->evaluate();
         right->evaluate();
         assembly.operator_=assembly.SUB;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -167,8 +173,8 @@ class ENMultiply : public ExpressionNode
     Node* 	right;
 
 public:
-    explicit ENMultiply(Node* _left, Node* _right, Assembly& _assembly)
-            : ExpressionNode(_assembly), left(_left), right(_right)
+    explicit ENMultiply(Node* _left, Node* _right, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), left(_left), right(_right)
     {
     }
 
@@ -183,7 +189,7 @@ public:
         left->evaluate();
         right->evaluate();
         assembly.operator_=assembly.MUL;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -197,8 +203,8 @@ class ENDivide : public ExpressionNode
     Node* 	right;
 
 public:
-    explicit ENDivide(Node* _left, Node* _right , Assembly& _assembly)
-            : ExpressionNode(_assembly), left(_left), right(_right)
+    explicit ENDivide(Node* _left, Node* _right , class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), left(_left), right(_right)
     {
     }
 
@@ -213,7 +219,7 @@ public:
         left->evaluate();
         right->evaluate();
         assembly.operator_=assembly.DIV;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -226,8 +232,8 @@ class ENSQRT: public ExpressionNode
     Node* 	node;
 
 public:
-    explicit ENSQRT(Node* _node, Assembly& _assembly)
-            : ExpressionNode(_assembly), node(_node)
+    explicit ENSQRT(Node* _node, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), node(_node)
     {
     }
 
@@ -240,7 +246,7 @@ public:
     {
         node->evaluate();
         assembly.operator_=assembly.SQRT;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){
@@ -255,8 +261,8 @@ class ENPower : public ExpressionNode
     Node* 	right;
 
 public:
-    explicit ENPower(Node* _left, Node* _right, Assembly& _assembly)
-            : ExpressionNode(_assembly), left(_left), right(_right)
+    explicit ENPower(Node* _left, Node* _right, class Assembly& _assembly, class ExpressionContext& _expressionContext)
+            : ExpressionNode(_assembly, _expressionContext), left(_left), right(_right)
     {
     }
 
@@ -271,7 +277,7 @@ public:
         right->evaluate();
         left->evaluate();
         assembly.operator_=assembly.POW;
-        assembly.compile();
+        assembly.performCalculation();
     }
 
     virtual int getOperator(){

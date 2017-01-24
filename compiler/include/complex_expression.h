@@ -17,9 +17,9 @@ class CxNIfStmt : public Node
 
 public:
 
-    explicit CxNIfStmt(Node* _condition, Node* _body_if, Assembly& _assembly)
+    explicit CxNIfStmt(Node* _condition, Node* _body_if, class Assembly& _assembly, class ExpressionContext& _expressionContext)
 
-            : Node(_assembly), condition(_condition), body_if(_body_if)
+            : Node(_assembly, _expressionContext), condition(_condition), body_if(_body_if)
     {
     }
 
@@ -58,9 +58,9 @@ class CxNIfElseStmt : public Node
 
 public:
 
-    explicit CxNIfElseStmt(Node* _condition, Node* _body_if, Node* _body_else, Assembly& _assembly)
+    explicit CxNIfElseStmt(Node* _condition, Node* _body_if, Node* _body_else, class Assembly& _assembly, class ExpressionContext& _expressionContext)
 
-            : Node(_assembly), condition(_condition), body_if(_body_if), body_else(_body_else)
+            : Node(_assembly, _expressionContext), condition(_condition), body_if(_body_if), body_else(_body_else)
     {
     }
 
