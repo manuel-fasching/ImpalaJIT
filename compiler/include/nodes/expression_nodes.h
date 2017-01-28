@@ -96,8 +96,8 @@ public:
     explicit PowerNode(Node* _left, Node* _right)
             : Node(POWER)
     {
-        nodes.push_back(_left);
         nodes.push_back(_right);
+        nodes.push_back(_left);
     }
 };
 

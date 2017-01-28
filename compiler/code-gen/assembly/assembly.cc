@@ -30,7 +30,7 @@ enum {
 };
 #line 13 "compiler/code-gen/assembly/assembly.dasc"
 //|.actionlist impala_actions
-static const unsigned char impala_actions[985] = {
+static const unsigned char impala_actions[1012] = {
   85,72,137,229,72,137,232,72,131,232,16,255,221,4,37,237,255,221,24,72,131,
   232,8,255,102,15,19,69,252,248,221,69,252,248,255,102,15,19,77,252,248,221,
   69,252,248,255,102,15,19,85,252,248,221,69,252,248,255,102,15,19,93,252,248,
@@ -78,7 +78,9 @@ static const unsigned char impala_actions[985] = {
   255,15,141,244,1,255,15,141,244,2,255,15,141,244,3,255,15,141,244,4,255,15,
   141,244,5,255,15,141,244,6,255,15,141,244,7,255,15,141,244,8,255,15,141,244,
   9,255,217,224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,
-  217,252,250,255,223,252,241,221,216,255,93,195,255
+  217,252,241,217,192,217,252,252,220,225,217,201,217,224,217,252,240,217,232,
+  222,193,217,252,253,221,217,255,217,252,250,255,223,252,241,221,216,255,93,
+  195,255
 };
 
 #line 14 "compiler/code-gen/assembly/assembly.dasc"
@@ -1551,14 +1553,25 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
-    printf("^: Operation not supported yet");
-    exit(0);
+    //| fyl2x
+    //| fld st0
+    //| frndint
+    //| fsubr st1,st0
+    //| fxch st1
+    //| fchs
+    //| f2xm1
+    //| fld1
+    //| faddp st1,st0
+    //| fscale
+    //| fstp st1
+    dasm_put(Dst, 972);
+#line 952 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateSQRT(){
     //| fsqrt
-    dasm_put(Dst, 972);
-#line 947 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 999);
+#line 956 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::performComparison(CompareOperatorType _operator){
@@ -1567,8 +1580,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 955 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 964 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1577,8 +1590,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 963 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 972 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1587,8 +1600,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 971 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 980 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1597,8 +1610,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 979 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 988 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1607,8 +1620,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 987 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 996 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1617,8 +1630,8 @@ void Assembly::performComparison(CompareOperatorType _operator){
             {
                 //| fcomip st1
                 //| fpop
-                dasm_put(Dst, 976);
-#line 995 "compiler/code-gen/assembly/assembly.dasc"
+                dasm_put(Dst, 1003);
+#line 1004 "compiler/code-gen/assembly/assembly.dasc"
                 // printf("fcomip st1 \n");
                 // printf("fpop \n");
                 break;
@@ -1630,15 +1643,15 @@ void Assembly::extractResult(){
      //| fstp qword [rbp-8]
      //| movlpd xmm0, qword [rbp-8]
      dasm_put(Dst, 116);
-#line 1005 "compiler/code-gen/assembly/assembly.dasc"
+#line 1014 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 
 void Assembly::epilogue(){
     //| pop rbp
     //| ret
-    dasm_put(Dst, 982);
-#line 1011 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 1009);
+#line 1020 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 dasm_gen_func Assembly::linkAndEncode(){

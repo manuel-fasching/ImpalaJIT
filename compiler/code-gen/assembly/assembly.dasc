@@ -938,8 +938,17 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
-    printf("^: Operation not supported yet");
-    exit(0);
+    | fyl2x
+    | fld st0
+    | frndint
+    | fsubr st1,st0
+    | fxch st1
+    | fchs
+    | f2xm1
+    | fld1
+    | faddp st1,st0
+    | fscale
+    | fstp st1
 }
 
 void Assembly::calculateSQRT(){
