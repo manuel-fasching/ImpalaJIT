@@ -24,8 +24,6 @@
 #undef yyFlexLexer
 #endif
 
-#include "parser.hh"
-
 namespace impalajit {
 
 /** Scanner is a derived class to add some extra function to the scanner

@@ -5,12 +5,10 @@
 #define IMPALAJIT_DRIVER_H
 
 #include <string>
-#include <vector>
 
-#include <assembly.hh>
-
+#include <function_context.h>
 #include <types.hh>
-#include <expression.h>
+
 
 /** The impalajit namespace is used to encapsulate the three parser classes
  * impalajit::Parser, impalajit::Scanner and impalajit::Driver */
@@ -24,7 +22,15 @@ namespace impalajit {
  * structure into which the parsed data is saved. */
 class Driver
 {
+private:
+    FunctionContext* functionContext;
+
 public:
+
+    ~Driver();
+    /** Pointer to the current lexer instance, this is used to connect the
+    * parser to the scanner. It is used in the yylex macro. */
+    class Scanner* lexer;
 
     /// stream name (file or input stream) used for error messages.
     std::string streamname;
@@ -64,15 +70,7 @@ public:
      * e.g. to a dialog box. */
     void error(const std::string& m);
 
-    /** Pointer to the current lexer instance, this is used to connect the
-     * parser to the scanner. It is used in the yylex macro. */
-    class Scanner* lexer;
-
-    /** Reference to the expression context filled during parsing of the
-     * expressions. */
-    ExpressionContext expressionContext;
-
-    Assembly assembly;
+    void setFunctionContext(FunctionContext* &_functionContext);
 };
 
 } // namespace impalajit

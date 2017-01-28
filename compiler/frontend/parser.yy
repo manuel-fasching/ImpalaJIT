@@ -5,14 +5,16 @@
 
 #include <stdio.h>
 #include <string>
-#include <vector>
 
-#include <expression.h>
-#include <basic_expression.h>
-#include <comparison_expression.h>
-#include <complex_expression.h>
-#include <assignment_expression.h>
+#include <expression_nodes.h>
+#include <compare_nodes.h>
+#include <conditional_nodes.h>
+#include <assignment_nodes.h>
+#include <boolean_nodes.h>
+#include <return_nodes.h>
 
+#include <driver.h>
+#include <scanner.h>
 %}
 
 /*** yacc/bison Declarations ***/
@@ -55,13 +57,17 @@
 /* verbose error messages */
 %error-verbose
 
- /*** BEGIN EXAMPLE - Change the example grammar's tokens below ***/
+%code requires {
+  #include <set>
+}
 
 %union {
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
+    std::set<std::string>* stringSet;
+    class FunctionContext* functionContext;
 }
 
 %token			END	     0				"end of file"
@@ -76,20 +82,20 @@
 %token <integerVal>  AND               	"and operator"
 %token <integerVal> CMPOP				"compare operator"
 %token <stringVal> COMMA				","
+%token <stringVal> SEMICOLON			";"
+%token <stringVal> RETURN				"return value"
 
 
 %type <node>	constant variable
-%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment conditional_body
+%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
+%type <stringSet> parameter_list
+%type <functionContext> function
 
 %destructor { delete $$; } constant variable 
-%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment conditional_body
-
- /*** END EXAMPLE - Change the example grammar's tokens above ***/
+%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
 
 %{
 
-#include <driver.h>
-#include <scanner.h>
 
 /* this "connects" the bison parser in the driver to the flex scanner class
  * object. it defines the yylex() function call to pull the next token from the
@@ -99,72 +105,78 @@
 
 %}
 
+
 %% /*** Grammar Rules ***/
-
- /*** BEGIN EXAMPLE - Change the example grammar rules below ***/
-
 
 function : STRING '(' parameter_list ')' '{' function_body '}'
 			{
+				$$ = new FunctionContext(*$1, *$3, $6);
+			}
+
+parameter_list : %empty 
+			{
+				std::set<std::string>* parameters = new std::set<std::string>();
+				$$ = parameters;
+			}
+
+			| parameter_list STRING
+			{
+				$$ = $1;
+				(*$$).insert(*$2);
 			}
 
 			|
-			STRING '(' ')' '{' function_body '}'
+			parameter_list COMMA STRING 
 			{
+				$$ = $1;
+				(*$$).insert(*$3);
 			}
 
-parameter_list : STRING
+function_body : %empty 
 			{
-				driver.expressionContext.addParameter(*$1);
-			}
-
+				$$ = new RootNode();
+			} 
+			
 			|
-			parameter_list ',' STRING 
+			function_body expr SEMICOLON
 			{
-				driver.expressionContext.addParameter(*$3);
-			}
-
-function_body : expr ';'
-			{
-				driver.expressionContext.addNode($1);
-			}
-
-			| ifstmt 
-			{
-				driver.expressionContext.addNode($1);
-			}
-
-			| assignment ';'
-			{
-				driver.expressionContext.addNode($1);
-			}
-
-			| function_body expr ';'
-			{
-				driver.expressionContext.addNode($2);
+				$$ = $1;
+				($$->nodes).push_back($2);
 			}
 
 			| function_body ifstmt 
 			{
-				printf("If Stmt\n");
-				driver.expressionContext.addNode($2);
+				$$ = $1;
+				($$->nodes).push_back($2);
 			}
 
-			| function_body assignment ';'
+			| function_body assignment SEMICOLON
 			{
-				driver.expressionContext.addNode($2);
+				$$ = $1;
+				($$->nodes).push_back($2);
 			}
 
+			| function_body return_stmt SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+
+return_stmt : RETURN expr 
+			{
+				$$ = new ReturnNode($2);
+			}
 
 constant :  DOUBLE
 			{
-		        $$ = new ENConstant($1, driver.assembly, driver.expressionContext);
+		        $$ = new ConstantNode($1);
 	   		}
 
 
 variable : STRING
            	{
-	       		$$ = new ENVariable(*$1, driver.assembly, driver.expressionContext);
+	       		$$ = new VariableNode(*$1);
 	   		}
 
 
@@ -180,7 +192,7 @@ atomexpr : constant
 		   	
 		   	| FUNCTION '(' expr ')'
 		   	{
-		       	$$ = new ENSQRT($3, driver.assembly, driver.expressionContext);
+		       	$$ = new SQRTNode($3);
 		   	}
 	        
 	        | '(' expr ')'
@@ -197,7 +209,7 @@ powexpr	: atomexpr
         	
         	| atomexpr '^' powexpr
           	{
-	      		$$ = new ENPower($1, $3, driver.assembly, driver.expressionContext);
+	      		$$ = new PowerNode($1, $3);
 	  		}
 
 unaryexpr : powexpr
@@ -212,7 +224,7 @@ unaryexpr : powexpr
 		    
 		    | '-' powexpr
 		    {
-				$$ = new ENNegate($2, driver.assembly, driver.expressionContext);
+				$$ = new NegationNode($2);
 			}
 
 mulexpr : unaryexpr
@@ -222,12 +234,12 @@ mulexpr : unaryexpr
 	        
 	        | mulexpr '*' unaryexpr
 	        {
-		      	$$ = new ENMultiply($1, $3, driver.assembly, driver.expressionContext);
+		      	$$ = new MultiplicationNode($1, $3);
 		  	}
 	        
 	        | mulexpr '/' unaryexpr
 	        {
-		  	    $$ = new ENDivide($1, $3, driver.assembly, driver.expressionContext);
+		  	    $$ = new DivisionNode($1, $3);
 		  	}
 
 
@@ -238,12 +250,12 @@ addexpr : mulexpr
 	      
 	      	| addexpr '+' mulexpr
 	      	{
-		      	$$ = new ENAdd($1, $3, driver.assembly, driver.expressionContext);
+		      	$$ = new AdditionNode($1, $3);
 		  	}
 	      	
 	      	| addexpr '-' mulexpr
 	      	{
-		      	$$ = new ENSubtract($1, $3, driver.assembly, driver.expressionContext);
+		      	$$ = new SubtractionNode($1, $3);
 		  	}
 
 
@@ -255,14 +267,13 @@ expr	: addexpr
 
 assignment : STRING '=' expr
             {
-		 		driver.expressionContext.addVariable(*$1);
-		 		$$ = new AssignmentExpression($3, driver.assembly, driver.expressionContext);
+		 		$$ = new AssignmentNode(*$1, $3);
 	     	}
 
  
 atomcondition : expr CMPOP expr
 			{
-				$$ = new CNComparison($1, $3, $2, driver.assembly, driver.expressionContext);
+				$$ = new CompareNode($1, $3, static_cast<CompareOperatorType>($2));
 			}
 
 			| '(' booleanor ')'
@@ -273,12 +284,12 @@ atomcondition : expr CMPOP expr
 
 booleanand : booleanand AND atomcondition
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
+				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
 			}
 			
 			| atomcondition AND atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
+				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
 			}
 			
 			
@@ -286,7 +297,7 @@ booleanand : booleanand AND atomcondition
 
 booleanor : atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, driver.assembly, driver.expressionContext);
+				$$ = new BooleanJunctionNode($1);
 			}
 			
 			| booleanand 
@@ -296,43 +307,91 @@ booleanor : atomcondition
 
 			| booleanor OR atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
+				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
 			}
 
 			| booleanor OR booleanand
 			{
-				$$ = new BooleanJunctionNode($1, $3, $2, driver.assembly, driver.expressionContext);
+				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
 			}
 
+if_body : %empty 
+			{
+				$$ = new IfBodyNode();
+			} 
 			
-conditional_body : assignment ';'
+			|
+			if_body expr SEMICOLON
 			{
 				$$ = $1;
+				($$->nodes).push_back($2);
 			}
 
-			| expr ';'
+			| if_body ifstmt 
 			{
-				$$ =$1;
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+			| if_body assignment SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+			| if_body return_stmt SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+else_body : %empty 
+			{
+				$$ = new ElseBodyNode();
+			} 
+			
+			|
+			else_body expr SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+			| else_body ifstmt 
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+			| else_body assignment SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
+			}
+
+			| else_body return_stmt SEMICOLON
+			{
+				$$ = $1;
+				($$->nodes).push_back($2);
 			}
 
 
-ifstmt	:	IF '(' booleanor ')' '{' conditional_body '}'
+
+ifstmt	:	IF '(' booleanor ')' '{' if_body '}'
 			{
-				$$ = new CxNIfStmt($3, $6, driver.assembly, driver.expressionContext);
+				$$ = new IfStmtNode($3, $6);
 			}
 			
-			| IF '(' booleanor ')' '{' conditional_body '}' ELSE '{' conditional_body '}'
+			| IF '(' booleanor ')' '{' if_body '}' ELSE '{' else_body '}'
 			{
-				$$ = new CxNIfElseStmt($3, $6, $10, driver.assembly, driver.expressionContext);
+				$$ = new IfElseStmtNode($3, $6, $10);
 			}
 		
 
-start	: /* empty */	        	        
-	        | start function END
+start	:   function END
 			{
+				driver.setFunctionContext($1);
 		  	}
-
- /*** END EXAMPLE - Change the example grammar rules above ***/
 
 %% /*** Additional Code ***/
 

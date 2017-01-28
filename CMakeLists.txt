@@ -31,7 +31,7 @@ macro(translate_dynasm_file)
     execute_process(COMMAND gcc -o minilua 3rd_party/LuaJIT/src/host/minilua.c -lm
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             )
-    execute_process(COMMAND ./minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/assembly/assembly.cc -D X64 compiler/assembly/assembly.dasc
+    execute_process(COMMAND ./minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/code-gen/assembly/assembly.cc -D X64 compiler/code-gen/assembly/assembly.dasc
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             )
 endmacro()
@@ -47,8 +47,11 @@ set(include_dirs
         include
         include/impalajit
         compiler/include
-        compiler/assembly/include
+        compiler/include/nodes
+        compiler/include/types
         compiler/frontend/include
+        compiler/code-gen/include
+        compiler/code-gen/assembly/include
         )
 
 include_directories(${include_dirs})
@@ -58,15 +61,16 @@ set(source_files ${source_files}
         compiler/frontend/parser.cc
         compiler/frontend/scanner.cc
         compiler/driver.cc
-        compiler/assembly/assembly.cc
-        compiler/include/driver.h
-        compiler/include/expression.h
+        compiler/function_context.cc
+        compiler/code-gen/assembly/assembly.cc
+        compiler/include/nodes/node.h
         impalajit.cc
-        compiler/include/basic_expression.h
-        compiler/include/comparison_expression.h
-        compiler/include/complex_expression.h
-        compiler/include/boolean_expression.h
-        compiler/include/assignment_expression.h)
+        compiler/include/nodes/expression_nodes.h
+        compiler/include/nodes/compare_nodes.h
+        compiler/include/nodes/conditional_nodes.h
+        compiler/include/nodes/boolean_nodes.h
+        compiler/include/nodes/assignment_nodes.h
+        compiler/code-gen/code_generator.cc)
 
 install(FILES include/impalajit.hh
         DESTINATION include )

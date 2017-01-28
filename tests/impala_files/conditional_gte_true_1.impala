@@ -1,4 +1,7 @@
-test(y, z){
-    x=z*y*59.0;
-    x;
+test(x,y,z){
+    a=3;
+    a=3+a;
+    b=a+3;
+    b=b*2;
+    return b*2+3;
 }

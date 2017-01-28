@@ -11,12 +11,10 @@
 namespace impalajit{
     class Compiler;
 }
-
 class impalajit::Compiler{
-
 public:
     enum Error {
-        SUCCESS = 0,
+        SUCCESS,
         NO_IMPALAFILE_SPECIFIED,
         BAD_INPUT_FILE,
         COMPILATION_ERROR,
@@ -24,9 +22,7 @@ public:
         EMPTY_VARIABLE_BUFFER
     };
 
-    virtual ~Compiler(){}
-
-    virtual dasm_gen_func compile();
+    dasm_gen_func compile();
 };
 
 typedef impalajit::Compiler impalajit_compiler;

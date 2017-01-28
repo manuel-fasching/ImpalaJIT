@@ -6,6 +6,7 @@
 #include <string>
 
 #include <scanner.h>
+#include <internal_types.hh>
 
 /* import the parser's token type into a local typedef */
 typedef impalajit::Parser::token token;
@@ -65,27 +66,27 @@ typedef impalajit::Parser::token_type token_type;
 
  /*** COMPARE OPERATORS ***/
 (<=) {
-    yylval->integerVal = 11;
+    yylval->integerVal = LTE;
     return token::CMPOP;
 }
 (>=) {
-    yylval->integerVal = 10;
+    yylval->integerVal = GTE;
     return token::CMPOP;
 }
 (==) {
-    yylval->integerVal = 12;
+    yylval->integerVal = EQ;
     return token::CMPOP;
 }
 (!=) {
-    yylval->integerVal = 13;
+    yylval->integerVal = NE;
     return token::CMPOP;
 }
 (<) {
-    yylval->integerVal = 9;
+    yylval->integerVal = LT;
     return token::CMPOP;
 }
 (>) {
-    yylval->integerVal = 8;
+    yylval->integerVal = GT;
     return token::CMPOP;
 }
 
@@ -93,11 +94,11 @@ typedef impalajit::Parser::token_type token_type;
 
  /*** BOOL OPERATORS ***/
 (&&) {
-    yylval->integerVal = 14;
+    yylval->integerVal = AND;
     return token::AND;
 }
 (\|\|) {
-    yylval->integerVal = 15;
+    yylval->integerVal = OR;
     return token::OR;
 }
 
@@ -123,6 +124,22 @@ else {
 }
 
 
+ /*** return ***/
+return {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::RETURN;
+}
+
+
+ /*** Special strings ***/
+(,) {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::COMMA;
+}
+(;) {
+    yylval->stringVal = new std::string(yytext, yyleng);
+    return token::SEMICOLON;
+}
 
 
 [A-Za-z][A-Za-z0-9_]* {

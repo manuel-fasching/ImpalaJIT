@@ -39,6 +39,12 @@
 
 #ifndef YY_YY_PARSER_HH_INCLUDED
 # define YY_YY_PARSER_HH_INCLUDED
+// //                    "%code requires" blocks.
+#line 60 "parser.yy" // lalr1.cc:377
+
+  #include <set>
+
+#line 48 "parser.hh" // lalr1.cc:377
 
 
 # include <cstdlib> // std::abort
@@ -108,9 +114,9 @@
 # define YYDEBUG 1
 #endif
 
-#line 37 "parser.yy" // lalr1.cc:377
+#line 39 "parser.yy" // lalr1.cc:377
 namespace impalajit {
-#line 114 "parser.hh" // lalr1.cc:377
+#line 120 "parser.hh" // lalr1.cc:377
 
 
 
@@ -124,14 +130,16 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 60 "parser.yy" // lalr1.cc:377
+    #line 64 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
+    std::set<std::string>* stringSet;
+    class FunctionContext* functionContext;
 
-#line 135 "parser.hh" // lalr1.cc:377
+#line 143 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -162,7 +170,9 @@ namespace impalajit {
         OR = 265,
         AND = 266,
         CMPOP = 267,
-        COMMA = 268
+        COMMA = 268,
+        SEMICOLON = 269,
+        RETURN = 270
       };
     };
 
@@ -350,7 +360,7 @@ namespace impalajit {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const signed char yycheck_[];
+  static const unsigned char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -470,9 +480,9 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 117,     ///< Last index in yytable_.
-      yynnts_ = 19,  ///< Number of nonterminal symbols.
-      yyfinal_ = 2, ///< Termination state number.
+      yylast_ = 109,     ///< Last index in yytable_.
+      yynnts_ = 21,  ///< Number of nonterminal symbols.
+      yyfinal_ = 6, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 26  ///< Number of tokens.
@@ -484,9 +494,9 @@ namespace impalajit {
   };
 
 
-#line 37 "parser.yy" // lalr1.cc:377
+#line 39 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 490 "parser.hh" // lalr1.cc:377
+#line 500 "parser.hh" // lalr1.cc:377
 
 
 

@@ -3,7 +3,6 @@
 //
 
 #include <assembly.hh>
-#include <stack>
 #include <stdio.h>
 
 
@@ -19,21 +18,19 @@
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
-
-dasm_State* d;
-void** labels;
-int operator_;
-int parameterCount;
-dasm_State** Dst;
-
-
-Assembly::~Assembly(){
+Assembly::~Assembly()
+{
+    dasm_free(&d);
+    delete labels;
+    Dst = NULL;
+    d = NULL;
+    labels = NULL;
 }
 
 void Assembly::initialize() {
     dasm_init(&d, DASM_MAXSECTION);
 
-    labels = (void**) malloc(lbl__MAX);
+    labels = (void **) operator new(lbl__MAX);
     dasm_setupglobal(&d, labels, lbl__MAX);
 
     dasm_setup(&d, impala_actions);
@@ -113,12 +110,73 @@ void Assembly::pushParameterToFPUStack(int index) {
                 | fld qword [rbp+(8+(index-7)*8)];
             }
     }
+}
 
+void Assembly::replaceParameter(int index) {
+    switch(index){
+        case 0:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm0, qword [rbp-8]
+                break;
+            }
+        case 1:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm1, qword [rbp-8]
+                break;
+            }
+        case 2:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm2, qword [rbp-8]
+                break;
+            }
+        case 3:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm3, qword [rbp-8]
+                break;
+            }
+        case 4:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm4, qword [rbp-8]
+                break;
+            }
+        case 5:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm5, qword [rbp-8]
+                break;
+            }
+        case 6:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm6, qword [rbp-8]
+                break;
+            }
+        case 7:
+            {
+                | fstp qword [rbp-8]
+                | movlpd xmm7, qword [rbp-8]
+                break;
+            }
+        default:
+            {
+                | fstp qword [rbp+(8+(index-7)*8)];
+            }
+    }
 }
 
 void Assembly::pushLocalVariableToFPUStack(int index) {
 // printf("Val: %u\n", index);
     | fld qword [rbp-(16+index*8)];
+}
+
+void Assembly::replaceLocalVariable(int index) {
+// printf("Val: %u\n", index);
+    | fstp qword [rbp-(16+index*8)];
 }
 
 void Assembly::addLocalLabel(int labelNumber) {
@@ -300,7 +358,7 @@ void Assembly::jumpBackwardTo(int labelNumber) {
 }
 
 
-void Assembly::conditionalJumpForwardTo(int labelNumber, bool condition){
+void Assembly::conditionalJumpForwardTo(int labelNumber, bool condition, CompareOperatorType operator_){
     if(condition == false){
         if(labelNumber == 1  && operator_==EQ)
             | jne  >1
@@ -635,7 +693,7 @@ void Assembly::conditionalJumpForwardTo(int labelNumber, bool condition){
             }*/
 }
 
-void Assembly::conditionalJumpBackwardTo(int labelNumber, bool condition){
+void Assembly::conditionalJumpBackwardTo(int labelNumber, bool condition, CompareOperatorType operator_){
     if(condition == false){
         if(labelNumber == 1  && operator_==EQ)
 			 | jne  <1
@@ -858,51 +916,39 @@ void Assembly::conditionalJumpBackwardTo(int labelNumber, bool condition){
 }
 
 
-void Assembly::performCalculation(){
+void Assembly::performNegation(){
+    | fchs
+}
 
-    switch(operator_){
-        case ADD:
-            {
-                | faddp st1
-                // printf("faddp st1 \n");
-                break;
-            }
-         case SUB:
-            {
-                | fsubp st1
-                // printf("fsubp st1 \n");
-                break;
-            }
-         case MUL:
-            {
-                | fmulp st1
-                // printf("fmulp st1 \n");
-                break;
-            }
-         case DIV:
-            {
-                | fdivp st1
-                // printf("fdivp st1 \n");
-                break;
-            }
-         case NEG:
-            {
-                | fchs
-                // printf("fchs \n");
-                break;
-            }
-         case SQRT:
-            {
-                | fsqrt
-                // printf("fsqrt \n");
-                break;
-            }
-         case POW:
-            {
-                // printf("^: Operation not supported yet");
-                exit(0);
-            }
-         case EQ:
+void Assembly::calculateAddition(){
+    | faddp st1
+    // printf("faddp st1 \n");
+}
+
+void Assembly::calculateSubtraction(){
+    | fsubp st1
+}
+
+void Assembly::calculateMultiplication(){
+    | fmulp st1
+}
+
+void Assembly::calculateDivision(){
+    | fdivp st1
+}
+
+void Assembly::calculatePower(){
+    printf("^: Operation not supported yet");
+    exit(0);
+}
+
+void Assembly::calculateSQRT(){
+    | fsqrt
+}
+
+void Assembly::performComparison(CompareOperatorType _operator){
+        switch(_operator) {
+          case EQ:
             {
                 | fcomip st1
                 | fpop
@@ -950,12 +996,8 @@ void Assembly::performCalculation(){
                 // printf("fpop \n");
                 break;
             }
-    }
-
-    operator_ = EMPTY;
+        }
 }
-
-
 
 void Assembly::extractResult(){
      | fstp qword [rbp-8]
@@ -975,6 +1017,5 @@ dasm_gen_func Assembly::linkAndEncode(){
   buf = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   dasm_encode(Dst, buf);
   mprotect(buf, sz, PROT_READ | PROT_EXEC);
-  dasm_free(&d);
   return (dasm_gen_func) buf;
 }

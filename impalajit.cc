@@ -7,12 +7,10 @@
 #include <fstream>
 #include <cstdlib>
 
-#include "expression.h"
-#include "driver.h"
-
+#include <node.h>
+#include <driver.h>
 
 impalajit::Driver driver;
-
 
 dasm_gen_func impalajit::Compiler::compile(){
     char* fileName = std::getenv(ENV_VARIABLE_NAME);

@@ -6,8 +6,14 @@
 
 #include <driver.h>
 #include <scanner.h>
+#include <code_generator.hh>
 
 namespace impalajit {
+
+Driver::~Driver(){
+    delete functionContext;
+    functionContext = NULL;
+}
 
 dasm_gen_func Driver::parse_stream(std::istream& in, const std::string& sname)
 {
@@ -21,16 +27,9 @@ dasm_gen_func Driver::parse_stream(std::istream& in, const std::string& sname)
     parser.set_debug_level(false);
     parser.parse();
 
-    assembly.initialize();
-    assembly.prologue();
+    CodeGenerator codeGenerator(*functionContext);
 
-    expressionContext.evaluateAst();
-
-    assembly.extractResult();
-    assembly.epilogue();
-
-    dasm_gen_func fp = assembly.linkAndEncode();
-    return fp;
+    return codeGenerator.generateCode();
 }
 
 dasm_gen_func Driver::parse_file(const std::string &filename)
@@ -46,13 +45,17 @@ dasm_gen_func Driver::parse_string(const std::string &input, const std::string& 
     return parse_stream(iss, sname);
 }
 
+void Driver::setFunctionContext(FunctionContext* &_functionContext){
+    functionContext = _functionContext;
+}
+
 void Driver::error(const class location& l, const std::string& m)
 {
     std::cerr << l << ": " << m << std::endl;
 }
 
 
-    void Driver::error(const std::string& m)
+void Driver::error(const std::string& m)
 {
     std::cerr << m << std::endl;
 }
