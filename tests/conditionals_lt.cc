@@ -1,16 +1,14 @@
-//
-// Created by manuel on 07.01.17.
-//
-
 #include "impalajit.hh"
+#include <iostream>
+#include <fstream>
 #include <stdlib.h>
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    double expection = 1.0;
+    double expection = 0.0;
 
-    setenv("IMPALA_FILE","../../tests/impala_files/conditional_complex_true_4.impala", 1);
+    setenv("IMPALA_FILE","../../tests/impala_files/conditional_lt.impala", 1);
 
     impalajit::Compiler compiler;
     dasm_gen_func function = compiler.compile();

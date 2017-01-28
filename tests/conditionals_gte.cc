@@ -2,17 +2,19 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <assert.h>
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    double expection = 34.0;
 
-    setenv("IMPALA_FILE","../../tests/impala_files/conditional_gte_true_1.impala", 1);
+    setenv("IMPALA_FILE","../../tests/impala_files/conditional_gte.impala", 1);
 
     impalajit::Compiler compiler;
     dasm_gen_func function = compiler.compile();
 
-    printf("Result: %f\n", function(12.0, 3.0, 2.0));
+    assert(function(2.0, 1.0) == 1.0);
+    assert(function(1.0, 1.0) == 1.0);
+    assert(function(0.0, 1.0) == 0.0);
     return 0;
 }

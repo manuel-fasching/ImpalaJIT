@@ -22,7 +22,6 @@ enum NodeType {
     BOOLEAN_OR_JUNCTION,
     IF_STATEMENT,
     IF_ELSE_STATEMENT,
-    IF_CONDITION,
     IF_BODY,
     ELSE_BODY,
     RETURN

@@ -3,7 +3,7 @@
 //
 
 #include <assembly.hh>
-#include <stdio.h>
+#include <iostream>
 
 
 |.arch x64
@@ -21,19 +21,17 @@
 Assembly::~Assembly()
 {
     dasm_free(&d);
-    delete labels;
-    Dst = NULL;
-    d = NULL;
-    labels = NULL;
 }
 
 void Assembly::initialize() {
     dasm_init(&d, DASM_MAXSECTION);
 
-    labels = (void **) operator new(lbl__MAX);
+    void* labels[lbl__MAX];
     dasm_setupglobal(&d, labels, lbl__MAX);
 
     dasm_setup(&d, impala_actions);
+
+    dasm_growpc(&d, 0);
 
     Dst = &d;
 }
@@ -44,15 +42,28 @@ void Assembly::prologue(){
     | mov rbp, rsp
     | mov rax, rbp
     | sub rax, 16
+
+    std::cout << "| push rbp" << std::endl;
+    std::cout << "| mov rbp, rsp" << std::endl;
+    std::cout << "| mov rax, rbp" << std::endl;
+    std::cout << "| sub rax, 16" << std::endl;
+}
+
+void Assembly::growPC(unsigned npc)
+{
+    dasm_growpc(&d, npc);
 }
 
 void Assembly::pushConstantToFPUStack(double *value){
     | fld qword [value]
+    std::cout << "| fld " << *value << std::endl;
 }
 
 void Assembly::storeLocalVariable() {
     | fstp qword [rax]
     | sub rax, 8
+    std::cout << "| fstp qword [rax]" << std::endl;
+    std::cout << "| sub rax, 8" << std::endl;
 }
 
 void Assembly::pushParameterToFPUStack(int index) {
@@ -107,9 +118,11 @@ void Assembly::pushParameterToFPUStack(int index) {
             }
         default:
             {
-                | fld qword [rbp+(8+(index-7)*8)];
+                | fld qword [rbp+(8+(index-7)*8)]
+                break;
             }
     }
+    std::cout << "| fld qword [rbp+" << (8+(index-7)*8) << "]" << std::endl;
 }
 
 void Assembly::replaceParameter(int index) {
@@ -164,777 +177,140 @@ void Assembly::replaceParameter(int index) {
             }
         default:
             {
-                | fstp qword [rbp+(8+(index-7)*8)];
+                | fstp qword [rbp+(8+(index-7)*8)]
+                break;
             }
     }
+    std::cout << "| fstp qword [rbp+" << (8+(index-7)*8) << "]" << std::endl;
 }
 
 void Assembly::pushLocalVariableToFPUStack(int index) {
-// printf("Val: %u\n", index);
-    | fld qword [rbp-(16+index*8)];
+    | fld qword [rbp-(16+index*8)]
+    std::cout << "| fld qword [rbp-" << (16+index*8) << "]" << std::endl;
 }
 
 void Assembly::replaceLocalVariable(int index) {
-// printf("Val: %u\n", index);
-    | fstp qword [rbp-(16+index*8)];
+    | fstp qword [rbp-(16+index*8)]
+    std::cout << "| fstp qword [rbp-" << (16+index*8) << "]" << std::endl;
 }
 
-void Assembly::addLocalLabel(int labelNumber) {
-    switch(labelNumber) {
-        case 1:
-            {
-                | 1:
-                // printf("1: \n");
-                break;
-            }
-        case 2:
-            {
-                | 2:
-                // printf("2: \n");
-                break;
-            }
-        case 3:
-            {
-                | 3:
-                // printf("3: \n");
-                break;
-            }
-        case 4:
-            {
-                | 4:
-                // printf("4: \n");
-                break;
-            }
-        case 5:
-            {
-                | 5:
-                // printf("5: \n");
-                break;
-            }
-        case 6:
-            {
-                | 6:
-                // printf("6: \n");
-                break;
-            }
-        case 7:
-            {
-                | 7:
-                // printf("7: \n");
-                break;
-            }
-        case 8:
-            {
-                | 8:
-                // printf("8: \n");
-                break;
-            }
-        case 9:
-            {
-                | 9:
-                // printf("9: \n");
-                break;
-            }
-    }
+void Assembly::addDynamicLabel(unsigned labelNumber) {
+    | =>labelNumber:
+    std::cout << "| =>" << labelNumber << ":" << std::endl;
 }
 
-void Assembly::jumpForwardTo(int labelNumber) {
-    switch(labelNumber) {
-            case 1:
-                {
-                    | jmp >1
-                    // printf(">1 \n");
-                    break;
-                }
-            case 2:
-                {
-                    | jmp >2
-                    // printf(">2 \n");
-                    break;
-                }
-            case 3:
-                {
-                    | jmp >3
-                    // printf(">3 \n");
-                    break;
-                }
-            case 4:
-                {
-                    | jmp >4
-                    // printf(">4 \n");
-                    break;
-                }
-            case 5:
-                {
-                    | jmp >5
-                    // printf(">5 \n");
-                    break;
-                }
-            case 6:
-                {
-                    | jmp >6
-                    // printf(">6 \n");
-                    break;
-                }
-            case 7:
-                {
-                    | jmp >7
-                    // printf(">7 \n");
-                    break;
-                }
-            case 8:
-                {
-                    | jmp >8
-                    // printf(">8 \n");
-                    break;
-                }
-            case 9:
-                {
-                    | jmp >9
-                    // printf(">9 \n");
-                    break;
-                }
-        }
+void Assembly::jumpForwardToDynamicLabel(unsigned labelNumber) {
+    | jmp =>labelNumber
+    std::cout << "| jmp =>" << labelNumber << std::endl;
 }
 
 
-void Assembly::jumpBackwardTo(int labelNumber) {
-    switch(labelNumber) {
-            case 1:
-                {
-                    | jmp <1
-                    // printf("<1 \n");
-                    break;
-                }
-            case 2:
-                {
-                    | jmp <2
-                    // printf("<2 \n");
-                    break;
-                }
-            case 3:
-                {
-                    | jmp <3
-                    // printf("<3 \n");
-                    break;
-                }
-            case 4:
-                {
-                    | jmp <4
-                    // printf("<4 \n");
-                    break;
-                }
-            case 5:
-                {
-                    | jmp <5
-                    // printf("<5 \n");
-                    break;
-                }
-            case 6:
-                {
-                    | jmp <6
-                    // printf("<6 \n");
-                    break;
-                }
-            case 7:
-                {
-                    | jmp <7
-                    // printf("<7 \n");
-                    break;
-                }
-            case 8:
-                {
-                    | jmp <8
-                    // printf("<8 \n");
-                    break;
-                }
-            case 9:
-                {
-                    | jmp <9
-                    // printf("<9 \n");
-                    break;
-                }
-        }
-}
-
-
-void Assembly::conditionalJumpForwardTo(int labelNumber, bool condition, CompareOperatorType operator_){
+void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
     if(condition == false){
-        if(labelNumber == 1  && operator_==EQ)
-            | jne  >1
-        else if(labelNumber == 1 && operator_==NE)
-            | je  >1
-        else if(labelNumber == 1 && operator_==GT)
-            | jbe  >1
-        else if(labelNumber == 1 && operator_==LT)
-            | jae  >1
-        else if(labelNumber == 1 && operator_==GTE)
-            | jb  >1
-        else if(labelNumber == 1 && operator_==LTE)
-            | ja  >1
-        else if(labelNumber == 2  && operator_==EQ)
-            | jne  >2
-        else if(labelNumber == 2 && operator_==NE)
-            | je  >2
-        else if(labelNumber == 2 && operator_==GT)
-            | jbe  >2
-        else if(labelNumber == 2 && operator_==LT)
-            | jae  >2
-        else if(labelNumber == 2 && operator_==GTE)
-            | jb  >2
-        else if(labelNumber == 2 && operator_==LTE)
-            | ja  >2
-        else if(labelNumber == 3  && operator_==EQ)
-            | jne  >3
-        else if(labelNumber == 3 && operator_==NE)
-            | je  >3
-        else if(labelNumber == 3 && operator_==GT)
-            | jbe  >3
-        else if(labelNumber == 3 && operator_==LT)
-            | jae  >3
-        else if(labelNumber == 3 && operator_==GTE)
-            | jb  >3
-        else if(labelNumber == 3 && operator_==LTE)
-            | ja  >3
-        else if(labelNumber == 4  && operator_==EQ)
-            | jne  >4
-        else if(labelNumber == 4 && operator_==NE)
-            | je  >4
-        else if(labelNumber == 4 && operator_==GT)
-            | jbe  >4
-        else if(labelNumber == 4 && operator_==LT)
-            | jae  >4
-        else if(labelNumber == 4 && operator_==GTE)
-            | jb  >4
-        else if(labelNumber == 4 && operator_==LTE)
-            | ja  >4
-        else if(labelNumber == 5  && operator_==EQ)
-            | jne  >5
-        else if(labelNumber == 5 && operator_==NE)
-            | je  >5
-        else if(labelNumber == 5 && operator_==GT)
-            | jbe  >5
-        else if(labelNumber == 5 && operator_==LT)
-            | jae  >5
-        else if(labelNumber == 5 && operator_==GTE)
-            | jb  >5
-        else if(labelNumber == 5 && operator_==LTE)
-            | ja  >5
-        else if(labelNumber == 6  && operator_==EQ)
-            | jne  >6
-        else if(labelNumber == 6 && operator_==NE)
-            | je  >6
-        else if(labelNumber == 6 && operator_==GT)
-            | jbe  >6
-        else if(labelNumber == 6 && operator_==LT)
-            | jae  >6
-        else if(labelNumber == 6 && operator_==GTE)
-            | jb  >6
-        else if(labelNumber == 6 && operator_==LTE)
-            | ja  >6
-        else if(labelNumber == 7  && operator_==EQ)
-            | jne  >7
-        else if(labelNumber == 7 && operator_==NE)
-            | je  >7
-        else if(labelNumber == 7 && operator_==GT)
-            | jbe  >7
-        else if(labelNumber == 7 && operator_==LT)
-            | jae  >7
-        else if(labelNumber == 7 && operator_==GTE)
-            | jb  >7
-        else if(labelNumber == 7 && operator_==LTE)
-            | ja  >7
-        else if(labelNumber == 8  && operator_==EQ)
-            | jne  >8
-        else if(labelNumber == 8 && operator_==NE)
-            | je  >8
-        else if(labelNumber == 8 && operator_==GT)
-            | jbe  >8
-        else if(labelNumber == 8 && operator_==LT)
-            | jae  >8
-        else if(labelNumber == 8 && operator_==GTE)
-            | jb  >8
-        else if(labelNumber == 8 && operator_==LTE)
-            | ja  >8
-        else if(labelNumber == 9  && operator_==EQ)
-            | jne  >9
-        else if(labelNumber == 9 && operator_==NE)
-            | je  >9
-        else if(labelNumber == 9 && operator_==GT)
-            | jbe  >9
-        else if(labelNumber == 9 && operator_==LT)
-            | jae  >9
-        else if(labelNumber == 9 && operator_==GTE)
-            | jb  >9
-        else if(labelNumber == 9 && operator_==LTE)
-            | ja  >9
-    }
-    else if(condition == true){
-        if(labelNumber == 1  && operator_==EQ) 
-            | je  >1
-        else if(labelNumber == 1 && operator_==NE) 
-            | jne  >1
-        else if(labelNumber == 1 && operator_==GT) 
-            | ja  >1
-        else if(labelNumber == 1 && operator_==LT)
-			 | jb  >1
-        else if(labelNumber == 1 && operator_==GTE)
-			 | jge  >1
-        else if(labelNumber == 1 && operator_==LTE)
-			 | jbe  >1
-        else if(labelNumber == 2  && operator_==EQ)
-			 | je  >2
-        else if(labelNumber == 2 && operator_==NE)
-			 | jne  >2
-        else if(labelNumber == 2 && operator_==GT)
-			 | ja  >2
-        else if(labelNumber == 2 && operator_==LT)
-			 | jb  >2
-        else if(labelNumber == 2 && operator_==GTE)
-			 | jge  >2
-        else if(labelNumber == 2 && operator_==LTE)
-			 | jbe  >2
-        else if(labelNumber == 3  && operator_==EQ)
-			 | je  >3
-        else if(labelNumber == 3 && operator_==NE)
-			 | jne  >3
-        else if(labelNumber == 3 && operator_==GT)
-			 | ja  >3
-        else if(labelNumber == 3 && operator_==LT)
-			 | jb  >3
-        else if(labelNumber == 3 && operator_==GTE)
-			 | jge  >3
-        else if(labelNumber == 3 && operator_==LTE)
-			 | jbe  >3
-        else if(labelNumber == 4  && operator_==EQ)
-			 | je  >4
-        else if(labelNumber == 4 && operator_==NE)
-			 | jne  >4
-        else if(labelNumber == 4 && operator_==GT)
-			 | ja  >4
-        else if(labelNumber == 4 && operator_==LT)
-			 | jb  >4
-        else if(labelNumber == 4 && operator_==GTE)
-			 | jge  >4
-        else if(labelNumber == 4 && operator_==LTE)
-			 | jbe  >4
-        else if(labelNumber == 5  && operator_==EQ)
-			 | je  >5
-        else if(labelNumber == 5 && operator_==NE)
-			 | jne  >5
-        else if(labelNumber == 5 && operator_==GT)
-			 | ja  >5
-        else if(labelNumber == 5 && operator_==LT)
-			 | jb  >5
-        else if(labelNumber == 5 && operator_==GTE)
-			 | jge  >5
-        else if(labelNumber == 5 && operator_==LTE)
-			 | jbe  >5
-        else if(labelNumber == 6  && operator_==EQ)
-			 | je  >6
-        else if(labelNumber == 6 && operator_==NE)
-			 | jne  >6
-        else if(labelNumber == 6 && operator_==GT)
-			 | ja  >6
-        else if(labelNumber == 6 && operator_==LT)
-			 | jb  >6
-        else if(labelNumber == 6 && operator_==GTE)
-			 | jge  >6
-        else if(labelNumber == 6 && operator_==LTE)
-			 | jbe  >6
-        else if(labelNumber == 7  && operator_==EQ)
-			 | je  >7
-        else if(labelNumber == 7 && operator_==NE)
-			 | jne  >7
-        else if(labelNumber == 7 && operator_==GT)
-			 | ja  >7
-        else if(labelNumber == 7 && operator_==LT)
-			 | jb  >7
-        else if(labelNumber == 7 && operator_==GTE)
-			 | jge  >7
-        else if(labelNumber == 7 && operator_==LTE)
-			 | jbe  >7
-        else if(labelNumber == 8  && operator_==EQ)
-			 | je  >8
-        else if(labelNumber == 8 && operator_==NE)
-			 | jne  >8
-        else if(labelNumber == 8 && operator_==GT)
-			 | ja  >8
-        else if(labelNumber == 8 && operator_==LT)
-			 | jb  >8
-        else if(labelNumber == 8 && operator_==GTE)
-			 | jge  >8
-        else if(labelNumber == 8 && operator_==LTE)
-			 | jbe  >8
-        else if(labelNumber == 9  && operator_==EQ)
-			 | je  >9
-        else if(labelNumber == 9 && operator_==NE)
-			 | jne  >9
-        else if(labelNumber == 9 && operator_==GT)
-			 | ja  >9
-        else if(labelNumber == 9 && operator_==LT)
-			 | jb  >9
-        else if(labelNumber == 9 && operator_==GTE)
-			 | jge  >9
-        else if(labelNumber == 9 && operator_==LTE)
-			 | jbe  >9
+        switch(operator_){
+            case EQ:
+            {
+                | jne  =>labelNumber
+                std::cout << "| jne  =>" << labelNumber << std::endl;
+                break;
+            }
+            case NE:
+            {
+                | je  =>labelNumber
+                std::cout << "| je  =>" << labelNumber << std::endl;
+                break;
+            }
+            case GT:
+            {
+                | jbe  =>labelNumber
+                std::cout << "| jbe  =>" << labelNumber << std::endl;
+                break;
+            }
+            case LT:
+            {
+                | jae  =>labelNumber
+                std::cout << "| jae  =>" << labelNumber << std::endl;
+                break;
+            }
+            case GTE:
+            {
+                | jb  =>labelNumber
+                std::cout << "| jbe  =>" << labelNumber << std::endl;
+                break;
+            }
+            case LTE:
+            {
+                | ja  =>labelNumber
+                std::cout << "| ja  =>" << labelNumber << std::endl;
+                break;
+            }
         }
-       /*
-        if(condition == false){
-                if(labelNumber == 1  && operator_==EQ) // printf("jne  >1\n");
-                else if(labelNumber == 1 && operator_==NE) // printf("je  >1\n");
-                else if(labelNumber == 1 && operator_==GT) // printf("jbe  >1\n");
-                else if(labelNumber == 1 && operator_==LT) // printf("jae  >1\n");
-                else if(labelNumber == 1 && operator_==GTE) // printf("jb  >1\n");
-                else if(labelNumber == 1 && operator_==LTE) // printf("ja  >1\n");
-                else if(labelNumber == 2  && operator_==EQ) // printf("jne  >2\n");
-                else if(labelNumber == 2 && operator_==NE) // printf("je  >2\n");
-                else if(labelNumber == 2 && operator_==GT) // printf("jbe  >2\n");
-                else if(labelNumber == 2 && operator_==LT) // printf("jae  >2\n");
-                else if(labelNumber == 2 && operator_==GTE) // printf("jb  >2\n");
-                else if(labelNumber == 2 && operator_==LTE) // printf("ja  >2\n");
-                else if(labelNumber == 3  && operator_==EQ) // printf("jne  >3\n");
-                else if(labelNumber == 3 && operator_==NE) // printf("je  >3\n");
-                else if(labelNumber == 3 && operator_==GT) // printf("jbe  >3\n");
-                else if(labelNumber == 3 && operator_==LT) // printf("jae  >3\n");
-                else if(labelNumber == 3 && operator_==GTE) // printf("jb  >3\n");
-                else if(labelNumber == 3 && operator_==LTE) // printf("ja  >3\n");
-                else if(labelNumber == 4  && operator_==EQ) // printf("jne  >4\n");
-                else if(labelNumber == 4 && operator_==NE) // printf("je  >4\n");
-                else if(labelNumber == 4 && operator_==GT) // printf("jbe  >4\n");
-                else if(labelNumber == 4 && operator_==LT) // printf("jae  >4\n");
-                else if(labelNumber == 4 && operator_==GTE) // printf("jb  >4\n");
-                else if(labelNumber == 4 && operator_==LTE) // printf("ja  >4\n");
-                else if(labelNumber == 5  && operator_==EQ) // printf("jne  >5\n");
-                else if(labelNumber == 5 && operator_==NE) // printf("je  >5\n");
-                else if(labelNumber == 5 && operator_==GT) // printf("jbe  >5\n");
-                else if(labelNumber == 5 && operator_==LT) // printf("jae  >5\n");
-                else if(labelNumber == 5 && operator_==GTE) // printf("jb  >5\n");
-                else if(labelNumber == 5 && operator_==LTE) // printf("ja  >5\n");
-                else if(labelNumber == 6  && operator_==EQ) // printf("jne  >6\n");
-                else if(labelNumber == 6 && operator_==NE) // printf("je  >6\n");
-                else if(labelNumber == 6 && operator_==GT) // printf("jbe  >6\n");
-                else if(labelNumber == 6 && operator_==LT) // printf("jae  >6\n");
-                else if(labelNumber == 6 && operator_==GTE) // printf("jb  >6\n");
-                else if(labelNumber == 6 && operator_==LTE) // printf("ja  >6\n");
-                else if(labelNumber == 7  && operator_==EQ) // printf("jne  >7\n");
-                else if(labelNumber == 7 && operator_==NE) // printf("je  >7\n");
-                else if(labelNumber == 7 && operator_==GT) // printf("jbe  >7\n");
-                else if(labelNumber == 7 && operator_==LT) // printf("jae  >7\n");
-                else if(labelNumber == 7 && operator_==GTE) // printf("jb  >7\n");
-                else if(labelNumber == 7 && operator_==LTE) // printf("ja  >7\n");
-                else if(labelNumber == 8  && operator_==EQ) // printf("jne  >8\n");
-                else if(labelNumber == 8 && operator_==NE) // printf("je  >8\n");
-                else if(labelNumber == 8 && operator_==GT) // printf("jbe  >8\n");
-                else if(labelNumber == 8 && operator_==LT) // printf("jae  >8\n");
-                else if(labelNumber == 8 && operator_==GTE) // printf("jb  >8\n");
-                else if(labelNumber == 8 && operator_==LTE) // printf("ja  >8\n");
-                else if(labelNumber == 9  && operator_==EQ) // printf("jne  >9\n");
-                else if(labelNumber == 9 && operator_==NE) // printf("je  >9\n");
-                else if(labelNumber == 9 && operator_==GT) // printf("jbe  >9\n");
-                else if(labelNumber == 9 && operator_==LT) // printf("jae  >9\n");
-                else if(labelNumber == 9 && operator_==GTE) // printf("jb  >9\n");
-                else if(labelNumber == 9 && operator_==LTE) // printf("ja  >9\n");
-            }else if(condition == true){
-                if(labelNumber == 1  && operator_==EQ) // printf("je  >1\n");
-                else if(labelNumber == 1 && operator_==NE) // printf("jne  >1\n");
-                else if(labelNumber == 1 && operator_==GT) // printf("ja  >1\n");
-                else if(labelNumber == 1 && operator_==LT) // printf("jb  >1\n");
-                else if(labelNumber == 1 && operator_==GTE) // printf("jge  >1\n");
-                else if(labelNumber == 1 && operator_==LTE) // printf("jbe  >1\n");
-                else if(labelNumber == 2  && operator_==EQ) // printf("je  >2\n");
-                else if(labelNumber == 2 && operator_==NE) // printf("jne  >2\n");
-                else if(labelNumber == 2 && operator_==GT) // printf("ja  >2\n");
-                else if(labelNumber == 2 && operator_==LT) // printf("jb  >2\n");
-                else if(labelNumber == 2 && operator_==GTE) // printf("jge  >2\n");
-                else if(labelNumber == 2 && operator_==LTE) // printf("jbe  >2\n");
-                else if(labelNumber == 3  && operator_==EQ) // printf("je  >3\n");
-                else if(labelNumber == 3 && operator_==NE) // printf("jne  >3\n");
-                else if(labelNumber == 3 && operator_==GT) // printf("ja  >3\n");
-                else if(labelNumber == 3 && operator_==LT) // printf("jb  >3\n");
-                else if(labelNumber == 3 && operator_==GTE) // printf("jge  >3\n");
-                else if(labelNumber == 3 && operator_==LTE) // printf("jbe  >3\n");
-                else if(labelNumber == 4  && operator_==EQ) // printf("je  >4\n");
-                else if(labelNumber == 4 && operator_==NE) // printf("jne  >4\n");
-                else if(labelNumber == 4 && operator_==GT) // printf("ja  >4\n");
-                else if(labelNumber == 4 && operator_==LT) // printf("jb  >4\n");
-                else if(labelNumber == 4 && operator_==GTE) // printf("jge  >4\n");
-                else if(labelNumber == 4 && operator_==LTE) // printf("jbe  >4\n");
-                else if(labelNumber == 5  && operator_==EQ) // printf("je  >5\n");
-                else if(labelNumber == 5 && operator_==NE) // printf("jne  >5\n");
-                else if(labelNumber == 5 && operator_==GT) // printf("ja  >5\n");
-                else if(labelNumber == 5 && operator_==LT) // printf("jb  >5\n");
-                else if(labelNumber == 5 && operator_==GTE) // printf("jge  >5\n");
-                else if(labelNumber == 5 && operator_==LTE) // printf("jbe  >5\n");
-                else if(labelNumber == 6  && operator_==EQ) // printf("je  >6\n");
-                else if(labelNumber == 6 && operator_==NE) // printf("jne  >6\n");
-                else if(labelNumber == 6 && operator_==GT) // printf("ja  >6\n");
-                else if(labelNumber == 6 && operator_==LT) // printf("jb  >6\n");
-                else if(labelNumber == 6 && operator_==GTE) // printf("jge  >6\n");
-                else if(labelNumber == 6 && operator_==LTE) // printf("jbe  >6\n");
-                else if(labelNumber == 7  && operator_==EQ) // printf("je  >7\n");
-                else if(labelNumber == 7 && operator_==NE) // printf("jne  >7\n");
-                else if(labelNumber == 7 && operator_==GT) // printf("ja  >7\n");
-                else if(labelNumber == 7 && operator_==LT) // printf("jb  >7\n");
-                else if(labelNumber == 7 && operator_==GTE) // printf("jge  >7\n");
-                else if(labelNumber == 7 && operator_==LTE) // printf("jbe  >7\n");
-                else if(labelNumber == 8  && operator_==EQ) // printf("je  >8\n");
-                else if(labelNumber == 8 && operator_==NE) // printf("jne  >8\n");
-                else if(labelNumber == 8 && operator_==GT) // printf("ja  >8\n");
-                else if(labelNumber == 8 && operator_==LT) // printf("jb  >8\n");
-                else if(labelNumber == 8 && operator_==GTE) // printf("jge  >8\n");
-                else if(labelNumber == 8 && operator_==LTE) // printf("jbe  >8\n");
-                else if(labelNumber == 9  && operator_==EQ) // printf("je  >9\n");
-                else if(labelNumber == 9 && operator_==NE) // printf("jne  >9\n");
-                else if(labelNumber == 9 && operator_==GT) // printf("ja  >9\n");
-                else if(labelNumber == 9 && operator_==LT) // printf("jb  >9\n");
-                else if(labelNumber == 9 && operator_==GTE) // printf("jge  >9\n");
-                else if(labelNumber == 9 && operator_==LTE) // printf("jbe  >9\n");
-            }*/
+    }
+    else{
+        switch(operator_){
+            case EQ:
+            {
+                | je  =>labelNumber
+                std::cout << "| je  =>" << labelNumber << std::endl;
+                break;
+            }
+            case NE:
+            {
+                | jne  =>labelNumber
+                std::cout << "| jne  =>" << labelNumber << std::endl;
+                break;
+            }
+            case GT:
+            {
+                | ja  =>labelNumber
+                std::cout << "| ja  =>" << labelNumber << std::endl;
+                break;
+            }
+            case LT:
+            {
+                | jb  =>labelNumber
+                std::cout << "| jb  =>" << labelNumber << std::endl;
+                break;
+            }
+            case GTE:
+            {
+                | jge  =>labelNumber
+                std::cout << "| jge  =>" << labelNumber << std::endl;
+                break;
+            }
+            case LTE:
+            {
+                | jbe  =>labelNumber
+                std::cout << "| jbe  =>" << labelNumber << std::endl;
+                break;
+            }
+        }
+     }
 }
-
-void Assembly::conditionalJumpBackwardTo(int labelNumber, bool condition, CompareOperatorType operator_){
-    if(condition == false){
-        if(labelNumber == 1  && operator_==EQ)
-			 | jne  <1
-        else if(labelNumber == 1 && operator_==NE)
-			 | je  <1
-        else if(labelNumber == 1 && operator_==GT)
-			 | jbe  <1
-        else if(labelNumber == 1 && operator_==LT)
-			 | jae  <1
-        else if(labelNumber == 1 && operator_==GTE)
-			 | jb  <1
-        else if(labelNumber == 1 && operator_==LTE)
-			 | ja  <1
-        else if(labelNumber == 2  && operator_==EQ)
-			 | jne  <2
-        else if(labelNumber == 2 && operator_==NE)
-			 | je  <2
-        else if(labelNumber == 2 && operator_==GT)
-			 | jbe  <2
-        else if(labelNumber == 2 && operator_==LT)
-			 | jae  <2
-        else if(labelNumber == 2 && operator_==GTE)
-			 | jb  <2
-        else if(labelNumber == 2 && operator_==LTE)
-			 | ja  <2
-        else if(labelNumber == 3  && operator_==EQ)
-			 | jne  <3
-        else if(labelNumber == 3 && operator_==NE)
-			 | je  <3
-        else if(labelNumber == 3 && operator_==GT)
-			 | jbe  <3
-        else if(labelNumber == 3 && operator_==LT)
-			 | jae  <3
-        else if(labelNumber == 3 && operator_==GTE)
-			 | jb  <3
-        else if(labelNumber == 3 && operator_==LTE)
-			 | ja  <3
-        else if(labelNumber == 4  && operator_==EQ)
-			 | jne  <4
-        else if(labelNumber == 4 && operator_==NE)
-			 | je  <4
-        else if(labelNumber == 4 && operator_==GT)
-			 | jbe  <4
-        else if(labelNumber == 4 && operator_==LT)
-			 | jae  <4
-        else if(labelNumber == 4 && operator_==GTE)
-			 | jb  <4
-        else if(labelNumber == 4 && operator_==LTE)
-			 | ja  <4
-        else if(labelNumber == 5  && operator_==EQ)
-			 | jne  <5
-        else if(labelNumber == 5 && operator_==NE)
-			 | je  <5
-        else if(labelNumber == 5 && operator_==GT)
-			 | jbe  <5
-        else if(labelNumber == 5 && operator_==LT)
-			 | jae  <5
-        else if(labelNumber == 5 && operator_==GTE)
-			 | jb  <5
-        else if(labelNumber == 5 && operator_==LTE)
-			 | ja  <5
-        else if(labelNumber == 6  && operator_==EQ)
-			 | jne  <6
-        else if(labelNumber == 6 && operator_==NE)
-			 | je  <6
-        else if(labelNumber == 6 && operator_==GT)
-			 | jbe  <6
-        else if(labelNumber == 6 && operator_==LT)
-			 | jae  <6
-        else if(labelNumber == 6 && operator_==GTE)
-			 | jb  <6
-        else if(labelNumber == 6 && operator_==LTE)
-			 | ja  <6
-        else if(labelNumber == 7  && operator_==EQ)
-			 | jne  <7
-        else if(labelNumber == 7 && operator_==NE)
-			 | je  <7
-        else if(labelNumber == 7 && operator_==GT)
-			 | jbe  <7
-        else if(labelNumber == 7 && operator_==LT)
-			 | jae  <7
-        else if(labelNumber == 7 && operator_==GTE)
-			 | jb  <7
-        else if(labelNumber == 7 && operator_==LTE)
-			 | ja  <7
-        else if(labelNumber == 8  && operator_==EQ)
-			 | jne  <8
-        else if(labelNumber == 8 && operator_==NE)
-			 | je  <8
-        else if(labelNumber == 8 && operator_==GT)
-			 | jbe  <8
-        else if(labelNumber == 8 && operator_==LT)
-			 | jae  <8
-        else if(labelNumber == 8 && operator_==GTE)
-			 | jb  <8
-        else if(labelNumber == 8 && operator_==LTE)
-			 | ja  <8
-        else if(labelNumber == 9  && operator_==EQ)
-			 | jne  <9
-        else if(labelNumber == 9 && operator_==NE)
-			 | je  <9
-        else if(labelNumber == 9 && operator_==GT)
-			 | jbe  <9
-        else if(labelNumber == 9 && operator_==LT)
-			 | jae  <9
-        else if(labelNumber == 9 && operator_==GTE)
-			 | jb  <9
-        else if(labelNumber == 9 && operator_==LTE)
-			 | ja  <9
-    } else if(condition == true) {
-        if(labelNumber == 1  && operator_==EQ)
-			 | je  <1
-        else if(labelNumber == 1 && operator_==NE)
-			 | jne  <1
-        else if(labelNumber == 1 && operator_==GT)
-			 | ja  <1
-        else if(labelNumber == 1 && operator_==LT)
-			 | jb  <1
-        else if(labelNumber == 1 && operator_==GTE)
-			 | jge  <1
-        else if(labelNumber == 1 && operator_==LTE)
-			 | jbe  <1
-        else if(labelNumber == 2  && operator_==EQ)
-			 | je  <2
-        else if(labelNumber == 2 && operator_==NE)
-			 | jne  <2
-        else if(labelNumber == 2 && operator_==GT)
-			 | ja  <2
-        else if(labelNumber == 2 && operator_==LT)
-			 | jb  <2
-        else if(labelNumber == 2 && operator_==GTE)
-			 | jge  <2
-        else if(labelNumber == 2 && operator_==LTE)
-			 | jbe  <2
-        else if(labelNumber == 3  && operator_==EQ)
-			 | je  <3
-        else if(labelNumber == 3 && operator_==NE)
-			 | jne  <3
-        else if(labelNumber == 3 && operator_==GT)
-			 | ja  <3
-        else if(labelNumber == 3 && operator_==LT)
-			 | jb  <3
-        else if(labelNumber == 3 && operator_==GTE)
-			 | jge  <3
-        else if(labelNumber == 3 && operator_==LTE)
-			 | jbe  <3
-        else if(labelNumber == 4  && operator_==EQ)
-			 | je  <4
-        else if(labelNumber == 4 && operator_==NE)
-			 | jne  <4
-        else if(labelNumber == 4 && operator_==GT)
-			 | ja  <4
-        else if(labelNumber == 4 && operator_==LT)
-			 | jb  <4
-        else if(labelNumber == 4 && operator_==GTE)
-			 | jge  <4
-        else if(labelNumber == 4 && operator_==LTE)
-			 | jbe  <4
-        else if(labelNumber == 5  && operator_==EQ)
-			 | je  <5
-        else if(labelNumber == 5 && operator_==NE)
-			 | jne  <5
-        else if(labelNumber == 5 && operator_==GT)
-			 | ja  <5
-        else if(labelNumber == 5 && operator_==LT)
-			 | jb  <5
-        else if(labelNumber == 5 && operator_==GTE)
-			 | jge  <5
-        else if(labelNumber == 5 && operator_==LTE)
-			 | jbe  <5
-        else if(labelNumber == 6  && operator_==EQ)
-			 | je  <6
-        else if(labelNumber == 6 && operator_==NE)
-			 | jne  <6
-        else if(labelNumber == 6 && operator_==GT)
-			 | ja  <6
-        else if(labelNumber == 6 && operator_==LT)
-			 | jb  <6
-        else if(labelNumber == 6 && operator_==GTE)
-			 | jge  <6
-        else if(labelNumber == 6 && operator_==LTE)
-			 | jbe  <6
-        else if(labelNumber == 7  && operator_==EQ)
-			 | je  <7
-        else if(labelNumber == 7 && operator_==NE)
-			 | jne  <7
-        else if(labelNumber == 7 && operator_==GT)
-			 | ja  <7
-        else if(labelNumber == 7 && operator_==LT)
-			 | jb  <7
-        else if(labelNumber == 7 && operator_==GTE)
-			 | jge  <7
-        else if(labelNumber == 7 && operator_==LTE)
-			 | jbe  <7
-        else if(labelNumber == 8  && operator_==EQ)
-			 | je  <8
-        else if(labelNumber == 8 && operator_==NE)
-			 | jne  <8
-        else if(labelNumber == 8 && operator_==GT)
-			 | ja  <8
-        else if(labelNumber == 8 && operator_==LT)
-			 | jb  <8
-        else if(labelNumber == 8 && operator_==GTE)
-			 | jge  <8
-        else if(labelNumber == 8 && operator_==LTE)
-			 | jbe  <8
-        else if(labelNumber == 9  && operator_==EQ)
-			 | je  <9
-        else if(labelNumber == 9 && operator_==NE)
-			 | jne  <9
-        else if(labelNumber == 9 && operator_==GT)
-			 | ja  <9
-        else if(labelNumber == 9 && operator_==LT)
-			 | jb  <9
-        else if(labelNumber == 9 && operator_==GTE)
-			 | jge  <9
-        else if(labelNumber == 9 && operator_==LTE)
-			 | jbe  <9
-	}
-}
-
 
 void Assembly::performNegation(){
     | fchs
+    std::cout << "| fchs" << std::endl;
 }
 
 void Assembly::calculateAddition(){
     | faddp st1
-    // printf("faddp st1 \n");
+    std::cout << "| faddp st1" << std::endl;
 }
 
 void Assembly::calculateSubtraction(){
     | fsubp st1
+    std::cout << "| fsubp st1" << std::endl;
 }
 
 void Assembly::calculateMultiplication(){
     | fmulp st1
+    std::cout << "| fmulp st1" << std::endl;
 }
 
 void Assembly::calculateDivision(){
     | fdivp st1
+    std::cout << "| fdivp st1" << std::endl;
 }
 
 void Assembly::calculatePower(){
@@ -949,74 +325,45 @@ void Assembly::calculatePower(){
     | faddp st1,st0
     | fscale
     | fstp st1
+
+    std::cout << "| fyl2x" << std::endl;
+    std::cout << "| fld st0" << std::endl;
+    std::cout << "| frndint" << std::endl;
+    std::cout << "| fsubr st1,st0" << std::endl;
+    std::cout << "| fxch st1" << std::endl;
+    std::cout << "| fchs" << std::endl;
+    std::cout << "| f2xm1" << std::endl;
+    std::cout << "| fld1" << std::endl;
+    std::cout << "| faddp st1,st0" << std::endl;
+    std::cout << "| fscale" << std::endl;
+    std::cout << "| fstp st1" << std::endl;
 }
 
 void Assembly::calculateSQRT(){
     | fsqrt
+    std::cout << "| fsqrt" << std::endl;
 }
 
-void Assembly::performComparison(CompareOperatorType _operator){
-        switch(_operator) {
-          case EQ:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-          case NE:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-          case GT:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-          case LT:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-          case GTE:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-          case LTE:
-            {
-                | fcomip st1
-                | fpop
-                // printf("fcomip st1 \n");
-                // printf("fpop \n");
-                break;
-            }
-        }
+void Assembly::performComparison(){
+    | fcomip st1
+    | fpop
+    std::cout << "| fcomip st1" << std::endl;
+    std::cout << "| fpop" << std::endl;
 }
 
 void Assembly::extractResult(){
      | fstp qword [rbp-8]
      | movlpd xmm0, qword [rbp-8]
+     std::cout << "| fstp qword [rbp-8]" << std::endl;
+     std::cout << "| movlpd xmm0, qword [rbp-8]" << std::endl;
 }
 
 
 void Assembly::epilogue(){
     | pop rbp
     | ret
+    std::cout << "| pop rbp" << std::endl;
+    std::cout << "| ret" << std::endl;
 }
 
 dasm_gen_func Assembly::linkAndEncode(){

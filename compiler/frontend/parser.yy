@@ -284,25 +284,25 @@ atomcondition : expr CMPOP expr
 
 booleanand : atomcondition 
 			{
-				$$ = new BooleanAndNode();
-				($$->nodes).push_back($1);
+				$$ = $1;
 			}
 
 			| booleanand AND atomcondition
 			{
-				$$ = $1;
+				$$ = new BooleanAndNode();
+				($$->nodes).push_back($1);
 				($$->nodes).push_back($3);
 			}
 
 booleanor : booleanand 
 			{
-				$$ = new BooleanOrNode();
-				($$->nodes).push_back($1);
+				$$ = $1;
 			}
 
 			| booleanor OR booleanand
 			{
-				$$ = $1;
+				$$ = new BooleanOrNode();
+				($$->nodes).push_back($1);
 				($$->nodes).push_back($3);
 			}
 		

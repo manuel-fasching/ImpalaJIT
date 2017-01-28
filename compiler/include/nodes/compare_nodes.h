@@ -14,8 +14,8 @@ public:
     explicit CompareNode(Node* _left, Node* _right, CompareOperatorType _compareOperator)
             : Node(COMPARISON),  compareOperator(_compareOperator)
     {
-        nodes.push_back(_left);
         nodes.push_back(_right);
+        nodes.push_back(_left);
     }
 };
 

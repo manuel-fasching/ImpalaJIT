@@ -6,6 +6,10 @@
 #include <expression_nodes.h>
 #include <compare_nodes.h>
 
+CodeGenerator::CodeGenerator(class FunctionContext &_functionContext)
+    : functionContext(_functionContext){
+    dynamicLabelCount = 0;
+}
 
 CodeGenerator::~CodeGenerator()
 {
@@ -17,8 +21,6 @@ dasm_gen_func CodeGenerator::generateCode()
     assembly.prologue();
 
     evaluateAst(functionContext.root);
-
-    assembly.extractResult();
 
     return assembly.linkAndEncode();
 }
@@ -122,26 +124,36 @@ void CodeGenerator::evaluateAst(Node *node){
         }
 
         case IF_STATEMENT:
-        {   int label1 = 1;
-            int label2 = 9;
-            evaluateCondition(node->nodes.at(0), label1, label2); //condition
-            assembly.addLocalLabel(label1);
+        {
+            unsigned labelDemand = (2+ countLabels(node->nodes.at(0)));
+            unsigned label1 = dynamicLabelCount;
+            dynamicLabelCount += labelDemand;
+            unsigned label2 = dynamicLabelCount-1;
+            assembly.growPC(dynamicLabelCount);
+
+            conditionEvaluationHelper(node->nodes.at(0), label1, label2); //condition
+            assembly.addDynamicLabel(label1);
             dsfUtil(node->nodes.at(1)); // if body
-            assembly.addLocalLabel(label2);
+            assembly.addDynamicLabel(label2);
             break;
         }
         case IF_ELSE_STATEMENT:
         {
-            int label1 = 1;
-            int label2 = 8;
-            int label3 = 9;
-            evaluateCondition(node->nodes.at(0), label1, label2);
-            assembly.addLocalLabel(label1);
+            unsigned labelDemand = (3 + countLabels(node->nodes.at(0)));
+            unsigned label1 = dynamicLabelCount;
+            dynamicLabelCount += labelDemand;
+            unsigned label2 = dynamicLabelCount-2;
+            unsigned label3 = dynamicLabelCount-1;
+            assembly.growPC(dynamicLabelCount);
+
+            conditionEvaluationHelper(node->nodes.at(0), label1, label2); //condition
+
+            assembly.addDynamicLabel(label1);
             dsfUtil(node->nodes.at(1));
-            assembly.jumpForwardTo(label3);
-            assembly.addLocalLabel(label2);
+            assembly.jumpForwardToDynamicLabel(label3);
+            assembly.addDynamicLabel(label2);
             dsfUtil(node->nodes.at(2));
-            assembly.addLocalLabel(label3);
+            assembly.addDynamicLabel(label3);
             break;
         }
         case IF_BODY:
@@ -165,30 +177,62 @@ void CodeGenerator::evaluateAst(Node *node){
     }
 }
 
-void CodeGenerator::evaluateCondition(Node* node, int label1, int label2){
+
+void CodeGenerator::dsfUtil(Node* node) {
+    for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
+        evaluateAst((*it));
+    }
+}
+
+unsigned CodeGenerator::countLabels(Node* node){
+    unsigned labels = 0;
+    for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
+        if (node->nodeType == BOOLEAN_OR_JUNCTION) {
+            if ((*it)->nodeType == BOOLEAN_AND_JUNCTION) {
+                labels++;
+            }
+        }
+        else if (node->nodeType == BOOLEAN_AND_JUNCTION) {
+            if ((*it)->nodeType == BOOLEAN_OR_JUNCTION) {
+                labels++;
+            }
+        }
+        labels += countLabels((*it));
+    }
+    return labels;
+}
+
+void CodeGenerator::conditionEvaluationHelper(Node* node, unsigned label1, unsigned label2){
     for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
         switch(node->nodeType)
         {
+            case COMPARISON:
+            {
+                dsfUtil(node);
+                assembly.performComparison();
+                assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(node)->compareOperator);
+                break;
+            }
             case BOOLEAN_OR_JUNCTION:
             {
                 switch((*it)->nodeType){
                     case COMPARISON:
                     {
-                        CompareOperatorType cop = evaluateComparison((*it));
-                        assembly.conditionalJumpForwardTo(label1, true, cop);
+                        dsfUtil(*it);
+                        assembly.performComparison();
+                        assembly.conditionalJumpForwardToDynamicLabel(label1, true, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
                     case BOOLEAN_OR_JUNCTION:
                     {
-                        evaluateCondition((*it), label1, label2);
+                        conditionEvaluationHelper((*it), label1, label2);
                         break;
                     }
                     case BOOLEAN_AND_JUNCTION:
                     {
-                        int label = label2-1;
-                        evaluateCondition((*it), label1, label);
-                        assembly.jumpForwardTo(label1);
-                        assembly.addLocalLabel(label);
+                        conditionEvaluationHelper((*it), label1, label2-1);
+                        assembly.jumpForwardToDynamicLabel(label1);
+                        assembly.addDynamicLabel(label2-1);
                         break;
                     }
                 }
@@ -199,44 +243,28 @@ void CodeGenerator::evaluateCondition(Node* node, int label1, int label2){
             {
                 switch((*it)->nodeType) {
                     case COMPARISON: {
-                        CompareOperatorType cop = evaluateComparison((*it));
-                        assembly.conditionalJumpForwardTo(label2, false, cop);
+                        dsfUtil(*it);
+                        assembly.performComparison();
+                        assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
                     case BOOLEAN_AND_JUNCTION:
                     {
-                        evaluateCondition(*(it), label1, label2);
+                        conditionEvaluationHelper(*(it), label1, label2);
                         break;
                     }
                     case BOOLEAN_OR_JUNCTION:
                     {
-                        int label = label1+1;
-                        evaluateCondition((*it), label, label2);
-                        assembly.addLocalLabel(label);
+                        conditionEvaluationHelper((*it), label1+1, label2);
+                        assembly.addDynamicLabel(label1+1);
                         break;
                     }
                 }
             }
         }
+        if(node->nodeType == COMPARISON)
+            break;
     }
-    switch(node->nodeType){
-        case BOOLEAN_OR_JUNCTION:
-        {
-            assembly.jumpForwardTo(label2);
-        }
-    }
-}
-
-CompareOperatorType  CodeGenerator::evaluateComparison(Node* node){
-    for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
-        dsfUtil(node);
-    }
-    assembly.performComparison(static_cast<CompareNode*>(node)->compareOperator);
-    return static_cast<CompareNode*>(node)->compareOperator;
-}
-
-void CodeGenerator::dsfUtil(Node* node) {
-    for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
-        evaluateAst((*it));
-    }
+    if(node->nodeType == BOOLEAN_OR_JUNCTION)
+            assembly.jumpForwardToDynamicLabel(label2);
 }

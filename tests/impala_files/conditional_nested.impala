@@ -1,0 +1,18 @@
+test(a,b,c,d){
+    if(a==b) {
+        if(c==d){
+            return 4;
+        }
+        else {
+            return 3;
+        }
+    }
+    else{
+        if(c==d){
+            return 2;
+        }
+        else {
+            return 1;
+        }
+    }
+}

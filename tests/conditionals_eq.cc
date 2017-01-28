@@ -2,18 +2,19 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <assert.h>
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    double expection = 0.0;
 
-    setenv("IMPALA_FILE","../../tests/impala_files/conditional_lt_false.impala", 1);
+    setenv("IMPALA_FILE","../../tests/impala_files/conditional_eq.impala", 1);
 
     impalajit::Compiler compiler;
     dasm_gen_func function = compiler.compile();
 
-    if((function())==expection)
-        return 0;
-    return 1;
+    assert(function(1.0,1.0) == 1.0);
+    assert(function(1.0,0.0) == 0.0);
+
+    return 0;
 }

@@ -12,18 +12,17 @@
 
 class CodeGenerator {
 private:
+    unsigned dynamicLabelCount;
     Assembly assembly;
     void evaluateAst(Node *node);
     void dsfUtil(Node* node);
-    void evaluateCondition(Node* node, int label1, int label2);
-    CompareOperatorType  evaluateComparison(Node* node);
+    void conditionEvaluationHelper(Node *node, unsigned label1, unsigned label2);
+    unsigned countLabels(Node* node);
+    CompareOperatorType  comparisonEvaluationHelper(Node *node);
     class FunctionContext &functionContext;
 
 public:
-    CodeGenerator(class FunctionContext &_functionContext)
-            : functionContext(_functionContext)
-    {
-    }
+    CodeGenerator(class FunctionContext &_functionContext);
     ~CodeGenerator();
     dasm_gen_func generateCode();
 };

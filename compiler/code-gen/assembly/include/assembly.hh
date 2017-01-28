@@ -23,6 +23,8 @@ public:
 
     void epilogue();
 
+    void growPC(unsigned npc);
+
     void pushParameterToFPUStack(int index);
 
     void pushLocalVariableToFPUStack(int index);
@@ -49,17 +51,13 @@ public:
 
     void calculateSQRT();
 
-    void performComparison(CompareOperatorType _operator);
+    void performComparison();
 
-    void addLocalLabel(int labelNumber);
+    void addDynamicLabel(unsigned labelNumber);
 
-    void jumpForwardTo(int labelNumber);
+    void jumpForwardToDynamicLabel(unsigned labelNumber);
 
-    void jumpBackwardTo(int labelNumber);
-
-    void conditionalJumpForwardTo(int labelNumber, bool condition, CompareOperatorType operator_);
-
-    void conditionalJumpBackwardTo(int labelNumber, bool condition, CompareOperatorType operator_);
+    void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
 
     void extractResult();
 
