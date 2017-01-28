@@ -1026,165 +1026,153 @@ namespace impalajit {
   case 33:
 #line 286 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), static_cast<BooleanJunctionType>((yystack_[1].value.integerVal)));
+				(yylhs.value.node) = new BooleanAndNode();
+				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
 			}
-#line 1032 "parser.cc" // lalr1.cc:859
+#line 1033 "parser.cc" // lalr1.cc:859
     break;
 
   case 34:
-#line 291 "parser.yy" // lalr1.cc:859
+#line 292 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), static_cast<BooleanJunctionType>((yystack_[1].value.integerVal)));
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
 			}
-#line 1040 "parser.cc" // lalr1.cc:859
+#line 1042 "parser.cc" // lalr1.cc:859
     break;
 
   case 35:
-#line 299 "parser.yy" // lalr1.cc:859
+#line 298 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[0].value.node));
+				(yylhs.value.node) = new BooleanOrNode();
+				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
 			}
-#line 1048 "parser.cc" // lalr1.cc:859
+#line 1051 "parser.cc" // lalr1.cc:859
     break;
 
   case 36:
 #line 304 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = (yystack_[0].value.node);
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
 			}
-#line 1056 "parser.cc" // lalr1.cc:859
+#line 1060 "parser.cc" // lalr1.cc:859
     break;
 
   case 37:
-#line 309 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), static_cast<BooleanJunctionType>((yystack_[1].value.integerVal)));
-			}
-#line 1064 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 38:
-#line 314 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = new BooleanJunctionNode((yystack_[2].value.node), (yystack_[0].value.node), static_cast<BooleanJunctionType>((yystack_[1].value.integerVal)));
-			}
-#line 1072 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 39:
-#line 319 "parser.yy" // lalr1.cc:859
+#line 311 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfBodyNode();
 			}
-#line 1080 "parser.cc" // lalr1.cc:859
+#line 1068 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 38:
+#line 317 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
+			}
+#line 1077 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 39:
+#line 323 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[1].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
+			}
+#line 1086 "parser.cc" // lalr1.cc:859
     break;
 
   case 40:
-#line 325 "parser.yy" // lalr1.cc:859
+#line 329 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
 			}
-#line 1089 "parser.cc" // lalr1.cc:859
+#line 1095 "parser.cc" // lalr1.cc:859
     break;
 
   case 41:
-#line 331 "parser.yy" // lalr1.cc:859
+#line 335 "parser.yy" // lalr1.cc:859
     {
-				(yylhs.value.node) = (yystack_[1].value.node);
-				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
 			}
-#line 1098 "parser.cc" // lalr1.cc:859
+#line 1104 "parser.cc" // lalr1.cc:859
     break;
 
   case 42:
-#line 337 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[2].value.node);
-				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
-			}
-#line 1107 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 43:
-#line 343 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[2].value.node);
-				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
-			}
-#line 1116 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 44:
-#line 349 "parser.yy" // lalr1.cc:859
+#line 341 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new ElseBodyNode();
 			}
-#line 1124 "parser.cc" // lalr1.cc:859
+#line 1112 "parser.cc" // lalr1.cc:859
     break;
 
-  case 45:
-#line 355 "parser.yy" // lalr1.cc:859
+  case 43:
+#line 347 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
 			}
-#line 1133 "parser.cc" // lalr1.cc:859
+#line 1121 "parser.cc" // lalr1.cc:859
     break;
 
-  case 46:
-#line 361 "parser.yy" // lalr1.cc:859
+  case 44:
+#line 353 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
 			}
-#line 1142 "parser.cc" // lalr1.cc:859
+#line 1130 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 45:
+#line 359 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
+			}
+#line 1139 "parser.cc" // lalr1.cc:859
+    break;
+
+  case 46:
+#line 365 "parser.yy" // lalr1.cc:859
+    {
+				(yylhs.value.node) = (yystack_[2].value.node);
+				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
+			}
+#line 1148 "parser.cc" // lalr1.cc:859
     break;
 
   case 47:
-#line 367 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[2].value.node);
-				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
-			}
-#line 1151 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 48:
 #line 373 "parser.yy" // lalr1.cc:859
-    {
-				(yylhs.value.node) = (yystack_[2].value.node);
-				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
-			}
-#line 1160 "parser.cc" // lalr1.cc:859
-    break;
-
-  case 49:
-#line 381 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfStmtNode((yystack_[4].value.node), (yystack_[1].value.node));
 			}
-#line 1168 "parser.cc" // lalr1.cc:859
+#line 1156 "parser.cc" // lalr1.cc:859
     break;
 
-  case 50:
-#line 386 "parser.yy" // lalr1.cc:859
+  case 48:
+#line 378 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfElseStmtNode((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node));
 			}
-#line 1176 "parser.cc" // lalr1.cc:859
+#line 1164 "parser.cc" // lalr1.cc:859
     break;
 
-  case 51:
-#line 392 "parser.yy" // lalr1.cc:859
+  case 49:
+#line 384 "parser.yy" // lalr1.cc:859
     {
 				driver.setFunctionContext((yystack_[1].value.functionContext));
 		  	}
-#line 1184 "parser.cc" // lalr1.cc:859
+#line 1172 "parser.cc" // lalr1.cc:859
     break;
 
 
-#line 1188 "parser.cc" // lalr1.cc:859
+#line 1176 "parser.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -1439,70 +1427,70 @@ namespace impalajit {
   }
 
 
-  const signed char Parser::yypact_ninf_ = -53;
+  const signed char Parser::yypact_ninf_ = -50;
 
   const signed char Parser::yytable_ninf_ = -1;
 
   const signed char
   Parser::yypact_[] =
   {
-      38,    31,    68,    69,   -53,   -53,   -53,    23,   -53,    45,
-      53,   -53,   -53,     9,   -53,    49,    59,    67,    72,    72,
-     -53,     2,     2,    70,   -53,   -53,    65,   -53,   -53,   -11,
-      -2,    73,    76,   -53,    72,    72,    75,   -53,   -53,    78,
-     -53,   -53,   -53,     2,    72,    72,    72,    72,   -53,   -53,
-     -53,    81,    75,    74,    88,    89,    -7,   -53,   -53,   -53,
-     -53,   -11,   -11,   -53,    33,    -6,    72,    75,    75,    75,
-      71,   -53,   -53,   -53,   -53,    88,    89,   -53,    27,    83,
-      87,    90,    91,   -53,    84,   -53,   -53,   -53,   -53,    51,
-     -53,    92,    93,    94,   -53,   -53,   -53,   -53
+      35,    47,    79,    80,   -50,   -50,   -50,    23,   -50,    41,
+      66,   -50,   -50,     9,   -50,    57,    69,    70,    45,    45,
+     -50,     2,     2,    73,   -50,   -50,    68,   -50,   -50,   -11,
+      -2,    75,    76,   -50,    45,    45,    53,   -50,   -50,    74,
+     -50,   -50,   -50,     2,    45,    45,    45,    45,   -50,   -50,
+     -50,    77,    53,    81,   -50,    84,    -7,   -50,   -50,   -50,
+     -50,   -11,   -11,   -50,    64,    -6,    45,    53,    53,    78,
+     -50,   -50,   -50,    84,   -50,    27,    83,    85,    86,    87,
+     -50,    88,   -50,   -50,   -50,   -50,    49,   -50,    89,    90,
+      91,   -50,   -50,   -50,   -50
   };
 
   const unsigned char
   Parser::yydefact_[] =
   {
-       0,     0,     0,     0,     3,    51,     1,     0,     4,     0,
+       0,     0,     0,     0,     3,    49,     1,     0,     4,     0,
        0,     5,     6,     0,    12,    13,     0,     0,     0,     0,
        2,     0,     0,     0,    14,    15,    18,    20,    23,    26,
       29,     0,     0,     8,     0,     0,     0,    13,    11,     0,
       21,    22,    10,     0,     0,     0,     0,     0,     7,     9,
-      30,     0,     0,     0,    35,    36,     0,    17,    19,    24,
+      30,     0,     0,     0,    33,    35,     0,    17,    19,    24,
       25,    27,    28,    16,     0,     0,     0,     0,     0,     0,
-       0,    32,    31,    34,    33,    37,    38,    39,     0,    49,
-       0,     0,     0,    41,     0,    43,    40,    42,    44,     0,
-      50,     0,     0,     0,    46,    48,    45,    47
+      32,    31,    34,    36,    37,     0,    47,     0,     0,     0,
+      39,     0,    41,    38,    40,    42,     0,    48,     0,     0,
+       0,    44,    46,    43,    45
   };
 
   const signed char
   Parser::yypgoto_[] =
   {
-     -53,   -53,   -53,   -53,   -52,   -53,   -53,   -53,   -20,    10,
-      14,   -53,   -13,   -51,    -5,    34,    57,   -53,   -53,   -37,
-     -53
+     -50,   -50,   -50,   -50,   -49,   -50,   -50,   -50,   -20,     0,
+      31,   -50,   -13,   -48,    30,    34,    46,   -50,   -50,    -3,
+     -50
   };
 
   const signed char
   Parser::yydefgoto_[] =
   {
       -1,     2,     7,    13,    23,    24,    25,    26,    27,    28,
-      29,    30,    53,    32,    54,    55,    56,    78,    89,    33,
+      29,    30,    53,    32,    54,    55,    56,    75,    86,    33,
        3
   };
 
   const unsigned char
   Parser::yytable_[] =
   {
-      31,    40,    41,    69,    69,    38,    39,    14,    37,    16,
-      70,    71,    44,    45,    14,    15,    16,    17,    19,    46,
-      47,    50,    51,    58,    18,    19,    80,    82,    20,     8,
-      21,    22,    14,    15,    16,    17,     9,    91,    93,    64,
-      10,    83,    18,    19,     1,    66,    79,     4,    21,    22,
-      57,    11,    94,    72,    59,    60,    14,    15,    16,    17,
-      61,    62,    73,    74,    75,    81,    18,    19,     5,     6,
-      90,    12,    21,    22,    34,    35,    92,    14,    37,    16,
-      14,    37,    16,    36,    42,    43,    66,    48,    19,    77,
-      49,    52,    84,    21,    22,    57,    21,    22,    63,    67,
-      68,    85,    88,    76,    86,    87,    95,    96,    97,    65
+      31,    40,    41,    68,    68,    38,    39,    14,    37,    16,
+      69,    70,    44,    45,    14,    15,    16,    17,    19,    46,
+      47,    50,    51,    58,    18,    19,    77,    79,    20,     8,
+      21,    22,    14,    15,    16,    17,     9,    88,    90,    64,
+      10,     1,    18,    19,    59,    60,    76,    11,    21,    22,
+      14,    37,    16,    71,    14,    15,    16,    17,    14,    37,
+      16,    19,    78,     4,    18,    19,    21,    22,    87,    52,
+      21,    22,    80,    89,    21,    22,    66,    61,    62,     5,
+       6,    57,    34,    91,    12,    35,    36,    42,    43,    48,
+      49,    57,    81,    66,    63,    67,    74,    72,    65,    82,
+      83,    84,    73,    92,    93,    94,    85
   };
 
   const unsigned char
@@ -1510,15 +1498,15 @@ namespace impalajit {
   {
       13,    21,    22,    10,    10,    18,    19,     5,     6,     7,
       17,    17,    23,    24,     5,     6,     7,     8,    16,    21,
-      22,    34,    35,    43,    15,    16,    78,    78,    19,     6,
-      21,    22,     5,     6,     7,     8,    13,    89,    89,    52,
-      17,    78,    15,    16,     6,    12,    19,    16,    21,    22,
-      17,     6,    89,    66,    44,    45,     5,     6,     7,     8,
-      46,    47,    67,    68,    69,    78,    15,    16,     0,     0,
-      19,    18,    21,    22,    25,    16,    89,     5,     6,     7,
-       5,     6,     7,    16,    14,    20,    12,    14,    16,    18,
-      14,    16,     9,    21,    22,    17,    21,    22,    17,    11,
-      11,    14,    18,    69,    14,    14,    14,    14,    14,    52
+      22,    34,    35,    43,    15,    16,    75,    75,    19,     6,
+      21,    22,     5,     6,     7,     8,    13,    86,    86,    52,
+      17,     6,    15,    16,    44,    45,    19,     6,    21,    22,
+       5,     6,     7,    66,     5,     6,     7,     8,     5,     6,
+       7,    16,    75,    16,    15,    16,    21,    22,    19,    16,
+      21,    22,    75,    86,    21,    22,    12,    46,    47,     0,
+       0,    17,    25,    86,    18,    16,    16,    14,    20,    14,
+      14,    17,     9,    12,    17,    11,    18,    67,    52,    14,
+      14,    14,    68,    14,    14,    14,    18
   };
 
   const unsigned char
@@ -1530,10 +1518,10 @@ namespace impalajit {
       37,    38,    39,    45,    25,    16,    16,     6,    38,    38,
       34,    34,    14,    20,    23,    24,    21,    22,    14,    14,
       38,    38,    16,    38,    40,    41,    42,    17,    34,    35,
-      35,    36,    36,    17,    38,    42,    12,    11,    11,    10,
-      17,    17,    38,    40,    40,    40,    41,    18,    43,    19,
-      30,    38,    39,    45,     9,    14,    14,    14,    18,    44,
-      19,    30,    38,    39,    45,    14,    14,    14
+      35,    36,    36,    17,    38,    42,    12,    11,    10,    17,
+      17,    38,    40,    41,    18,    43,    19,    30,    38,    39,
+      45,     9,    14,    14,    14,    18,    44,    19,    30,    38,
+      39,    45,    14,    14,    14
   };
 
   const unsigned char
@@ -1542,9 +1530,8 @@ namespace impalajit {
        0,    26,    27,    28,    28,    28,    29,    29,    29,    29,
       29,    30,    31,    32,    33,    33,    33,    33,    34,    34,
       35,    35,    35,    36,    36,    36,    37,    37,    37,    38,
-      39,    40,    40,    41,    41,    42,    42,    42,    42,    43,
-      43,    43,    43,    43,    44,    44,    44,    44,    44,    45,
-      45,    46
+      39,    40,    40,    41,    41,    42,    42,    43,    43,    43,
+      43,    43,    44,    44,    44,    44,    44,    45,    45,    46
   };
 
   const unsigned char
@@ -1553,9 +1540,8 @@ namespace impalajit {
        0,     2,     7,     0,     2,     3,     0,     3,     2,     3,
        3,     2,     1,     1,     1,     1,     4,     3,     1,     3,
        1,     2,     2,     1,     3,     3,     1,     3,     3,     1,
-       3,     3,     3,     3,     3,     1,     1,     3,     3,     0,
-       3,     2,     3,     3,     0,     3,     2,     3,     3,     7,
-      11,     2
+       3,     3,     3,     1,     3,     1,     3,     0,     3,     2,
+       3,     3,     0,     3,     2,     3,     3,     7,    11,     2
   };
 
 
@@ -1567,7 +1553,7 @@ namespace impalajit {
   {
   "\"end of file\"", "error", "$undefined", "\"end of line\"",
   "\"integer\"", "\"double\"", "\"string\"", "\"function\"",
-  "\"if block\"", "\"else block\"", "\"or operator\"", "\"and operator\"",
+  "\"if block\"", "\"else block\"", "\"|| operator\"", "\"&& operator\"",
   "\"compare operator\"", "\",\"", "\";\"", "\"return value\"", "'('",
   "')'", "'{'", "'}'", "'^'", "'+'", "'-'", "'*'", "'/'", "'='", "$accept",
   "function", "parameter_list", "function_body", "return_stmt", "constant",
@@ -1583,9 +1569,8 @@ namespace impalajit {
        0,   111,   111,   116,   122,   129,   135,   141,   147,   153,
      159,   166,   171,   177,   183,   188,   193,   198,   205,   210,
      215,   220,   225,   230,   235,   240,   246,   251,   256,   262,
-     268,   274,   279,   285,   290,   298,   303,   308,   313,   318,
-     324,   330,   336,   342,   348,   354,   360,   366,   372,   380,
-     385,   391
+     268,   274,   279,   285,   291,   297,   303,   310,   316,   322,
+     328,   334,   340,   346,   352,   358,   364,   372,   377,   383
   };
 
   // Print the state stack on the debug stream.
@@ -1668,8 +1653,8 @@ namespace impalajit {
 
 #line 39 "parser.yy" // lalr1.cc:1167
 } // impalajit
-#line 1672 "parser.cc" // lalr1.cc:1167
-#line 396 "parser.yy" // lalr1.cc:1168
+#line 1657 "parser.cc" // lalr1.cc:1167
+#line 388 "parser.yy" // lalr1.cc:1168
  /*** Additional Code ***/
 
 

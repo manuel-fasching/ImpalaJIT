@@ -480,7 +480,7 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 109,     ///< Last index in yytable_.
+      yylast_ = 106,     ///< Last index in yytable_.
       yynnts_ = 21,  ///< Number of nonterminal symbols.
       yyfinal_ = 6, ///< Termination state number.
       yyterror_ = 1,

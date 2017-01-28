@@ -10,7 +10,7 @@
 class IfStmtNode : public Node
 {
 public:
-    explicit IfStmtNode(Node* _condition, Node* _if_body)
+    IfStmtNode(Node* _condition, Node* _if_body)
             : Node(IF_STATEMENT)
     {
         nodes.push_back(_condition);
@@ -71,6 +71,20 @@ public:
         delete label3;
     }
 */
+};
+
+class IfConditionNode : public Node
+{
+public:
+    IfConditionNode(Node* _node)
+            : Node(IF_CONDITION)
+    {
+        nodes.push_back(_node);
+    }
+
+    virtual ~IfConditionNode()
+    {
+    }
 };
 
 class IfBodyNode : public Node

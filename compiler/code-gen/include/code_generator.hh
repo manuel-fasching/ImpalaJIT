@@ -15,6 +15,8 @@ private:
     Assembly assembly;
     void evaluateAst(Node *node);
     void dsfUtil(Node* node);
+    void evaluateCondition(Node* node, int label1, int label2);
+    CompareOperatorType  evaluateComparison(Node* node);
     class FunctionContext &functionContext;
 
 public:

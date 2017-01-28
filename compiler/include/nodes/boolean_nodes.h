@@ -27,6 +27,26 @@ public:
     }
 };*/
 
+class BooleanAndNode : public Node {
+
+public:
+    BooleanAndNode()
+    : Node(BOOLEAN_AND_JUNCTION)
+    {
+    }
+};
+
+
+class BooleanOrNode : public Node {
+
+public:
+    BooleanOrNode()
+            : Node(BOOLEAN_OR_JUNCTION)
+    {
+    }
+};
+
+/*
 class BooleanJunctionNode : public Node {
 private:
     Node* left;
@@ -60,7 +80,7 @@ public:
         left = NULL;
         right = NULL;
     }
-/*
+
     virtual void evaluate(){
         if(right != NULL) {
             if (right->getType() == assembly.AND && boolOperator == assembly.OR) {
@@ -119,7 +139,7 @@ public:
         }
 
 
-    } */
-};
+    }
+};*/
 
 #endif //IMPALAJIT_BOOL_H

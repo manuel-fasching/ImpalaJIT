@@ -78,8 +78,8 @@
 %token <stringVal>	FUNCTION    		"function"
 %token <stringVal>  IF 					"if block"
 %token <stringVal>  ELSE 				"else block"
-%token <integerVal>  OR               	"or operator"
-%token <integerVal>  AND               	"and operator"
+%token <integerVal>  OR               	"|| operator"
+%token <integerVal>  AND               	"&& operator"
 %token <integerVal> CMPOP				"compare operator"
 %token <stringVal> COMMA				","
 %token <stringVal> SEMICOLON			";"
@@ -282,38 +282,30 @@ atomcondition : expr CMPOP expr
 			}
 
 
-booleanand : booleanand AND atomcondition
+booleanand : atomcondition 
 			{
-				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
+				$$ = new BooleanAndNode();
+				($$->nodes).push_back($1);
 			}
-			
-			| atomcondition AND atomcondition 
-			{
-				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
-			}
-			
-			
 
-
-booleanor : atomcondition 
-			{
-				$$ = new BooleanJunctionNode($1);
-			}
-			
-			| booleanand 
+			| booleanand AND atomcondition
 			{
 				$$ = $1;
+				($$->nodes).push_back($3);
 			}
 
-			| booleanor OR atomcondition 
+booleanor : booleanand 
 			{
-				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
+				$$ = new BooleanOrNode();
+				($$->nodes).push_back($1);
 			}
 
 			| booleanor OR booleanand
 			{
-				$$ = new BooleanJunctionNode($1, $3, static_cast<BooleanJunctionType>($2));
+				$$ = $1;
+				($$->nodes).push_back($3);
 			}
+		
 
 if_body : %empty 
 			{
