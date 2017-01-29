@@ -36,3 +36,10 @@ int FunctionContext::getIndexOfVariable(std::string &name) {
         return std::distance(variables.begin(), it);
     }
 }
+
+void FunctionContext::clear(){
+    delete root;
+    parameters.clear();
+    variables.clear();
+    root = NULL;
+}

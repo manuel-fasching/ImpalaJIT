@@ -1,4 +1,4 @@
-test(x,y){
+gte(x,y){
     if(x>=y) {
         return 1;
     }

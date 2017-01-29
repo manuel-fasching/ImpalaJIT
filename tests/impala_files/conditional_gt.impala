@@ -1,4 +1,4 @@
-test(x,y){
+gt(x,y){
     if(x>y) {
         return 1;
     }

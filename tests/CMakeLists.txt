@@ -13,6 +13,10 @@ function( add_test_executable name )
     target_link_libraries( test_${name}.o impalajit)
 endfunction( add_test_executable )
 
+
+include_directories(include)
+
+
 add_test_executable(conditionals_eq)
 add_test_executable(conditionals_lt)
 add_test_executable(conditionals_gt)
@@ -22,3 +26,4 @@ add_test_executable(conditionals_gte)
 add_test_executable(conditionals_nested)
 add_test_executable(conditionals_complex_1)
 add_test_executable(conditionals_complex_2)
+add_test_executable(multiple_functions)

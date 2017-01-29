@@ -5,6 +5,8 @@
 #define IMPALAJIT_DRIVER_H
 
 #include <string>
+#include <map>
+#include <vector>
 
 #include <function_context.h>
 #include <types.hh>
@@ -24,10 +26,10 @@ class Driver
 {
 private:
     FunctionContext* functionContext;
-
 public:
 
     ~Driver();
+
     /** Pointer to the current lexer instance, this is used to connect the
     * parser to the scanner. It is used in the yylex macro. */
     class Scanner* lexer;
@@ -51,12 +53,15 @@ public:
     dasm_gen_func parse_string(const std::string& input,
 		      const std::string& sname = "string stream");
 
+
+    dasm_gen_func parse_single_file(const std::string &filename);
+
     /** Invoke the scanner and parser on a file. Use parse_stream with a
      * std::ifstream if detection of file reading errors is required.
      * @param filename	input file name
      * @return		true if successfully parsed
      */
-    dasm_gen_func parse_file(const std::string& filename);
+    std::map<std::string, dasm_gen_func> parse_multiple_files(std::vector<std::string> &filenames);
 
     // To demonstrate pure handling of parse errors, instead of
     // simply dumping them on the standard error output, we will pass
@@ -71,6 +76,8 @@ public:
     void error(const std::string& m);
 
     void setFunctionContext(FunctionContext* &_functionContext);
+
+    std::string getName();
 };
 
 } // namespace impalajit

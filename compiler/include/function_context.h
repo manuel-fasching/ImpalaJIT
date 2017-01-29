@@ -27,5 +27,7 @@ public:
 
     int getIndexOfVariable(std::string &name);
 
+    void clear();
+
 };
 #endif //IMPALAJIT_FUNCTION_CONTEXT_HH

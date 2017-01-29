@@ -42,11 +42,6 @@ void Assembly::prologue(){
     | mov rbp, rsp
     | mov rax, rbp
     | sub rax, 16
-
-    std::cout << "| push rbp" << std::endl;
-    std::cout << "| mov rbp, rsp" << std::endl;
-    std::cout << "| mov rax, rbp" << std::endl;
-    std::cout << "| sub rax, 16" << std::endl;
 }
 
 void Assembly::growPC(unsigned npc)
@@ -56,14 +51,11 @@ void Assembly::growPC(unsigned npc)
 
 void Assembly::pushConstantToFPUStack(double *value){
     | fld qword [value]
-    std::cout << "| fld " << *value << std::endl;
 }
 
 void Assembly::storeLocalVariable() {
     | fstp qword [rax]
     | sub rax, 8
-    std::cout << "| fstp qword [rax]" << std::endl;
-    std::cout << "| sub rax, 8" << std::endl;
 }
 
 void Assembly::pushParameterToFPUStack(int index) {
@@ -122,7 +114,6 @@ void Assembly::pushParameterToFPUStack(int index) {
                 break;
             }
     }
-    std::cout << "| fld qword [rbp+" << (8+(index-7)*8) << "]" << std::endl;
 }
 
 void Assembly::replaceParameter(int index) {
@@ -181,27 +172,22 @@ void Assembly::replaceParameter(int index) {
                 break;
             }
     }
-    std::cout << "| fstp qword [rbp+" << (8+(index-7)*8) << "]" << std::endl;
 }
 
 void Assembly::pushLocalVariableToFPUStack(int index) {
     | fld qword [rbp-(16+index*8)]
-    std::cout << "| fld qword [rbp-" << (16+index*8) << "]" << std::endl;
 }
 
 void Assembly::replaceLocalVariable(int index) {
     | fstp qword [rbp-(16+index*8)]
-    std::cout << "| fstp qword [rbp-" << (16+index*8) << "]" << std::endl;
 }
 
 void Assembly::addDynamicLabel(unsigned labelNumber) {
     | =>labelNumber:
-    std::cout << "| =>" << labelNumber << ":" << std::endl;
 }
 
 void Assembly::jumpForwardToDynamicLabel(unsigned labelNumber) {
     | jmp =>labelNumber
-    std::cout << "| jmp =>" << labelNumber << std::endl;
 }
 
 
@@ -211,37 +197,31 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
             case EQ:
             {
                 | jne  =>labelNumber
-                std::cout << "| jne  =>" << labelNumber << std::endl;
                 break;
             }
             case NE:
             {
                 | je  =>labelNumber
-                std::cout << "| je  =>" << labelNumber << std::endl;
                 break;
             }
             case GT:
             {
                 | jbe  =>labelNumber
-                std::cout << "| jbe  =>" << labelNumber << std::endl;
                 break;
             }
             case LT:
             {
                 | jae  =>labelNumber
-                std::cout << "| jae  =>" << labelNumber << std::endl;
                 break;
             }
             case GTE:
             {
                 | jb  =>labelNumber
-                std::cout << "| jbe  =>" << labelNumber << std::endl;
                 break;
             }
             case LTE:
             {
                 | ja  =>labelNumber
-                std::cout << "| ja  =>" << labelNumber << std::endl;
                 break;
             }
         }
@@ -251,37 +231,31 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
             case EQ:
             {
                 | je  =>labelNumber
-                std::cout << "| je  =>" << labelNumber << std::endl;
                 break;
             }
             case NE:
             {
                 | jne  =>labelNumber
-                std::cout << "| jne  =>" << labelNumber << std::endl;
                 break;
             }
             case GT:
             {
                 | ja  =>labelNumber
-                std::cout << "| ja  =>" << labelNumber << std::endl;
                 break;
             }
             case LT:
             {
                 | jb  =>labelNumber
-                std::cout << "| jb  =>" << labelNumber << std::endl;
                 break;
             }
             case GTE:
             {
                 | jge  =>labelNumber
-                std::cout << "| jge  =>" << labelNumber << std::endl;
                 break;
             }
             case LTE:
             {
                 | jbe  =>labelNumber
-                std::cout << "| jbe  =>" << labelNumber << std::endl;
                 break;
             }
         }
@@ -290,27 +264,22 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
 
 void Assembly::performNegation(){
     | fchs
-    std::cout << "| fchs" << std::endl;
 }
 
 void Assembly::calculateAddition(){
     | faddp st1
-    std::cout << "| faddp st1" << std::endl;
 }
 
 void Assembly::calculateSubtraction(){
     | fsubp st1
-    std::cout << "| fsubp st1" << std::endl;
 }
 
 void Assembly::calculateMultiplication(){
     | fmulp st1
-    std::cout << "| fmulp st1" << std::endl;
 }
 
 void Assembly::calculateDivision(){
     | fdivp st1
-    std::cout << "| fdivp st1" << std::endl;
 }
 
 void Assembly::calculatePower(){
@@ -325,45 +294,26 @@ void Assembly::calculatePower(){
     | faddp st1,st0
     | fscale
     | fstp st1
-
-    std::cout << "| fyl2x" << std::endl;
-    std::cout << "| fld st0" << std::endl;
-    std::cout << "| frndint" << std::endl;
-    std::cout << "| fsubr st1,st0" << std::endl;
-    std::cout << "| fxch st1" << std::endl;
-    std::cout << "| fchs" << std::endl;
-    std::cout << "| f2xm1" << std::endl;
-    std::cout << "| fld1" << std::endl;
-    std::cout << "| faddp st1,st0" << std::endl;
-    std::cout << "| fscale" << std::endl;
-    std::cout << "| fstp st1" << std::endl;
 }
 
 void Assembly::calculateSQRT(){
     | fsqrt
-    std::cout << "| fsqrt" << std::endl;
 }
 
 void Assembly::performComparison(){
     | fcomip st1
     | fpop
-    std::cout << "| fcomip st1" << std::endl;
-    std::cout << "| fpop" << std::endl;
 }
 
 void Assembly::extractResult(){
      | fstp qword [rbp-8]
      | movlpd xmm0, qword [rbp-8]
-     std::cout << "| fstp qword [rbp-8]" << std::endl;
-     std::cout << "| movlpd xmm0, qword [rbp-8]" << std::endl;
 }
 
 
 void Assembly::epilogue(){
     | pop rbp
     | ret
-    std::cout << "| pop rbp" << std::endl;
-    std::cout << "| ret" << std::endl;
 }
 
 dasm_gen_func Assembly::linkAndEncode(){
@@ -375,3 +325,5 @@ dasm_gen_func Assembly::linkAndEncode(){
   mprotect(buf, sz, PROT_READ | PROT_EXEC);
   return (dasm_gen_func) buf;
 }
+
+

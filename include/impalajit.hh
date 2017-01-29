@@ -5,6 +5,7 @@
 
 #include <string>
 #include "impalajit/types.hh"
+#include <map>
 
 #ifdef __cplusplus
 
@@ -12,6 +13,8 @@ namespace impalajit{
     class Compiler;
 }
 class impalajit::Compiler{
+private:
+    std::string configFilePath;
 public:
     enum Error {
         SUCCESS,
@@ -22,7 +25,11 @@ public:
         EMPTY_VARIABLE_BUFFER
     };
 
+    Compiler(std::string configFilePath);
+    Compiler();
+
     dasm_gen_func compile();
+    std::map<std::string, dasm_gen_func> compileMultipleFunctions();
 };
 
 typedef impalajit::Compiler impalajit_compiler;
@@ -45,10 +52,19 @@ typedef enum {
 #ifdef __cplusplus
 extern "C" {
 #endif
+    typedef struct
+    {
+        const char* key;
+        dasm_gen_func value;
+    } c_function_map;
 
     impalajit_compiler * impalajit_compiler_create();
 
+    impalajit_compiler * impalajit_compiler_create_with_config(char* config_file_path);
+
     dasm_gen_func impalajit_compiler_compile(impalajit_compiler* handle);
+
+    c_function_map* impalajit_compiler_compile_multiple_functions(impalajit_compiler* handle);
 
 #ifdef __cplusplus
 }

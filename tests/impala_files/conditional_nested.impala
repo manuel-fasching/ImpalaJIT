@@ -1,4 +1,4 @@
-test(a,b,c,d){
+nested(a,b,c,d){
     if(a==b) {
         if(c==d){
             return 4;

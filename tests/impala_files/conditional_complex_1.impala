@@ -1,4 +1,4 @@
-test(a,b,c,d) {
+complex_1(a,b,c,d) {
     if(a==1 && (b==1 || c==1 && d == 1)){
         return 1;
     }
