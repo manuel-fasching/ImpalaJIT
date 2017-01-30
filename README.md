@@ -7,3 +7,6 @@ A lightweight JIT compiler for flexible data access in simulation applications
 3. make
 4. make test
 5. make install
+
+# License
+ImpalaJIT is release under the MIT License (see COPYING)
