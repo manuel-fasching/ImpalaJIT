@@ -40,7 +40,7 @@
 
 # include <vector>
 
-#line 39 "parser.yy" // stack.hh:132
+#line 58 "parser.yy" // stack.hh:132
 namespace impalajit {
 #line 46 "stack.hh" // stack.hh:132
   template <class T, class S = std::vector<T> >
@@ -150,7 +150,7 @@ namespace impalajit {
     unsigned int range_;
   };
 
-#line 39 "parser.yy" // stack.hh:132
+#line 58 "parser.yy" // stack.hh:132
 } // impalajit
 #line 156 "stack.hh" // stack.hh:132
 

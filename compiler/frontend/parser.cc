@@ -32,7 +32,7 @@
 
 
 // First part of user declarations.
-#line 4 "parser.yy" // lalr1.cc:404
+#line 23 "parser.yy" // lalr1.cc:404
  /*** C/C++ Declarations ***/
 
 #include <stdio.h>
@@ -61,7 +61,7 @@
 #include "parser.hh"
 
 // User implementation prologue.
-#line 97 "parser.yy" // lalr1.cc:412
+#line 116 "parser.yy" // lalr1.cc:412
 
 
 
@@ -156,7 +156,7 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-#line 39 "parser.yy" // lalr1.cc:479
+#line 58 "parser.yy" // lalr1.cc:479
 namespace impalajit {
 #line 162 "parser.cc" // lalr1.cc:479
 
@@ -409,119 +409,119 @@ namespace impalajit {
     {
             case 29: // function_body
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 415 "parser.cc" // lalr1.cc:614
         break;
 
       case 30: // return_stmt
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 422 "parser.cc" // lalr1.cc:614
         break;
 
       case 31: // constant
 
-#line 94 "parser.yy" // lalr1.cc:614
+#line 113 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 429 "parser.cc" // lalr1.cc:614
         break;
 
       case 32: // variable
 
-#line 94 "parser.yy" // lalr1.cc:614
+#line 113 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 436 "parser.cc" // lalr1.cc:614
         break;
 
       case 33: // atomexpr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 443 "parser.cc" // lalr1.cc:614
         break;
 
       case 34: // powexpr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 450 "parser.cc" // lalr1.cc:614
         break;
 
       case 35: // unaryexpr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 457 "parser.cc" // lalr1.cc:614
         break;
 
       case 36: // mulexpr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 464 "parser.cc" // lalr1.cc:614
         break;
 
       case 37: // addexpr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 471 "parser.cc" // lalr1.cc:614
         break;
 
       case 38: // expr
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 478 "parser.cc" // lalr1.cc:614
         break;
 
       case 39: // assignment
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 485 "parser.cc" // lalr1.cc:614
         break;
 
       case 40: // atomcondition
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 492 "parser.cc" // lalr1.cc:614
         break;
 
       case 41: // booleanand
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 499 "parser.cc" // lalr1.cc:614
         break;
 
       case 42: // booleanor
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 506 "parser.cc" // lalr1.cc:614
         break;
 
       case 43: // if_body
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 513 "parser.cc" // lalr1.cc:614
         break;
 
       case 44: // else_body
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 520 "parser.cc" // lalr1.cc:614
         break;
 
       case 45: // ifstmt
 
-#line 95 "parser.yy" // lalr1.cc:614
+#line 114 "parser.yy" // lalr1.cc:614
         { delete (yysym.value.node); }
 #line 527 "parser.cc" // lalr1.cc:614
         break;
@@ -655,7 +655,7 @@ namespace impalajit {
 
 
     // User initialization code.
-    #line 47 "parser.yy" // lalr1.cc:741
+    #line 66 "parser.yy" // lalr1.cc:741
 {
     // initialize the initial location object
     yyla.location.begin.filename = yyla.location.end.filename = &driver.streamname;
@@ -769,7 +769,7 @@ namespace impalajit {
           switch (yyn)
             {
   case 2:
-#line 112 "parser.yy" // lalr1.cc:859
+#line 131 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.functionContext) = new FunctionContext(*(yystack_[6].value.stringVal), *(yystack_[4].value.stringSet), (yystack_[1].value.node));
 			}
@@ -777,7 +777,7 @@ namespace impalajit {
     break;
 
   case 3:
-#line 117 "parser.yy" // lalr1.cc:859
+#line 136 "parser.yy" // lalr1.cc:859
     {
 				std::set<std::string>* parameters = new std::set<std::string>();
 				(yylhs.value.stringSet) = parameters;
@@ -786,7 +786,7 @@ namespace impalajit {
     break;
 
   case 4:
-#line 123 "parser.yy" // lalr1.cc:859
+#line 142 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.stringSet) = (yystack_[1].value.stringSet);
 				(*(yylhs.value.stringSet)).insert(*(yystack_[0].value.stringVal));
@@ -795,7 +795,7 @@ namespace impalajit {
     break;
 
   case 5:
-#line 130 "parser.yy" // lalr1.cc:859
+#line 149 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.stringSet) = (yystack_[2].value.stringSet);
 				(*(yylhs.value.stringSet)).insert(*(yystack_[0].value.stringVal));
@@ -804,7 +804,7 @@ namespace impalajit {
     break;
 
   case 6:
-#line 136 "parser.yy" // lalr1.cc:859
+#line 155 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new RootNode();
 			}
@@ -812,7 +812,7 @@ namespace impalajit {
     break;
 
   case 7:
-#line 142 "parser.yy" // lalr1.cc:859
+#line 161 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -821,7 +821,7 @@ namespace impalajit {
     break;
 
   case 8:
-#line 148 "parser.yy" // lalr1.cc:859
+#line 167 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
@@ -830,7 +830,7 @@ namespace impalajit {
     break;
 
   case 9:
-#line 154 "parser.yy" // lalr1.cc:859
+#line 173 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -839,7 +839,7 @@ namespace impalajit {
     break;
 
   case 10:
-#line 160 "parser.yy" // lalr1.cc:859
+#line 179 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -848,7 +848,7 @@ namespace impalajit {
     break;
 
   case 11:
-#line 167 "parser.yy" // lalr1.cc:859
+#line 186 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new ReturnNode((yystack_[0].value.node));
 			}
@@ -856,7 +856,7 @@ namespace impalajit {
     break;
 
   case 12:
-#line 172 "parser.yy" // lalr1.cc:859
+#line 191 "parser.yy" // lalr1.cc:859
     {
 		        (yylhs.value.node) = new ConstantNode((yystack_[0].value.doubleVal));
 	   		}
@@ -864,7 +864,7 @@ namespace impalajit {
     break;
 
   case 13:
-#line 178 "parser.yy" // lalr1.cc:859
+#line 197 "parser.yy" // lalr1.cc:859
     {
 	       		(yylhs.value.node) = new VariableNode(*(yystack_[0].value.stringVal));
 	   		}
@@ -872,7 +872,7 @@ namespace impalajit {
     break;
 
   case 14:
-#line 184 "parser.yy" // lalr1.cc:859
+#line 203 "parser.yy" // lalr1.cc:859
     {
 	       		(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
@@ -880,7 +880,7 @@ namespace impalajit {
     break;
 
   case 15:
-#line 189 "parser.yy" // lalr1.cc:859
+#line 208 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
@@ -888,7 +888,7 @@ namespace impalajit {
     break;
 
   case 16:
-#line 194 "parser.yy" // lalr1.cc:859
+#line 213 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = new SQRTNode((yystack_[1].value.node));
 		   	}
@@ -896,7 +896,7 @@ namespace impalajit {
     break;
 
   case 17:
-#line 199 "parser.yy" // lalr1.cc:859
+#line 218 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[1].value.node);
 		   	}
@@ -904,7 +904,7 @@ namespace impalajit {
     break;
 
   case 18:
-#line 206 "parser.yy" // lalr1.cc:859
+#line 225 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 	  		}
@@ -912,7 +912,7 @@ namespace impalajit {
     break;
 
   case 19:
-#line 211 "parser.yy" // lalr1.cc:859
+#line 230 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = new PowerNode((yystack_[2].value.node), (yystack_[0].value.node));
 	  		}
@@ -920,7 +920,7 @@ namespace impalajit {
     break;
 
   case 20:
-#line 216 "parser.yy" // lalr1.cc:859
+#line 235 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
@@ -928,7 +928,7 @@ namespace impalajit {
     break;
 
   case 21:
-#line 221 "parser.yy" // lalr1.cc:859
+#line 240 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
@@ -936,7 +936,7 @@ namespace impalajit {
     break;
 
   case 22:
-#line 226 "parser.yy" // lalr1.cc:859
+#line 245 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new NegationNode((yystack_[0].value.node));
 			}
@@ -944,7 +944,7 @@ namespace impalajit {
     break;
 
   case 23:
-#line 231 "parser.yy" // lalr1.cc:859
+#line 250 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 		  	}
@@ -952,7 +952,7 @@ namespace impalajit {
     break;
 
   case 24:
-#line 236 "parser.yy" // lalr1.cc:859
+#line 255 "parser.yy" // lalr1.cc:859
     {
 		      	(yylhs.value.node) = new MultiplicationNode((yystack_[2].value.node), (yystack_[0].value.node));
 		  	}
@@ -960,7 +960,7 @@ namespace impalajit {
     break;
 
   case 25:
-#line 241 "parser.yy" // lalr1.cc:859
+#line 260 "parser.yy" // lalr1.cc:859
     {
 		  	    (yylhs.value.node) = new DivisionNode((yystack_[2].value.node), (yystack_[0].value.node));
 		  	}
@@ -968,7 +968,7 @@ namespace impalajit {
     break;
 
   case 26:
-#line 247 "parser.yy" // lalr1.cc:859
+#line 266 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 		  	}
@@ -976,7 +976,7 @@ namespace impalajit {
     break;
 
   case 27:
-#line 252 "parser.yy" // lalr1.cc:859
+#line 271 "parser.yy" // lalr1.cc:859
     {
 		      	(yylhs.value.node) = new AdditionNode((yystack_[2].value.node), (yystack_[0].value.node));
 		  	}
@@ -984,7 +984,7 @@ namespace impalajit {
     break;
 
   case 28:
-#line 257 "parser.yy" // lalr1.cc:859
+#line 276 "parser.yy" // lalr1.cc:859
     {
 		      	(yylhs.value.node) = new SubtractionNode((yystack_[2].value.node), (yystack_[0].value.node));
 		  	}
@@ -992,7 +992,7 @@ namespace impalajit {
     break;
 
   case 29:
-#line 263 "parser.yy" // lalr1.cc:859
+#line 282 "parser.yy" // lalr1.cc:859
     {
 	      		(yylhs.value.node) = (yystack_[0].value.node);
 	  		}
@@ -1000,7 +1000,7 @@ namespace impalajit {
     break;
 
   case 30:
-#line 269 "parser.yy" // lalr1.cc:859
+#line 288 "parser.yy" // lalr1.cc:859
     {
 		 		(yylhs.value.node) = new AssignmentNode(*(yystack_[2].value.stringVal), (yystack_[0].value.node));
 	     	}
@@ -1008,7 +1008,7 @@ namespace impalajit {
     break;
 
   case 31:
-#line 275 "parser.yy" // lalr1.cc:859
+#line 294 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new CompareNode((yystack_[2].value.node), (yystack_[0].value.node), static_cast<CompareOperatorType>((yystack_[1].value.integerVal)));
 			}
@@ -1016,7 +1016,7 @@ namespace impalajit {
     break;
 
   case 32:
-#line 280 "parser.yy" // lalr1.cc:859
+#line 299 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 			}
@@ -1024,7 +1024,7 @@ namespace impalajit {
     break;
 
   case 33:
-#line 286 "parser.yy" // lalr1.cc:859
+#line 305 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
@@ -1032,7 +1032,7 @@ namespace impalajit {
     break;
 
   case 34:
-#line 291 "parser.yy" // lalr1.cc:859
+#line 310 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new BooleanAndNode();
 				((yylhs.value.node)->nodes).push_back((yystack_[2].value.node));
@@ -1042,7 +1042,7 @@ namespace impalajit {
     break;
 
   case 35:
-#line 298 "parser.yy" // lalr1.cc:859
+#line 317 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[0].value.node);
 			}
@@ -1050,7 +1050,7 @@ namespace impalajit {
     break;
 
   case 36:
-#line 303 "parser.yy" // lalr1.cc:859
+#line 322 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new BooleanOrNode();
 				((yylhs.value.node)->nodes).push_back((yystack_[2].value.node));
@@ -1060,7 +1060,7 @@ namespace impalajit {
     break;
 
   case 37:
-#line 311 "parser.yy" // lalr1.cc:859
+#line 330 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfBodyNode();
 			}
@@ -1068,7 +1068,7 @@ namespace impalajit {
     break;
 
   case 38:
-#line 317 "parser.yy" // lalr1.cc:859
+#line 336 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1077,7 +1077,7 @@ namespace impalajit {
     break;
 
   case 39:
-#line 323 "parser.yy" // lalr1.cc:859
+#line 342 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
@@ -1086,7 +1086,7 @@ namespace impalajit {
     break;
 
   case 40:
-#line 329 "parser.yy" // lalr1.cc:859
+#line 348 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1095,7 +1095,7 @@ namespace impalajit {
     break;
 
   case 41:
-#line 335 "parser.yy" // lalr1.cc:859
+#line 354 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1104,7 +1104,7 @@ namespace impalajit {
     break;
 
   case 42:
-#line 341 "parser.yy" // lalr1.cc:859
+#line 360 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new ElseBodyNode();
 			}
@@ -1112,7 +1112,7 @@ namespace impalajit {
     break;
 
   case 43:
-#line 347 "parser.yy" // lalr1.cc:859
+#line 366 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1121,7 +1121,7 @@ namespace impalajit {
     break;
 
   case 44:
-#line 353 "parser.yy" // lalr1.cc:859
+#line 372 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[1].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[0].value.node));
@@ -1130,7 +1130,7 @@ namespace impalajit {
     break;
 
   case 45:
-#line 359 "parser.yy" // lalr1.cc:859
+#line 378 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1139,7 +1139,7 @@ namespace impalajit {
     break;
 
   case 46:
-#line 365 "parser.yy" // lalr1.cc:859
+#line 384 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = (yystack_[2].value.node);
 				((yylhs.value.node)->nodes).push_back((yystack_[1].value.node));
@@ -1148,7 +1148,7 @@ namespace impalajit {
     break;
 
   case 47:
-#line 373 "parser.yy" // lalr1.cc:859
+#line 392 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfStmtNode((yystack_[4].value.node), (yystack_[1].value.node));
 			}
@@ -1156,7 +1156,7 @@ namespace impalajit {
     break;
 
   case 48:
-#line 378 "parser.yy" // lalr1.cc:859
+#line 397 "parser.yy" // lalr1.cc:859
     {
 				(yylhs.value.node) = new IfElseStmtNode((yystack_[8].value.node), (yystack_[5].value.node), (yystack_[1].value.node));
 			}
@@ -1164,7 +1164,7 @@ namespace impalajit {
     break;
 
   case 49:
-#line 384 "parser.yy" // lalr1.cc:859
+#line 403 "parser.yy" // lalr1.cc:859
     {
 				driver.setFunctionContext((yystack_[1].value.functionContext));
 		  	}
@@ -1566,11 +1566,11 @@ namespace impalajit {
   const unsigned short int
   Parser::yyrline_[] =
   {
-       0,   111,   111,   116,   122,   129,   135,   141,   147,   153,
-     159,   166,   171,   177,   183,   188,   193,   198,   205,   210,
-     215,   220,   225,   230,   235,   240,   246,   251,   256,   262,
-     268,   274,   279,   285,   290,   297,   302,   310,   316,   322,
-     328,   334,   340,   346,   352,   358,   364,   372,   377,   383
+       0,   130,   130,   135,   141,   148,   154,   160,   166,   172,
+     178,   185,   190,   196,   202,   207,   212,   217,   224,   229,
+     234,   239,   244,   249,   254,   259,   265,   270,   275,   281,
+     287,   293,   298,   304,   309,   316,   321,   329,   335,   341,
+     347,   353,   359,   365,   371,   377,   383,   391,   396,   402
   };
 
   // Print the state stack on the debug stream.
@@ -1651,10 +1651,10 @@ namespace impalajit {
       return undef_token_;
   }
 
-#line 39 "parser.yy" // lalr1.cc:1167
+#line 58 "parser.yy" // lalr1.cc:1167
 } // impalajit
 #line 1657 "parser.cc" // lalr1.cc:1167
-#line 388 "parser.yy" // lalr1.cc:1168
+#line 407 "parser.yy" // lalr1.cc:1168
  /*** Additional Code ***/
 
 

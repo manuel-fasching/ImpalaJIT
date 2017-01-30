@@ -50,7 +50,7 @@
 #  endif
 # endif
 
-#line 39 "parser.yy" // location.cc:296
+#line 58 "parser.yy" // location.cc:296
 namespace impalajit {
 #line 56 "position.hh" // location.cc:296
   /// Abstract a position.
@@ -174,7 +174,7 @@ namespace impalajit {
     return ostr << pos.line << '.' << pos.column;
   }
 
-#line 39 "parser.yy" // location.cc:296
+#line 58 "parser.yy" // location.cc:296
 } // impalajit
 #line 180 "position.hh" // location.cc:296
 #endif // !YY_YY_POSITION_HH_INCLUDED

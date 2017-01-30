@@ -40,7 +40,7 @@
 #ifndef YY_YY_PARSER_HH_INCLUDED
 # define YY_YY_PARSER_HH_INCLUDED
 // //                    "%code requires" blocks.
-#line 60 "parser.yy" // lalr1.cc:377
+#line 79 "parser.yy" // lalr1.cc:377
 
   #include <set>
 
@@ -114,7 +114,7 @@
 # define YYDEBUG 1
 #endif
 
-#line 39 "parser.yy" // lalr1.cc:377
+#line 58 "parser.yy" // lalr1.cc:377
 namespace impalajit {
 #line 120 "parser.hh" // lalr1.cc:377
 
@@ -130,7 +130,7 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 64 "parser.yy" // lalr1.cc:377
+    #line 83 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
@@ -494,7 +494,7 @@ namespace impalajit {
   };
 
 
-#line 39 "parser.yy" // lalr1.cc:377
+#line 58 "parser.yy" // lalr1.cc:377
 } // impalajit
 #line 500 "parser.hh" // lalr1.cc:377
 

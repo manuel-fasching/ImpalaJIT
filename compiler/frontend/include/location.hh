@@ -40,7 +40,7 @@
 
 # include "position.hh"
 
-#line 39 "parser.yy" // location.cc:296
+#line 58 "parser.yy" // location.cc:296
 namespace impalajit {
 #line 46 "location.hh" // location.cc:296
   /// Abstract a location.
@@ -186,7 +186,7 @@ namespace impalajit {
     return ostr;
   }
 
-#line 39 "parser.yy" // location.cc:296
+#line 58 "parser.yy" // location.cc:296
 } // impalajit
 #line 192 "location.hh" // location.cc:296
 #endif // !YY_YY_LOCATION_HH_INCLUDED
