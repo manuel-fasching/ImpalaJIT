@@ -54,14 +54,7 @@ public:
 		      const std::string& sname = "string stream");
 
 
-    dasm_gen_func parse_single_file(const std::string &filename);
-
-    /** Invoke the scanner and parser on a file. Use parse_stream with a
-     * std::ifstream if detection of file reading errors is required.
-     * @param filename	input file name
-     * @return		true if successfully parsed
-     */
-    std::map<std::string, dasm_gen_func> parse_multiple_files(std::vector<std::string> &filenames);
+    dasm_gen_func parse_file(const std::string &filename);
 
     // To demonstrate pure handling of parse errors, instead of
     // simply dumping them on the standard error output, we will pass
@@ -77,7 +70,7 @@ public:
 
     void setFunctionContext(FunctionContext* &_functionContext);
 
-    std::string getName();
+    std::string getFunctionName();
 };
 
 } // namespace impalajit

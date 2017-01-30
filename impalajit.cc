@@ -15,28 +15,21 @@ impalajit::Driver driver;
 impalajit::Compiler::Compiler() {
 }
 
-impalajit::Compiler::Compiler(std::string _configFilePath) {
-    std::ifstream fin(_configFilePath.c_str());
+impalajit::Compiler::Compiler(std::string _configPath) {
+    std::ifstream fin(_configPath.c_str());
     if(!fin.good()) {
         fin.close();
         throw std::runtime_error("Bad configuration file");
     }
     fin.close();
-    configFilePath = _configFilePath;
+    configPath = _configPath;
 
 }
 
-dasm_gen_func impalajit::Compiler::compile(){
-    std::string line;
-    std::ifstream fin(configFilePath.c_str());
-    getline(fin, line);
-    fin.close();
-    return driver.parse_single_file(line);
-}
-std::map<std::string, dasm_gen_func> impalajit::Compiler::compileMultipleFunctions(){
+void impalajit::Compiler::compile(){
     std::vector<std::string> v;
     std::string line;
-    std::ifstream fin(configFilePath.c_str());
+    std::ifstream fin(configPath.c_str());
     while(getline(fin,line)) {
         if (line.empty()){
             continue;
@@ -50,7 +43,19 @@ std::map<std::string, dasm_gen_func> impalajit::Compiler::compileMultipleFunctio
         v.push_back(line);
     }
     fin.close();
-    return driver.parse_multiple_files(v);
+
+    for(std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
+        dasm_gen_func function = driver.parse_file((*it));
+        std::cout << "function name: " << driver.getFunctionName() << std::endl;
+        functionMap.insert(std::make_pair(driver.getFunctionName(), function));
+    }
+}
+
+dasm_gen_func impalajit::Compiler::getFunction(std::string functionName) {
+    if(functionMap.find(functionName) == functionMap.end()){
+        throw std::runtime_error("Function \""+functionName+"\" not found");
+    }
+    return functionMap.at(functionName);
 }
 
 //C Interface
@@ -63,18 +68,11 @@ impalajit_compiler *impalajit_compiler_create_with_config(char* config_file_path
     return new impalajit::Compiler(std::string (config_file_path));
 }
 
-dasm_gen_func impalajit_compiler_compile(impalajit_compiler *handle) {
+void impalajit_compiler_compile(impalajit_compiler *handle) {
     handle->compile();
 }
 
-c_function_map* impalajit_compiler_compile_multiple_functions(impalajit_compiler *handle) {
-    std::map<std::string, dasm_gen_func> cpp_result = handle->compileMultipleFunctions();
-    c_function_map* map = (c_function_map*) malloc(sizeof(c_function_map)*cpp_result.size());
-    int i=0;
-    for(std::map<std::string, dasm_gen_func>::iterator it = cpp_result.begin(); it != cpp_result.end(); ++it) {
-        map[i].key=(*it).first.c_str();
-        map[i].value=(*it).second;
-        i++;
-    }
-    return map;
+dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, char* function_name){
+    return handle->getFunction(std::string(function_name));
 }
+

@@ -9,42 +9,29 @@
 
 #ifdef __cplusplus
 
+
+
 namespace impalajit{
     class Compiler;
 }
 class impalajit::Compiler{
 private:
-    std::string configFilePath;
+    std::string configPath;
+    std::map<std::string, dasm_gen_func> functionMap;
 public:
-    enum Error {
-        SUCCESS,
-        NO_IMPALAFILE_SPECIFIED,
-        BAD_INPUT_FILE,
-        COMPILATION_ERROR,
-        EMPTY_VARIABLE_NAME,
-        EMPTY_VARIABLE_BUFFER
-    };
 
     Compiler(std::string configFilePath);
     Compiler();
 
-    dasm_gen_func compile();
-    std::map<std::string, dasm_gen_func> compileMultipleFunctions();
+    void compile();
+    dasm_gen_func getFunction(std::string functionName);
 };
 
 typedef impalajit::Compiler impalajit_compiler;
-typedef impalajit::Compiler::Error impalajit_error;
 
 #else
 typedef struct impalajit::Compiler impalajit_compiler;
-typedef enum {
-    IMPALAJIT_SUCCESS = 0,
-    IMPALAJIT_NO_IMPALAFILE_SPECIFIED,
-    IMPALAJIT_BAD_INPUT_FILE,
-    IMPALAJIT_COMPILATION_ERROR,
-    IMPALAJIT_EMPTY_VARIABLE_NAME,
-    IMPALAJIT_EMPTY_VARIABLE_BUFFER
-} impalajit_error;
+
 #endif
 
 //C Interface
@@ -62,9 +49,10 @@ extern "C" {
 
     impalajit_compiler * impalajit_compiler_create_with_config(char* config_file_path);
 
-    dasm_gen_func impalajit_compiler_compile(impalajit_compiler* handle);
+    void impalajit_compiler_compile(impalajit_compiler* handle);
 
-    c_function_map* impalajit_compiler_compile_multiple_functions(impalajit_compiler* handle);
+    dasm_gen_func impalajit_compiler_get_function(char* function_name);
+
 
 #ifdef __cplusplus
 }

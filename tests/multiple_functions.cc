@@ -22,29 +22,29 @@ int main(int argc, char** argv) {
     configFile.close();
 
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
-    std::map<std::string, dasm_gen_func> functions = compiler.compileMultipleFunctions();
+    compiler.compile();
 
-    assert(functions.at("eq")(1.0,1.0) == 1.0);
-    assert(functions.at("eq")(1.0,0.0) == 0.0);
+    assert(compiler.getFunction("eq")(1.0,1.0) == 1.0);
+    assert(compiler.getFunction("eq")(1.0,0.0) == 0.0);
 
-    assert(functions.at("gt")(1.0, 0.0) == 1.0);
-    assert(functions.at("gt")(0.0, 1.0) == 0.0);
-    assert(functions.at("gt")(0.0, 0.0) == 0.0);
+    assert(compiler.getFunction("gt")(1.0, 0.0) == 1.0);
+    assert(compiler.getFunction("gt")(0.0, 1.0) == 0.0);
+    assert(compiler.getFunction("gt")(0.0, 0.0) == 0.0);
 
-    assert(functions.at("gte")(2.0, 1.0) == 1.0);
-    assert(functions.at("gte")(1.0, 1.0) == 1.0);
-    assert(functions.at("gte")(0.0, 1.0) == 0.0);
+    assert(compiler.getFunction("gte")(2.0, 1.0) == 1.0);
+    assert(compiler.getFunction("gte")(1.0, 1.0) == 1.0);
+    assert(compiler.getFunction("gte")(0.0, 1.0) == 0.0);
 
-    assert(functions.at("lt")(1.0, 0.0) == 0.0);
-    assert(functions.at("lt")(0.0, 1.0) == 1.0);
-    assert(functions.at("lt")(0.0, 0.0) == 0.0);
+    assert(compiler.getFunction("lt")(1.0, 0.0) == 0.0);
+    assert(compiler.getFunction("lt")(0.0, 1.0) == 1.0);
+    assert(compiler.getFunction("lt")(0.0, 0.0) == 0.0);
 
-    assert(functions.at("lte")(2.0, 1.0) == 0.0);
-    assert(functions.at("lte")(1.0, 1.0) == 1.0);
-    assert(functions.at("lte")(0.0, 1.0) == 1.0);
+    assert(compiler.getFunction("lte")(2.0, 1.0) == 0.0);
+    assert(compiler.getFunction("lte")(1.0, 1.0) == 1.0);
+    assert(compiler.getFunction("lte")(0.0, 1.0) == 1.0);
 
-    assert(functions.at("neq")(2.0, 1.0) == 1.0);
-    assert(functions.at("neq")(1.0, 1.0) == 0.0);
-    assert(functions.at("neq")(0.0, 1.0) == 1.0);
+    assert(compiler.getFunction("neq")(2.0, 1.0) == 1.0);
+    assert(compiler.getFunction("neq")(1.0, 1.0) == 0.0);
+    assert(compiler.getFunction("neq")(0.0, 1.0) == 1.0);
     return 0;
 }

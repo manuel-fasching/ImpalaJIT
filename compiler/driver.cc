@@ -32,22 +32,10 @@ dasm_gen_func Driver::parse_stream(std::istream& in, const std::string& sname)
     return codeGenerator.generateCode();
 }
 
-dasm_gen_func Driver::parse_single_file(const std::string &filename)
+dasm_gen_func Driver::parse_file(const std::string &filename)
 {
     std::ifstream in(filename.c_str());
     return parse_stream(in, filename);
-}
-
-std::map<std::string, dasm_gen_func> Driver::parse_multiple_files(std::vector<std::string> &filenames)
-{
-    std::map<std::string, dasm_gen_func> result;
-
-    for(std::vector<std::string>::iterator it = filenames.begin(); it != filenames.end(); ++it) {
-        std::cout << (*it) << " asdf" << std::endl;
-        dasm_gen_func function = parse_single_file((*it));
-        result.insert(std::make_pair(functionContext->name, function));
-    }
-    return result;
 }
 
 dasm_gen_func Driver::parse_string(const std::string &input, const std::string& sname)
@@ -71,7 +59,7 @@ void Driver::error(const std::string& m)
     std::cerr << m << std::endl;
 }
 
-std::string Driver::getName(){
+std::string Driver::getFunctionName(){
     return functionContext->name;
 }
 

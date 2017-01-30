@@ -13,7 +13,8 @@ int main(int argc, char** argv) {
     configFile.close();
 
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
-    dasm_gen_func function = compiler.compile();
+    compiler.compile();
+    dasm_gen_func function = compiler.getFunction("lt");
 
     assert(function(1.0, 0.0) == 0.0);
     assert(function(0.0, 1.0) == 1.0);

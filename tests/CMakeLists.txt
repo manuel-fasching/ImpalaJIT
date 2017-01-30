@@ -13,7 +13,6 @@ function( add_test_executable name )
     target_link_libraries( test_${name}.o impalajit)
 endfunction( add_test_executable )
 
-
 include_directories(include)
 
 

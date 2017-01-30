@@ -72,6 +72,8 @@ set(source_files ${source_files}
         compiler/include/nodes/assignment_nodes.h
         compiler/code-gen/code_generator.cc)
 
+add_definitions(-DIMPALAJIT_CONFIG_PATH=/home/manuel/git/ImpalaJIT/tests/conf/impala.conf)
+
 install(FILES include/impalajit.hh
         DESTINATION include )
 install(FILES include/impalajit/types.hh
