@@ -132,7 +132,6 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
             }
             catch(std::exception& e) {
             }
-            functionContext->variables.insert((static_cast<VariableNode *>(node)->name));
             assembly.storeLocalVariable();
             break;
         }

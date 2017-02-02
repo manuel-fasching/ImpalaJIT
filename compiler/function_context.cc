@@ -46,7 +46,7 @@ int FunctionContext::getIndexOfParameter(std::string &name) {
 int FunctionContext::getIndexOfVariable(std::string &name) {
     std::set<std::string>::iterator it = std::find(variables.begin(), variables.end(), name);
     if (it == variables.end()) {
-        throw std::runtime_error("Parameter not found");
+        throw std::runtime_error("Variable not found");
     }
     else{
         return std::distance(variables.begin(), it);
