@@ -21,8 +21,7 @@
 #include <expression_nodes.h>
 #include <compare_nodes.h>
 
-CodeGenerator::CodeGenerator(class FunctionContext &_functionContext)
-    : functionContext(_functionContext){
+CodeGenerator::CodeGenerator() {
     dynamicLabelCount = 0;
 }
 
@@ -30,21 +29,21 @@ CodeGenerator::~CodeGenerator()
 {
 }
 
-dasm_gen_func CodeGenerator::generateCode()
+dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
     assembly.initialize();
     assembly.prologue();
 
-    evaluateAst(functionContext.root);
+    evaluateAst(functionContext, functionContext->root);
 
     return assembly.linkAndEncode();
 }
 
-void CodeGenerator::evaluateAst(Node *node){
+void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
     switch(node->nodeType)
     {
         case ROOT:{
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             break;
         }
         case CONSTANT:
@@ -56,84 +55,84 @@ void CodeGenerator::evaluateAst(Node *node){
         case VARIABLE:
         {
             try {
-                int index = functionContext.getIndexOfParameter((static_cast<VariableNode *>(node)->name));
+                int index = functionContext->getIndexOfParameter((static_cast<VariableNode *>(node)->name));
                 assembly.pushParameterToFPUStack(index);
                 break;
             }
             catch(std::exception& e) {
             }
-            int index = functionContext.getIndexOfVariable((static_cast<VariableNode *>(node)->name));
+            int index = functionContext->getIndexOfVariable((static_cast<VariableNode *>(node)->name));
             assembly.pushLocalVariableToFPUStack(index);
             break;
         }
 
         case NEGATION:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.performNegation();
             break;
         }
 
         case ADDITION:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculateAddition();
             break;
         }
 
         case SUBTRACTION:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculateSubtraction();
             break;
         }
 
         case MULTIPLICATION:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculateMultiplication();
             break;
         }
 
         case DIVISION:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculateDivision();
             break;
         }
 
         case POWER:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculatePower();
             break;
         }
 
         case SQRT:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.calculateSQRT();
             break;
         }
 
         case ASSIGNMENT:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             try {
-                int index = functionContext.getIndexOfParameter((static_cast<VariableNode *>(node)->name));
+                int index = functionContext->getIndexOfParameter((static_cast<VariableNode *>(node)->name));
                 assembly.replaceParameter(index);
                 break;
             }
             catch(std::exception& e) {
             }
             try {
-                int index = functionContext.getIndexOfVariable((static_cast<VariableNode *>(node)->name));
+                int index = functionContext->getIndexOfVariable((static_cast<VariableNode *>(node)->name));
                 assembly.replaceLocalVariable(index);
                 break;
             }
             catch(std::exception& e) {
             }
-            functionContext.variables.insert((static_cast<VariableNode *>(node)->name));
+            functionContext->variables.insert((static_cast<VariableNode *>(node)->name));
             assembly.storeLocalVariable();
             break;
         }
@@ -146,9 +145,9 @@ void CodeGenerator::evaluateAst(Node *node){
             unsigned label2 = dynamicLabelCount-1;
             assembly.growPC(dynamicLabelCount);
 
-            conditionEvaluationHelper(node->nodes.at(0), label1, label2); //condition
+            conditionEvaluationHelper(functionContext, node->nodes.at(0), label1, label2); //condition
             assembly.addDynamicLabel(label1);
-            dsfUtil(node->nodes.at(1)); // if body
+            dsfUtil(functionContext, node->nodes.at(1)); // if body
             assembly.addDynamicLabel(label2);
             break;
         }
@@ -161,30 +160,30 @@ void CodeGenerator::evaluateAst(Node *node){
             unsigned label3 = dynamicLabelCount-1;
             assembly.growPC(dynamicLabelCount);
 
-            conditionEvaluationHelper(node->nodes.at(0), label1, label2); //condition
+            conditionEvaluationHelper(functionContext, node->nodes.at(0), label1, label2); //condition
 
             assembly.addDynamicLabel(label1);
-            dsfUtil(node->nodes.at(1));
+            dsfUtil(functionContext, node->nodes.at(1));
             assembly.jumpForwardToDynamicLabel(label3);
             assembly.addDynamicLabel(label2);
-            dsfUtil(node->nodes.at(2));
+            dsfUtil(functionContext, node->nodes.at(2));
             assembly.addDynamicLabel(label3);
             break;
         }
         case IF_BODY:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             break;
         }
         case ELSE_BODY:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             break;
         }
 
         case RETURN:
         {
-            dsfUtil(node);
+            dsfUtil(functionContext, node);
             assembly.extractResult();
             assembly.epilogue();
             break;
@@ -193,9 +192,9 @@ void CodeGenerator::evaluateAst(Node *node){
 }
 
 
-void CodeGenerator::dsfUtil(Node* node) {
+void CodeGenerator::dsfUtil(FunctionContext* &functionContext, Node* &node) {
     for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
-        evaluateAst((*it));
+        evaluateAst(functionContext, (*it));
     }
 }
 
@@ -217,13 +216,13 @@ unsigned CodeGenerator::countLabels(Node* node){
     return labels;
 }
 
-void CodeGenerator::conditionEvaluationHelper(Node* node, unsigned label1, unsigned label2){
+void CodeGenerator::conditionEvaluationHelper(FunctionContext* &functionContext, Node* &node, unsigned label1, unsigned label2){
     for(std::vector<Node*>::iterator it = node->nodes.begin(); it != node->nodes.end(); ++it) {
         switch(node->nodeType)
         {
             case COMPARISON:
             {
-                dsfUtil(node);
+                dsfUtil(functionContext, node);
                 assembly.performComparison();
                 assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(node)->compareOperator);
                 break;
@@ -233,19 +232,19 @@ void CodeGenerator::conditionEvaluationHelper(Node* node, unsigned label1, unsig
                 switch((*it)->nodeType){
                     case COMPARISON:
                     {
-                        dsfUtil(*it);
+                        dsfUtil(functionContext, *it);
                         assembly.performComparison();
                         assembly.conditionalJumpForwardToDynamicLabel(label1, true, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
                     case BOOLEAN_OR_JUNCTION:
                     {
-                        conditionEvaluationHelper((*it), label1, label2);
+                        conditionEvaluationHelper(functionContext, (*it), label1, label2);
                         break;
                     }
                     case BOOLEAN_AND_JUNCTION:
                     {
-                        conditionEvaluationHelper((*it), label1, label2-1);
+                        conditionEvaluationHelper(functionContext, (*it), label1, label2-1);
                         assembly.jumpForwardToDynamicLabel(label1);
                         assembly.addDynamicLabel(label2-1);
                         break;
@@ -258,19 +257,19 @@ void CodeGenerator::conditionEvaluationHelper(Node* node, unsigned label1, unsig
             {
                 switch((*it)->nodeType) {
                     case COMPARISON: {
-                        dsfUtil(*it);
+                        dsfUtil(functionContext, *it);
                         assembly.performComparison();
                         assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
                     case BOOLEAN_AND_JUNCTION:
                     {
-                        conditionEvaluationHelper(*(it), label1, label2);
+                        conditionEvaluationHelper(functionContext, (*it), label1, label2);
                         break;
                     }
                     case BOOLEAN_OR_JUNCTION:
                     {
-                        conditionEvaluationHelper((*it), label1+1, label2);
+                        conditionEvaluationHelper(functionContext, (*it), label1+1, label2);
                         assembly.addDynamicLabel(label1+1);
                         break;
                     }

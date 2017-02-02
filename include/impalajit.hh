@@ -25,6 +25,7 @@
 #include <string>
 #include "impalajit/types.hh"
 #include <map>
+#include <vector>
 
 #ifdef __cplusplus
 
@@ -35,11 +36,14 @@ namespace impalajit{
 }
 class impalajit::Compiler{
 private:
-    std::string configPath;
+    std::vector<std::string> functionDefinitions;
     std::map<std::string, dasm_gen_func> functionMap;
+
+    void loadFunctionDefinitionsFromInputFiles(std::string _configPath);
 public:
 
-    Compiler(std::string configFilePath);
+    Compiler(std::string _configFilePath);
+    Compiler(std::vector<std::string> _functionDefinitions);
     Compiler();
 
     void compile();

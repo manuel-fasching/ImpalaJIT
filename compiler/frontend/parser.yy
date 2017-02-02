@@ -65,7 +65,7 @@
 %initial-action
 {
     // initialize the initial location object
-    @$.begin.filename = @$.end.filename = &driver.streamname;
+    @$.begin.filename = @$.end.filename;
 };
 
 /* The driver is passed by reference to the parser and to the scanner. This

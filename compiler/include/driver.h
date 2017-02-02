@@ -52,27 +52,21 @@ public:
     * parser to the scanner. It is used in the yylex macro. */
     class Scanner* lexer;
 
-    /// stream name (file or input stream) used for error messages.
-    std::string streamname;
-
     /** Invoke the scanner and parser for a stream.
      * @param in	input stream
      * @param sname	stream name for error messages
      * @return		true if successfully parsed
      */
-    dasm_gen_func parse_stream(std::istream& in,
-		      const std::string& sname = "stream input");
+    std::map<std::string,dasm_gen_func> parse_stream(std::istream& in);
 
     /** Invoke the scanner and parser on an input string.
      * @param input	input string
      * @param sname	stream name for error messages
      * @return		true if successfully parsed
      */
-    dasm_gen_func parse_string(const std::string& input,
-		      const std::string& sname = "string stream");
+    std::map<std::string,dasm_gen_func> parse_string(const std::string& input);
 
-
-    dasm_gen_func parse_file(const std::string &filename);
+    void setFunctionContext(FunctionContext* _functionContext);
 
     // To demonstrate pure handling of parse errors, instead of
     // simply dumping them on the standard error output, we will pass
@@ -85,10 +79,6 @@ public:
     /** General error handling. This can be modified to output the error
      * e.g. to a dialog box. */
     void error(const std::string& m);
-
-    void setFunctionContext(FunctionContext* &_functionContext);
-
-    std::string getFunctionName();
 };
 
 } // namespace impalajit

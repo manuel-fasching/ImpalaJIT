@@ -29,16 +29,15 @@ class CodeGenerator {
 private:
     unsigned dynamicLabelCount;
     Assembly assembly;
-    void evaluateAst(Node *node);
-    void dsfUtil(Node* node);
-    void conditionEvaluationHelper(Node *node, unsigned label1, unsigned label2);
+    void evaluateAst(FunctionContext* &functionContext, Node* &node);
+    void dsfUtil(FunctionContext* &functionContext, Node* &node);
+    void conditionEvaluationHelper(FunctionContext* &functionContext, Node* &node, unsigned label1, unsigned label2);
     unsigned countLabels(Node* node);
     CompareOperatorType  comparisonEvaluationHelper(Node *node);
-    class FunctionContext &functionContext;
 
 public:
-    CodeGenerator(class FunctionContext &_functionContext);
+    CodeGenerator();
     ~CodeGenerator();
-    dasm_gen_func generateCode();
+    dasm_gen_func generateCode(FunctionContext* &functionContext);
 };
 #endif //IMPALAJIT_CODE_GENERATOR_HH

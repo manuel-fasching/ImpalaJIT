@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
     ofstream configFile;
     configFile.open(CONFIG_FILE_PATH);
-    configFile << "../../tests/impala_files/conditional_gte.impala";
+    configFile << "../../tests/impala_files/conditional_gte.impala;";
     configFile.close();
 
     impalajit::Compiler compiler(CONFIG_FILE_PATH);

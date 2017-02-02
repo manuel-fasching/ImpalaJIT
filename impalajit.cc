@@ -21,48 +21,64 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <sstream>
 
-#include <node.h>
 #include <driver.h>
+#include <iterator>
 
 impalajit::Driver driver;
-
+//TODO example
 impalajit::Compiler::Compiler() {
+    char* fileName = std::getenv(ENV_VARIABLE_NAME);
+    if(fileName == NULL) {
+        throw std::runtime_error("Please specify env variable IMPALA_FILE");
+    }
+    loadFunctionDefinitionsFromInputFiles(std::string(fileName));
 }
 
-impalajit::Compiler::Compiler(std::string _configPath) {
-    std::ifstream fin(_configPath.c_str());
-    if(!fin.good()) {
-        fin.close();
+impalajit::Compiler::Compiler(std::string _configFilePath) {
+    loadFunctionDefinitionsFromInputFiles(_configFilePath);
+}
+
+impalajit::Compiler::Compiler(std::vector<std::string> _functionDefinitions)
+    : functionDefinitions(_functionDefinitions) {
+}
+
+void impalajit::Compiler::loadFunctionDefinitionsFromInputFiles(std::string _configPath){
+
+    std::ifstream inFile;
+    inFile.open(_configPath.c_str());
+
+    if(!inFile.good()) {
+        inFile.close();
         throw std::runtime_error("Bad configuration file");
     }
-    fin.close();
-    configPath = _configPath;
 
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    inFile.close();
+
+    std::string inputText = strStream.str();
+
+    std::vector<std::string> functionFiles;
+    std::size_t start = 0, end = 0;
+
+    while ((end = inputText.find(';', start)) != std::string::npos) {
+        functionFiles.push_back(inputText.substr(start, end - start));
+        start = end + 1;
+    }
+
+    for(std::vector<std::string>::iterator it = functionFiles.begin(); it != functionFiles.end(); ++it) {
+        std::ifstream in((*it).c_str());
+        functionDefinitions.push_back(std::string((std::istreambuf_iterator<char>(in)),
+                                             (std::istreambuf_iterator<char>())));
+    }
 }
 
 void impalajit::Compiler::compile(){
-    std::vector<std::string> v;
-    std::string line;
-    std::ifstream fin(configPath.c_str());
-    while(getline(fin,line)) {
-        if (line.empty()){
-            continue;
-        }
-        else if(line.find (' ') != line.npos) {
-            continue;
-        }
-        else if(line.find('\t') != line.npos){
-            continue;
-        }
-        v.push_back(line);
-    }
-    fin.close();
-
-    for(std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
-        dasm_gen_func function = driver.parse_file((*it));
-        std::cout << "function name: " << driver.getFunctionName() << std::endl;
-        functionMap.insert(std::make_pair(driver.getFunctionName(), function));
+    for(std::vector<std::string>::iterator it = functionDefinitions.begin(); it != functionDefinitions.end(); ++it) {
+        std::map<std::string,dasm_gen_func> parsedFunctions = driver.parse_string((*it));
+        functionMap.insert(parsedFunctions.begin(), parsedFunctions.end());
     }
 }
 
@@ -81,6 +97,14 @@ impalajit_compiler *impalajit_compiler_create() {
 
 impalajit_compiler *impalajit_compiler_create_with_config(char* config_file_path) {
     return new impalajit::Compiler(std::string (config_file_path));
+}
+
+impalajit_compiler *impalajit_compiler_create_with_function_defnition(char** function_definitions) {
+    std::vector<std::string> lFunctionDefintions;
+    for(int i = 0; i< sizeof(char**); i++){
+        lFunctionDefintions.push_back(std::string(function_definitions[i]));
+    }
+    return new impalajit::Compiler(lFunctionDefintions);
 }
 
 void impalajit_compiler_compile(impalajit_compiler *handle) {

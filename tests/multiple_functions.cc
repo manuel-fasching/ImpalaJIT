@@ -28,12 +28,12 @@ int main(int argc, char** argv) {
 
     ofstream configFile;
     configFile.open(CONFIG_FILE_PATH);
-    configFile << "../../tests/impala_files/conditional_eq.impala\n";
-    configFile << "../../tests/impala_files/conditional_gt.impala\n";
-    configFile << "../../tests/impala_files/conditional_gte.impala\n";
-    configFile << "../../tests/impala_files/conditional_lt.impala\n";
-    configFile << "../../tests/impala_files/conditional_lte.impala\n";
-    configFile << "../../tests/impala_files/conditional_neq.impala";
+    configFile << "../../tests/impala_files/conditional_eq.impala;";
+    configFile << "../../tests/impala_files/conditional_gt.impala;";
+    configFile << "../../tests/impala_files/conditional_gte.impala;";
+    configFile << "../../tests/impala_files/conditional_lt.impala;";
+    configFile << "../../tests/impala_files/conditional_lte.impala;";
+    configFile << "../../tests/impala_files/conditional_neq.impala;";
     configFile.close();
 
     impalajit::Compiler compiler(CONFIG_FILE_PATH);

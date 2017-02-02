@@ -658,7 +658,7 @@ namespace impalajit {
     #line 66 "parser.yy" // lalr1.cc:741
 {
     // initialize the initial location object
-    yyla.location.begin.filename = yyla.location.end.filename = &driver.streamname;
+    yyla.location.begin.filename = yyla.location.end.filename;
 }
 
 #line 665 "parser.cc" // lalr1.cc:741
