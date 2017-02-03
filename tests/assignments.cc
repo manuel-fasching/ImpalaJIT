@@ -22,27 +22,29 @@
 #include <fstream>
 #include <assert.h>
 #include <defines.hh>
-#include <math.h>
 #include <double_comparison.hh>
 using namespace std;
 
 
 double reference_function(double x, double y){
-    return pow(sqrt(3.01*x+(-y+12.65)), 2.54)/3.4331;
+    double a = 3*x+5*y;
+    a = a + 1.0;
+    return a;
 }
 
 int main(int argc, char** argv) {
 
     ofstream configFile;
     configFile.open(CONFIG_FILE_PATH);
-    configFile << "../../tests/impala_files/expression_basic.impala;";
+    configFile << "../../tests/impala_files/assignment.impala;";
     configFile.close();
 
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
-    dasm_gen_func function = compiler.getFunction("expression_basic");
-    assert(double_equals(function(2.54, -4.21), reference_function(2.54, -4.21)));
-    assert(double_equals(function(212.421, -232.22), reference_function(212.421, -232.22)));
+    dasm_gen_func function = compiler.getFunction("assignment");
+
+    assert(double_equals(function(45.3, 43.6), reference_function(45.3, 43.6)));
+    assert(double_equals(function(-23.3, 456.6), reference_function(-23.3, 456.6)));
+
     return 0;
 }
-
