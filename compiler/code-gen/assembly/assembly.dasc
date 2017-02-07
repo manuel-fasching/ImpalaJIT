@@ -19,13 +19,27 @@
 
 #include <assembly.hh>
 #include <iostream>
+#include <math.h>
+#include <stdio.h>
 
 
 |.arch x64
 
-|.section code
+|.section code, imports
+
 |.globals lbl_
 |.actionlist impala_actions
+
+
+|.macro call_extern, target
+|  .imports
+|  ->__imp__..target:
+|  .dword  (uint32_t)target
+|  .dword ((uint64_t)target >> 32)
+|  .code
+|  call qword [->__imp__..target]
+|.endmacro
+
 
 #include <sys/mman.h>
 
@@ -298,6 +312,18 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
+    | fld st1
+    | ftst
+    | fstsw ax
+    | sahf
+    | fpop
+    | jz >1
+
+    | ftst
+    | fstsw ax
+    | sahf
+    | jz >2
+
     | fyl2x
     | fld st0
     | frndint
@@ -309,6 +335,22 @@ void Assembly::calculatePower(){
     | faddp st1,st0
     | fscale
     | fstp st1
+    | jmp >3
+
+    | 1:
+    | fpop
+    | fpop
+    | fld1
+    | jmp >3
+
+    | 2:
+    | fpop
+    | fpop
+    | fld1
+    | fld1
+    | fsub st1
+
+    | 3:
 }
 
 void Assembly::calculateSQRT(){
@@ -340,5 +382,4 @@ dasm_gen_func Assembly::linkAndEncode(){
   mprotect(buf, sz, PROT_READ | PROT_EXEC);
   return (dasm_gen_func) buf;
 }
-
 

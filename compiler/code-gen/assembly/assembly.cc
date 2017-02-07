@@ -27,25 +27,29 @@
 
 #include <assembly.hh>
 #include <iostream>
+#include <math.h>
+#include <stdio.h>
 
 
 //|.arch x64
 #if DASM_VERSION != 10300
 #error "Version mismatch between DynASM and included encoding engine"
 #endif
-#line 25 "compiler/code-gen/assembly/assembly.dasc"
-
-//|.section code
-#define DASM_SECTION_CODE	0
-#define DASM_MAXSECTION		1
 #line 27 "compiler/code-gen/assembly/assembly.dasc"
+
+//|.section code, imports
+#define DASM_SECTION_CODE	0
+#define DASM_SECTION_IMPORTS	1
+#define DASM_MAXSECTION		2
+#line 29 "compiler/code-gen/assembly/assembly.dasc"
+
 //|.globals lbl_
 enum {
   lbl__MAX
 };
-#line 28 "compiler/code-gen/assembly/assembly.dasc"
+#line 31 "compiler/code-gen/assembly/assembly.dasc"
 //|.actionlist impala_actions
-static const unsigned char impala_actions[299] = {
+static const unsigned char impala_actions[358] = {
   85,72,137,229,72,137,232,72,131,232,16,255,221,4,37,237,255,221,24,72,131,
   232,8,255,102,15,19,69,252,248,221,69,252,248,255,102,15,19,77,252,248,221,
   69,252,248,255,102,15,19,85,252,248,221,69,252,248,255,102,15,19,93,252,248,
@@ -58,12 +62,27 @@ static const unsigned char impala_actions[299] = {
   252,248,102,15,18,117,252,248,255,221,93,252,248,102,15,18,125,252,248,255,
   221,157,233,255,249,255,252,233,245,255,15,133,245,255,15,132,245,255,15,
   134,245,255,15,131,245,255,15,130,245,255,15,135,245,255,15,141,245,255,217,
-  224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,217,252,241,
-  217,192,217,252,252,220,225,217,201,217,224,217,252,240,217,232,222,193,217,
-  252,253,221,217,255,217,252,250,255,223,252,241,221,216,255,93,195,255
+  224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,217,193,217,
+  228,155,223,224,158,221,216,15,132,244,247,255,217,228,155,223,224,158,15,
+  132,244,248,255,217,252,241,217,192,217,252,252,220,225,217,201,217,224,217,
+  252,240,217,232,222,193,217,252,253,221,217,252,233,244,249,255,248,1,221,
+  216,221,216,217,232,252,233,244,249,255,248,2,221,216,221,216,217,232,217,
+  232,216,225,255,248,3,255,217,252,250,255,223,252,241,221,216,255,93,195,
+  255
 };
 
-#line 29 "compiler/code-gen/assembly/assembly.dasc"
+#line 32 "compiler/code-gen/assembly/assembly.dasc"
+
+
+//|.macro call_extern, target
+//|  .imports
+//|  ->__imp__..target:
+//|  .dword  (uint32_t)target
+//|  .dword ((uint64_t)target >> 32)
+//|  .code
+//|  call qword [->__imp__..target]
+//|.endmacro
+
 
 #include <sys/mman.h>
 
@@ -96,7 +115,7 @@ void Assembly::prologue(){
     //| mov rax, rbp
     //| sub rax, 16
     dasm_put(Dst, 0);
-#line 60 "compiler/code-gen/assembly/assembly.dasc"
+#line 74 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::growPC(unsigned npc)
@@ -107,14 +126,14 @@ void Assembly::growPC(unsigned npc)
 void Assembly::pushConstantToFPUStack(double *value){
     //| fld qword [value]
     dasm_put(Dst, 12, value);
-#line 69 "compiler/code-gen/assembly/assembly.dasc"
+#line 83 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::storeLocalVariable() {
     //| fstp qword [rax]
     //| sub rax, 8
     dasm_put(Dst, 17);
-#line 74 "compiler/code-gen/assembly/assembly.dasc"
+#line 88 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::pushParameterToFPUStack(int index) {
@@ -124,7 +143,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm0
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 24);
-#line 82 "compiler/code-gen/assembly/assembly.dasc"
+#line 96 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 1:
@@ -132,7 +151,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm1
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 35);
-#line 88 "compiler/code-gen/assembly/assembly.dasc"
+#line 102 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 2:
@@ -140,7 +159,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm2
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 46);
-#line 94 "compiler/code-gen/assembly/assembly.dasc"
+#line 108 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 3:
@@ -148,7 +167,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm3
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 57);
-#line 100 "compiler/code-gen/assembly/assembly.dasc"
+#line 114 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 4:
@@ -156,7 +175,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm4
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 68);
-#line 106 "compiler/code-gen/assembly/assembly.dasc"
+#line 120 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 5:
@@ -164,7 +183,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm5
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 79);
-#line 112 "compiler/code-gen/assembly/assembly.dasc"
+#line 126 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 6:
@@ -172,7 +191,7 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm6
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 90);
-#line 118 "compiler/code-gen/assembly/assembly.dasc"
+#line 132 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 7:
@@ -180,14 +199,14 @@ void Assembly::pushParameterToFPUStack(int index) {
                 //| movlpd qword [rbp-8], xmm7
                 //| fld qword [rbp-8]
                 dasm_put(Dst, 101);
-#line 124 "compiler/code-gen/assembly/assembly.dasc"
+#line 138 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         default:
             {
                 //| fld qword [rbp+(8+(index-7)*8)]
                 dasm_put(Dst, 112, (8+(index-7)*8));
-#line 129 "compiler/code-gen/assembly/assembly.dasc"
+#line 143 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
     }
@@ -200,7 +219,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm0, qword [rbp-8]
                 dasm_put(Dst, 116);
-#line 140 "compiler/code-gen/assembly/assembly.dasc"
+#line 154 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 1:
@@ -208,7 +227,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm1, qword [rbp-8]
                 dasm_put(Dst, 127);
-#line 146 "compiler/code-gen/assembly/assembly.dasc"
+#line 160 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 2:
@@ -216,7 +235,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm2, qword [rbp-8]
                 dasm_put(Dst, 138);
-#line 152 "compiler/code-gen/assembly/assembly.dasc"
+#line 166 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 3:
@@ -224,7 +243,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm3, qword [rbp-8]
                 dasm_put(Dst, 149);
-#line 158 "compiler/code-gen/assembly/assembly.dasc"
+#line 172 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 4:
@@ -232,7 +251,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm4, qword [rbp-8]
                 dasm_put(Dst, 160);
-#line 164 "compiler/code-gen/assembly/assembly.dasc"
+#line 178 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 5:
@@ -240,7 +259,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm5, qword [rbp-8]
                 dasm_put(Dst, 171);
-#line 170 "compiler/code-gen/assembly/assembly.dasc"
+#line 184 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 6:
@@ -248,7 +267,7 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm6, qword [rbp-8]
                 dasm_put(Dst, 182);
-#line 176 "compiler/code-gen/assembly/assembly.dasc"
+#line 190 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         case 7:
@@ -256,14 +275,14 @@ void Assembly::replaceParameter(int index) {
                 //| fstp qword [rbp-8]
                 //| movlpd xmm7, qword [rbp-8]
                 dasm_put(Dst, 193);
-#line 182 "compiler/code-gen/assembly/assembly.dasc"
+#line 196 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         default:
             {
                 //| fstp qword [rbp+(8+(index-7)*8)]
                 dasm_put(Dst, 204, (8+(index-7)*8));
-#line 187 "compiler/code-gen/assembly/assembly.dasc"
+#line 201 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
     }
@@ -272,25 +291,25 @@ void Assembly::replaceParameter(int index) {
 void Assembly::pushLocalVariableToFPUStack(int index) {
     //| fld qword [rbp-(16+index*8)]
     dasm_put(Dst, 112, -(16+index*8));
-#line 194 "compiler/code-gen/assembly/assembly.dasc"
+#line 208 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::replaceLocalVariable(int index) {
     //| fstp qword [rbp-(16+index*8)]
     dasm_put(Dst, 204, -(16+index*8));
-#line 198 "compiler/code-gen/assembly/assembly.dasc"
+#line 212 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::addDynamicLabel(unsigned labelNumber) {
     //| =>labelNumber:
     dasm_put(Dst, 208, labelNumber);
-#line 202 "compiler/code-gen/assembly/assembly.dasc"
+#line 216 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::jumpForwardToDynamicLabel(unsigned labelNumber) {
     //| jmp =>labelNumber
     dasm_put(Dst, 210, labelNumber);
-#line 206 "compiler/code-gen/assembly/assembly.dasc"
+#line 220 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 
@@ -301,42 +320,42 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
             {
                 //| jne  =>labelNumber
                 dasm_put(Dst, 214, labelNumber);
-#line 215 "compiler/code-gen/assembly/assembly.dasc"
+#line 229 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case NE:
             {
                 //| je  =>labelNumber
                 dasm_put(Dst, 218, labelNumber);
-#line 220 "compiler/code-gen/assembly/assembly.dasc"
+#line 234 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case GT:
             {
                 //| jbe  =>labelNumber
                 dasm_put(Dst, 222, labelNumber);
-#line 225 "compiler/code-gen/assembly/assembly.dasc"
+#line 239 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case LT:
             {
                 //| jae  =>labelNumber
                 dasm_put(Dst, 226, labelNumber);
-#line 230 "compiler/code-gen/assembly/assembly.dasc"
+#line 244 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case GTE:
             {
                 //| jb  =>labelNumber
                 dasm_put(Dst, 230, labelNumber);
-#line 235 "compiler/code-gen/assembly/assembly.dasc"
+#line 249 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case LTE:
             {
                 //| ja  =>labelNumber
                 dasm_put(Dst, 234, labelNumber);
-#line 240 "compiler/code-gen/assembly/assembly.dasc"
+#line 254 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         }
@@ -347,42 +366,42 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
             {
                 //| je  =>labelNumber
                 dasm_put(Dst, 218, labelNumber);
-#line 249 "compiler/code-gen/assembly/assembly.dasc"
+#line 263 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case NE:
             {
                 //| jne  =>labelNumber
                 dasm_put(Dst, 214, labelNumber);
-#line 254 "compiler/code-gen/assembly/assembly.dasc"
+#line 268 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case GT:
             {
                 //| ja  =>labelNumber
                 dasm_put(Dst, 234, labelNumber);
-#line 259 "compiler/code-gen/assembly/assembly.dasc"
+#line 273 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case LT:
             {
                 //| jb  =>labelNumber
                 dasm_put(Dst, 230, labelNumber);
-#line 264 "compiler/code-gen/assembly/assembly.dasc"
+#line 278 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case GTE:
             {
                 //| jge  =>labelNumber
                 dasm_put(Dst, 238, labelNumber);
-#line 269 "compiler/code-gen/assembly/assembly.dasc"
+#line 283 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
             case LTE:
             {
                 //| jbe  =>labelNumber
                 dasm_put(Dst, 222, labelNumber);
-#line 274 "compiler/code-gen/assembly/assembly.dasc"
+#line 288 "compiler/code-gen/assembly/assembly.dasc"
                 break;
             }
         }
@@ -392,34 +411,50 @@ void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool c
 void Assembly::performNegation(){
     //| fchs
     dasm_put(Dst, 242);
-#line 282 "compiler/code-gen/assembly/assembly.dasc"
+#line 296 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateAddition(){
     //| faddp st1
     dasm_put(Dst, 245);
-#line 286 "compiler/code-gen/assembly/assembly.dasc"
+#line 300 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateSubtraction(){
     //| fsubp st1
     dasm_put(Dst, 248);
-#line 290 "compiler/code-gen/assembly/assembly.dasc"
+#line 304 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateMultiplication(){
     //| fmulp st1
     dasm_put(Dst, 252);
-#line 294 "compiler/code-gen/assembly/assembly.dasc"
+#line 308 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateDivision(){
     //| fdivp st1
     dasm_put(Dst, 255);
-#line 298 "compiler/code-gen/assembly/assembly.dasc"
+#line 312 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculatePower(){
+    //| fld st1
+    //| ftst
+    //| fstsw ax
+    //| sahf
+    //| fpop
+    //| jz >1
+    dasm_put(Dst, 259);
+#line 321 "compiler/code-gen/assembly/assembly.dasc"
+
+    //| ftst
+    //| fstsw ax
+    //| sahf
+    //| jz >2
+    dasm_put(Dst, 274);
+#line 326 "compiler/code-gen/assembly/assembly.dasc"
+
     //| fyl2x
     //| fld st0
     //| frndint
@@ -431,36 +466,58 @@ void Assembly::calculatePower(){
     //| faddp st1,st0
     //| fscale
     //| fstp st1
-    dasm_put(Dst, 259);
-#line 312 "compiler/code-gen/assembly/assembly.dasc"
+    //| jmp >3
+    dasm_put(Dst, 285);
+#line 339 "compiler/code-gen/assembly/assembly.dasc"
+
+    //| 1:
+    //| fpop
+    //| fpop
+    //| fld1
+    //| jmp >3
+    dasm_put(Dst, 316);
+#line 345 "compiler/code-gen/assembly/assembly.dasc"
+
+    //| 2:
+    //| fpop
+    //| fpop
+    //| fld1
+    //| fld1
+    //| fsub st1
+    dasm_put(Dst, 329);
+#line 352 "compiler/code-gen/assembly/assembly.dasc"
+
+    //| 3:
+    dasm_put(Dst, 342);
+#line 354 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateSQRT(){
     //| fsqrt
-    dasm_put(Dst, 286);
-#line 316 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 345);
+#line 358 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::performComparison(){
     //| fcomip st1
     //| fpop
-    dasm_put(Dst, 290);
-#line 321 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 349);
+#line 363 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::extractResult(){
      //| fstp qword [rbp-8]
      //| movlpd xmm0, qword [rbp-8]
      dasm_put(Dst, 116);
-#line 326 "compiler/code-gen/assembly/assembly.dasc"
+#line 368 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 
 void Assembly::epilogue(){
     //| pop rbp
     //| ret
-    dasm_put(Dst, 296);
-#line 332 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 355);
+#line 374 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 dasm_gen_func Assembly::linkAndEncode(){
@@ -472,5 +529,4 @@ dasm_gen_func Assembly::linkAndEncode(){
   mprotect(buf, sz, PROT_READ | PROT_EXEC);
   return (dasm_gen_func) buf;
 }
-
 
