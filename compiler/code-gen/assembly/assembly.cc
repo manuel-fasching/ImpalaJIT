@@ -51,7 +51,7 @@ enum {
 };
 #line 33 "compiler/code-gen/assembly/assembly.dasc"
 //|.actionlist impala_actions
-static const unsigned char impala_actions[310] = {
+static const unsigned char impala_actions[332] = {
   85,72,137,229,72,137,232,72,131,232,16,255,221,4,37,237,255,221,24,72,131,
   232,8,255,102,15,19,69,252,248,221,69,252,248,255,102,15,19,77,252,248,221,
   69,252,248,255,102,15,19,85,252,248,221,69,252,248,255,102,15,19,93,252,248,
@@ -64,10 +64,11 @@ static const unsigned char impala_actions[310] = {
   252,248,102,15,18,117,252,248,255,221,93,252,248,102,15,18,125,252,248,255,
   221,157,233,255,249,255,252,233,245,255,15,133,245,255,15,132,245,255,15,
   134,245,255,15,131,245,255,15,130,245,255,15,135,245,255,15,141,245,255,217,
-  224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,221,93,252,
-  248,102,15,18,69,252,248,221,93,252,248,102,15,18,77,252,248,72,184,237,237,
-  252,255,208,102,15,19,69,252,248,221,69,252,248,255,217,252,250,255,223,252,
-  241,221,216,255,93,195,255
+  224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,252,243,68,
+  15,126,192,68,15,22,193,255,221,93,252,248,102,15,18,69,252,248,221,93,252,
+  248,102,15,18,77,252,248,72,184,237,237,252,255,208,102,15,19,69,252,248,
+  221,69,252,248,255,65,15,18,200,252,243,65,15,126,192,255,217,252,250,255,
+  223,252,241,221,216,255,93,195,255
 };
 
 #line 34 "compiler/code-gen/assembly/assembly.dasc"
@@ -438,6 +439,13 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
+    // Backup xmm0 and xmm1
+    //| movq	xmm8, xmm0
+    //| movlhps	xmm8, xmm1
+    dasm_put(Dst, 259);
+#line 320 "compiler/code-gen/assembly/assembly.dasc"
+
+    // Call pow function of c std math lib
     //| fstp qword [rbp-8]
     //| movlpd xmm0, qword [rbp-8]
     //| fstp qword [rbp-8]
@@ -446,36 +454,42 @@ void Assembly::calculatePower(){
     //| call rax
     //| movlpd qword [rbp-8], xmm0
     //| fld qword [rbp-8]
-    dasm_put(Dst, 259, (unsigned int)((uintptr_t) pow), (unsigned int)(((uintptr_t) pow)>>32));
-#line 325 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 270, (unsigned int)((uintptr_t) pow), (unsigned int)(((uintptr_t) pow)>>32));
+#line 330 "compiler/code-gen/assembly/assembly.dasc"
+
+     // Restore xmm0 and xmm1
+    //| movhlps xmm1, xmm8
+    //| movq xmm0, xmm8
+    dasm_put(Dst, 308);
+#line 334 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::calculateSQRT(){
     //| fsqrt
-    dasm_put(Dst, 297);
-#line 329 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 319);
+#line 338 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::performComparison(){
     //| fcomip st1
     //| fpop
-    dasm_put(Dst, 301);
-#line 334 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 323);
+#line 343 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 void Assembly::extractResult(){
      //| fstp qword [rbp-8]
      //| movlpd xmm0, qword [rbp-8]
      dasm_put(Dst, 116);
-#line 339 "compiler/code-gen/assembly/assembly.dasc"
+#line 348 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 
 void Assembly::epilogue(){
     //| pop rbp
     //| ret
-    dasm_put(Dst, 307);
-#line 345 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 329);
+#line 354 "compiler/code-gen/assembly/assembly.dasc"
 }
 
 dasm_gen_func Assembly::linkAndEncode(){

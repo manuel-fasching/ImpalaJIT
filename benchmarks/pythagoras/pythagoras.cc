@@ -22,36 +22,75 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <math.h>
 
 #define CONFIG_FILE_PATH "benchmark.conf"
 
 
-int main(){
-    impalajit::Compiler compiler(CONFIG_FILE_PATH);
-    compiler.compile();
-    dasm_gen_func pythagoras = compiler.getFunction("pythagoras");
 
+double pythagoras_static(double a, double b){
+    if(a<0 || b<0){
+        return -1;
+    }
+    else {
+        return sqrt(pow(a, 2) + pow(b, 2));
+    }
+}
+
+
+int main(){
     struct timeval tv;
 
+    // Dynamic compilation
+    impalajit::Compiler compiler(CONFIG_FILE_PATH);
+    compiler.compile();
+    dasm_gen_func pythagoras_dynamic = compiler.getFunction("pythagoras");
+
     gettimeofday(&tv, NULL);
-    unsigned long long start =
+    unsigned long long start_dynamic =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
-    for(int i = 0; i<100000; i++) {
-        for (int j = 0; j < 10000; j++) {
-            pythagoras(i, j);
+    for(int i = 0; i<50000; i++) {
+        for (int j = 0; j < 50000; j++) {
+            pythagoras_dynamic((double)i, (double)j);
         }
     }
 
     gettimeofday(&tv, NULL);
-    unsigned long long end =
+    unsigned long long end_dynamic =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
+
+    // Static compilation
+    gettimeofday(&tv, NULL);
+    unsigned long long start_static =
+            (unsigned long long)(tv.tv_sec) * 1000 +
+            (unsigned long long)(tv.tv_usec) / 1000;
+
+    for(int i = 0; i<50000; i++) {
+        for (int j = 0; j < 50000; j++) {
+            pythagoras_static((double)i, (double)j);
+        }
+    }
+
+    gettimeofday(&tv, NULL);
+    unsigned long long end_static =
+            (unsigned long long)(tv.tv_sec) * 1000 +
+            (unsigned long long)(tv.tv_usec) / 1000;
+
+
+    // Write results
     std::ofstream outputFile;
-    outputFile.open ("result_dynamic.txt");
-    outputFile << "Duration (ms): " << end-start << "\n";
+    outputFile.open ("result.txt");
+    outputFile << "------------ Dynamic compilation ------------" << std::endl;
+    outputFile << "Duration (ms): " << end_dynamic-start_dynamic << std::endl;
+    outputFile << "---------------------------------------------" << std::endl;
+    outputFile << std::endl;
+    outputFile << "------------- Static compilation ------------" << std::endl;
+    outputFile << "Duration (ms): " << end_static-start_static << std::endl;
+    outputFile << "---------------------------------------------" << std::endl;
     outputFile.close();
 
 }

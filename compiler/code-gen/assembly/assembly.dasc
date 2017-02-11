@@ -314,6 +314,11 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
+    // Backup xmm0 and xmm1.
+    | movq	xmm8, xmm0
+    | movlhps	xmm8, xmm1
+
+    // Call pow function of c std math lib
     | fstp qword [rbp-8]
     | movlpd xmm0, qword [rbp-8]
     | fstp qword [rbp-8]
@@ -322,6 +327,10 @@ void Assembly::calculatePower(){
     | call rax
     | movlpd qword [rbp-8], xmm0
     | fld qword [rbp-8]
+
+     // Restore xmm0 and xmm1
+    | movhlps xmm1, xmm8
+    | movq xmm0, xmm8
 }
 
 void Assembly::calculateSQRT(){
