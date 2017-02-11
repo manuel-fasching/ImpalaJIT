@@ -27,7 +27,7 @@ double pythagoras(double a, double b){
     if(a<0 || b<0){
         return -1;
     }
-    return sqrt(a*a+b*b);
+    return sqrt(a^2+b^2);
 }
 
 int main() {

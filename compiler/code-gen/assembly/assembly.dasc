@@ -21,6 +21,8 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
+#include <stdint.h>
+
 
 
 |.arch x64
@@ -312,45 +314,14 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
-    | fld st1
-    | ftst
-    | fstsw ax
-    | sahf
-    | jz >1
-
-    | ftst
-    | fstsw ax
-    | sahf
-    | jz >2
-
-    | fyl2x
-    | fld st0
-    | frndint
-    | fsubr st1,st0
-    | fxch st1
-    | fchs
-    | f2xm1
-    | fld1
-    | faddp st1,st0
-    | fscale
-    | fstp st1
-    | jmp >3
-
-    | 1:
-    | fpop
-    | fpop
-    | fpop
-    | fld1
-    | jmp >3
-
-    | 2:
-    | fpop
-    | fpop
-    | fld1
-    | fld1
-    | fsub st1
-
-    | 3:
+    | fstp qword [rbp-8]
+    | movlpd xmm0, qword [rbp-8]
+    | fstp qword [rbp-8]
+    | movlpd xmm1, qword [rbp-8]
+    | mov64 rax, (uintptr_t) pow
+    | call rax
+    | movlpd qword [rbp-8], xmm0
+    | fld qword [rbp-8]
 }
 
 void Assembly::calculateSQRT(){

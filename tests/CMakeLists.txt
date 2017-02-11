@@ -10,7 +10,7 @@ function( add_test_executable name )
     add_test(${name} test_${name}.o)
 
     # Link with asagi
-    target_link_libraries( test_${name}.o impalajit m)
+    target_link_libraries( test_${name}.o impalajit)
 endfunction( add_test_executable )
 
 include_directories(include)
