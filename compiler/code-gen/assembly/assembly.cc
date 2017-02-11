@@ -439,7 +439,7 @@ void Assembly::calculateDivision(){
 }
 
 void Assembly::calculatePower(){
-    // Backup xmm0 and xmm1
+    // Backup xmm0 and xmm1.
     //| movq	xmm8, xmm0
     //| movlhps	xmm8, xmm1
     dasm_put(Dst, 259);
