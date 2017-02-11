@@ -40,6 +40,8 @@ translate_bison_file()
 translate_flex_file()
 translate_dynasm_file()
 
+enable_language( Fortran )
+set( CMAKE_Fortran_COMPILER g95 )
 enable_testing()
 add_subdirectory( tests )
 
@@ -74,15 +76,16 @@ set(source_files ${source_files}
         compiler/include/nodes/assignment_nodes.h
         compiler/code-gen/code_generator.cc)
 
-add_definitions(-DIMPALAJIT_CONFIG_PATH=/home/manuel/git/ImpalaJIT/tests/conf/impala.conf)
-
 install(FILES include/impalajit.hh
+        DESTINATION include )
+install(FILES include/impalajit.f90
         DESTINATION include )
 install(FILES include/impalajit/types.hh
         DESTINATION include/impalajit )
 
-
 add_library( impalajit STATIC ${source_files})
+target_link_libraries (impalajit m)
 
 install( TARGETS impalajit DESTINATION lib)
+
 

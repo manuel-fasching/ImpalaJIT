@@ -48,7 +48,6 @@ void impalajit::Compiler::loadFunctionDefinitionsFromInputFiles(std::string _con
 
     std::ifstream inFile;
     inFile.open(_configPath.c_str());
-
     if(!inFile.good()) {
         inFile.close();
         throw std::runtime_error("Bad configuration file");
@@ -95,13 +94,13 @@ impalajit_compiler *impalajit_compiler_create() {
     return new impalajit::Compiler();
 }
 
-impalajit_compiler *impalajit_compiler_create_with_config(char* config_file_path) {
+impalajit_compiler *impalajit_compiler_create_with_config(const char* config_file_path) {
     return new impalajit::Compiler(std::string (config_file_path));
 }
 
-impalajit_compiler *impalajit_compiler_create_with_function_defnition(char** function_definitions) {
+impalajit_compiler *impalajit_compiler_create_with_function_definitions(char** function_definitions) {
     std::vector<std::string> lFunctionDefintions;
-    for(int i = 0; i< sizeof(char**); i++){
+    for(int i = 0; i< sizeof(function_definitions); i++){
         lFunctionDefintions.push_back(std::string(function_definitions[i]));
     }
     return new impalajit::Compiler(lFunctionDefintions);
@@ -111,7 +110,7 @@ void impalajit_compiler_compile(impalajit_compiler *handle) {
     handle->compile();
 }
 
-dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, char* function_name){
+dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, const char* function_name){
     return handle->getFunction(std::string(function_name));
 }
 

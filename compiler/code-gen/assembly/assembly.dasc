@@ -316,7 +316,6 @@ void Assembly::calculatePower(){
     | ftst
     | fstsw ax
     | sahf
-    | fpop
     | jz >1
 
     | ftst
@@ -338,6 +337,7 @@ void Assembly::calculatePower(){
     | jmp >3
 
     | 1:
+    | fpop
     | fpop
     | fpop
     | fld1

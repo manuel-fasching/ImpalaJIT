@@ -108,11 +108,11 @@ public:
 class PowerNode : public Node
 {
 public:
-    explicit PowerNode(Node* _left, Node* _right)
+    explicit PowerNode(Node* _base, Node* _exponent)
             : Node(POWER)
     {
-        nodes.push_back(_right);
-        nodes.push_back(_left);
+        nodes.push_back(_exponent);
+        nodes.push_back(_base);
     }
 };
 

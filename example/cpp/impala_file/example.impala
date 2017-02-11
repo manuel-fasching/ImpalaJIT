@@ -1,0 +1,3 @@
+example(x){
+	return x*3;
+}

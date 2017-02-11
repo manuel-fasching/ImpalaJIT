@@ -17,33 +17,41 @@
  * THE SOFTWARE.
  */
 
-#include "impalajit.hh"
+#include <impalajit.hh>
+#include <sys/time.h>
 #include <iostream>
 #include <fstream>
-#include <assert.h>
-#include <defines.hh>
-#include <math.h>
-#include <double_comparison.hh>
-using namespace std;
+#include <vector>
+
+#define CONFIG_FILE_PATH "benchmark.conf"
 
 
-double reference_function(double x, double y){
-    return pow(sqrt(3.01*x+(-y+12.65)), 2.54)/3.4331;
-}
-
-int main(int argc, char** argv) {
-
-    ofstream configFile;
-    configFile.open(CONFIG_FILE_PATH);
-    configFile << "../../tests/impala_files/expression_basic.impala;";
-    configFile.close();
-
+int main(){
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
-    dasm_gen_func function = compiler.getFunction("expression_basic");
-   /* assert(double_equals(function(2.54, -4.21), reference_function(2.54, -4.21)));
-    assert(double_equals(function(212.421, -232.22), reference_function(212.421, -232.22)));*/
-    std::cout << function(1.f,2.f) << std::endl;
-    return 0;
-}
+    dasm_gen_func pythagoras = compiler.getFunction("pythagoras");
 
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    unsigned long long start =
+            (unsigned long long)(tv.tv_sec) * 1000 +
+            (unsigned long long)(tv.tv_usec) / 1000;
+
+    for(int i = 0; i<100000; i++) {
+        for (int j = 0; j < 10000; j++) {
+            pythagoras(i, j);
+        }
+    }
+
+    gettimeofday(&tv, NULL);
+    unsigned long long end =
+            (unsigned long long)(tv.tv_sec) * 1000 +
+            (unsigned long long)(tv.tv_usec) / 1000;
+
+    std::ofstream outputFile;
+    outputFile.open ("result_dynamic.txt");
+    outputFile << "Duration (ms): " << end-start << "\n";
+    outputFile.close();
+
+}

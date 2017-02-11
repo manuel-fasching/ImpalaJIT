@@ -63,9 +63,9 @@ static const unsigned char impala_actions[358] = {
   221,157,233,255,249,255,252,233,245,255,15,133,245,255,15,132,245,255,15,
   134,245,255,15,131,245,255,15,130,245,255,15,135,245,255,15,141,245,255,217,
   224,255,222,193,255,222,252,233,255,222,201,255,222,252,249,255,217,193,217,
-  228,155,223,224,158,221,216,15,132,244,247,255,217,228,155,223,224,158,15,
-  132,244,248,255,217,252,241,217,192,217,252,252,220,225,217,201,217,224,217,
-  252,240,217,232,222,193,217,252,253,221,217,252,233,244,249,255,248,1,221,
+  228,155,223,224,158,15,132,244,247,255,217,228,155,223,224,158,15,132,244,
+  248,255,217,252,241,217,192,217,252,252,220,225,217,201,217,224,217,252,240,
+  217,232,222,193,217,252,253,221,217,252,233,244,249,255,248,1,221,216,221,
   216,221,216,217,232,252,233,244,249,255,248,2,221,216,221,216,217,232,217,
   232,216,225,255,248,3,255,217,252,250,255,223,252,241,221,216,255,93,195,
   255
@@ -443,17 +443,16 @@ void Assembly::calculatePower(){
     //| ftst
     //| fstsw ax
     //| sahf
-    //| fpop
     //| jz >1
     dasm_put(Dst, 259);
-#line 321 "compiler/code-gen/assembly/assembly.dasc"
+#line 320 "compiler/code-gen/assembly/assembly.dasc"
 
     //| ftst
     //| fstsw ax
     //| sahf
     //| jz >2
-    dasm_put(Dst, 274);
-#line 326 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 272);
+#line 325 "compiler/code-gen/assembly/assembly.dasc"
 
     //| fyl2x
     //| fld st0
@@ -467,15 +466,16 @@ void Assembly::calculatePower(){
     //| fscale
     //| fstp st1
     //| jmp >3
-    dasm_put(Dst, 285);
-#line 339 "compiler/code-gen/assembly/assembly.dasc"
+    dasm_put(Dst, 283);
+#line 338 "compiler/code-gen/assembly/assembly.dasc"
 
     //| 1:
     //| fpop
     //| fpop
+    //| fpop
     //| fld1
     //| jmp >3
-    dasm_put(Dst, 316);
+    dasm_put(Dst, 314);
 #line 345 "compiler/code-gen/assembly/assembly.dasc"
 
     //| 2:

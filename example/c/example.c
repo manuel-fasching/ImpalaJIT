@@ -17,33 +17,16 @@
  * THE SOFTWARE.
  */
 
-#include "impalajit.hh"
-#include <iostream>
-#include <fstream>
-#include <assert.h>
-#include <defines.hh>
-#include <math.h>
-#include <double_comparison.hh>
-using namespace std;
+#include <impalajit.hh>
+#include <stdlib.h>
+#include <stdio.h>
 
+int main() {
+    impalajit_compiler* handle = (impalajit_compiler*)impalajit_compiler_create_with_config("example.conf");
+    impalajit_compiler_compile(handle);
+  
+    dasm_gen_func example = impalajit_compiler_get_function(handle, "example");
 
-double reference_function(double x, double y){
-    return pow(sqrt(3.01*x+(-y+12.65)), 2.54)/3.4331;
-}
-
-int main(int argc, char** argv) {
-
-    ofstream configFile;
-    configFile.open(CONFIG_FILE_PATH);
-    configFile << "../../tests/impala_files/expression_basic.impala;";
-    configFile.close();
-
-    impalajit::Compiler compiler(CONFIG_FILE_PATH);
-    compiler.compile();
-    dasm_gen_func function = compiler.getFunction("expression_basic");
-   /* assert(double_equals(function(2.54, -4.21), reference_function(2.54, -4.21)));
-    assert(double_equals(function(212.421, -232.22), reference_function(212.421, -232.22)));*/
-    std::cout << function(1.f,2.f) << std::endl;
+    printf("Result: %f", example(3.0));
     return 0;
 }
-
