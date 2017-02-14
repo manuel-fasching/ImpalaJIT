@@ -17,24 +17,14 @@
 !! THE SOFTWARE.
 !!
 
-! Simple library test
-
 program example
 	use impalajit
 	use, intrinsic :: iso_c_binding
  	implicit none
 
- 	ABSTRACT INTERFACE
-        FUNCTION c_callback ()
-           USE, INTRINSIC :: ISO_C_BINDING
-           REAL :: c_callback
-        END FUNCTION c_callback
-    END INTERFACE
  	type( c_ptr ) :: handle
  	type( c_funptr ) :: cfp
- 	PROCEDURE(c_callback), POINTER :: fpp
-
- 	
+ 	procedure(c_callback), pointer :: fpp
 
  	handle = impalajit_compiler_create_with_config("example.conf")
  	CALL impalajit_compiler_compile(handle)
@@ -42,6 +32,6 @@ program example
  	cfp = impalajit_compiler_get_function(handle, "example")
  	CALL c_f_procpointer(cfp, fpp)
 
- 	write (*,*) "Result:", fpp()
+ 	write (*,*) "Result:", fpp(3.0d0, 4.0d0)
 
  end program example

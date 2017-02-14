@@ -40,8 +40,8 @@ translate_bison_file()
 translate_flex_file()
 translate_dynasm_file()
 
-enable_language( Fortran )
-set( CMAKE_Fortran_COMPILER g95 )
+enable_language( C Fortran )
+set( CMAKE_Fortran_COMPILER gfortran )
 enable_testing()
 add_subdirectory( tests )
 
@@ -77,8 +77,6 @@ set(source_files ${source_files}
         compiler/code-gen/code_generator.cc)
 
 install(FILES include/impalajit.hh
-        DESTINATION include )
-install(FILES include/impalajit.f90
         DESTINATION include )
 install(FILES include/impalajit/types.hh
         DESTINATION include/impalajit )

@@ -27,6 +27,6 @@ int main() {
   
     dasm_gen_func example = impalajit_compiler_get_function(handle, "example");
 
-    printf("Result: %f", example(3.0));
+    printf("Result: %f", example(3.0, 4.0));
     return 0;
 }
