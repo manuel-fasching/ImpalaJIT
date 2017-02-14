@@ -24,7 +24,7 @@ program example
 
  	type( c_ptr ) :: handle
  	type( c_funptr ) :: cfp
- 	procedure(c_callback), pointer :: fpp
+ 	procedure(impala_fun_template), pointer :: fpp
 
  	handle = impalajit_compiler_create_with_config("example.conf")
  	CALL impalajit_compiler_compile(handle)
