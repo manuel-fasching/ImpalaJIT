@@ -20,14 +20,13 @@
 #include <impalajit.hh>
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
 #include <sstream>
 
 #include <driver.h>
 #include <iterator>
 
 impalajit::Driver driver;
-//TODO example
+
 impalajit::Compiler::Compiler() {
     char* fileName = std::getenv(ENV_VARIABLE_NAME);
     if(fileName == NULL) {

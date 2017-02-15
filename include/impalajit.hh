@@ -23,7 +23,7 @@
 #define ENV_VARIABLE_NAME "IMPALA_FILE"
 
 #include <string>
-#include "impalajit/types.hh"
+#include <impalajit/types.hh>
 #include <map>
 #include <vector>
 
