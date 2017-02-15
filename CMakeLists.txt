@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(ImpalaJIT)
 
-option( SHARED_LIB "Compile the shared library" ON )
-option( STATIC_LIB "Compile the static library" OFF )
+option( SHARED_LIB "Compile the shared library" OFF )
+option( STATIC_LIB "Compile the static library" ON )
 option( TESTS "Enable Tests" OFF )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
 enable_language( C Fortran )
 set( CMAKE_Fortran_COMPILER gfortran )
 
