@@ -2,23 +2,27 @@
 A lightweight JIT compiler for flexible data access in simulation applications
 
 # Building ImpalaJIT
-1. cd build
-2. cmake ../
-3. make
+1. mkdir build
+2. cd build
+3. cmake ../
+4. make
 
-# Regenerate Parser, Scanner and ASM
-This step is only necessary if you have modified compiler/parser.yy, compiler/scanner.ll or code-gen/assembly/assembly.dasc.
-Prerequisites for the "generate" task are:
-Bison (Tested with version 3.0.4): https://www.gnu.org/software/bison/
-Flex (Tested with version 2.6.0): https://github.com/westes/flex
+# Generating Parser, Scanner and ASM
+This step is only necessary if you have modified one of the following files: <br />
+[parser.yy](compiler/parser.yy) <br />
+[scanner.ll](compiler/scanner.ll) <br />
+[assembly.dasc](code-gen/assembly/assembly.dasc) <br /><br />
+Prerequisites for the <b>generate</b> task are: <br />
+Bison (Tested with version 3.0.4): https://www.gnu.org/software/bison/ <br />
+Flex (Tested with version 2.6.0): https://github.com/westes/flex <br />
 
-1. make generate
+* make generate
 
-# Install ImpalaJIT as Shared Library
-1. make install
+# Installing ImpalaJIT
+* make install
 
-# Uninstall ImpalaJIT
-1. make uninstall
+# Uninstalling ImpalaJIT
+* make uninstall
 
 # License
 ImpalaJIT is release under the MIT License (see [COPYING](COPYING))
