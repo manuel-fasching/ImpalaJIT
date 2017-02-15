@@ -17,6 +17,7 @@
  * THE SOFTWARE.
  */
 
+#include <stdexcept>
 
 #include <function_context.h>
 
