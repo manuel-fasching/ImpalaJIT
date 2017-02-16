@@ -93,49 +93,49 @@ void Assembly::pushParameterToFPUStack(int index) {
     switch(index){
         case 0:
             {
-                | movlpd qword [rbp-8], xmm0
+                | vmovlpd qword [rbp-8], xmm0
                 | fld qword [rbp-8]
                 break;
             }
         case 1:
             {
-                | movlpd qword [rbp-8], xmm1
+                | vmovlpd qword [rbp-8], xmm1
                 | fld qword [rbp-8]
                 break;
             }
         case 2:
             {
-                | movlpd qword [rbp-8], xmm2
+                | vmovlpd qword [rbp-8], xmm2
                 | fld qword [rbp-8]
                 break;
             }
         case 3:
             {
-                | movlpd qword [rbp-8], xmm3
+                | vmovlpd qword [rbp-8], xmm3
                 | fld qword [rbp-8]
                 break;
             }
         case 4:
             {
-                | movlpd qword [rbp-8], xmm4
+                | vmovlpd qword [rbp-8], xmm4
                 | fld qword [rbp-8]
                 break;
             }
         case 5:
             {
-                | movlpd qword [rbp-8], xmm5
+                | vmovlpd qword [rbp-8], xmm5
                 | fld qword [rbp-8]
                 break;
             }
         case 6:
             {
-                | movlpd qword [rbp-8], xmm6
+                | vmovlpd qword [rbp-8], xmm6
                 | fld qword [rbp-8]
                 break;
             }
         case 7:
             {
-                | movlpd qword [rbp-8], xmm7
+                | vmovlpd qword [rbp-8], xmm7
                 | fld qword [rbp-8]
                 break;
             }
@@ -152,49 +152,49 @@ void Assembly::replaceParameter(int index) {
         case 0:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm0, qword [rbp-8]
+                | vmovq xmm0, qword [rbp-8]
                 break;
             }
         case 1:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm1, qword [rbp-8]
+                | vmovq xmm1, qword [rbp-8]
                 break;
             }
         case 2:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm2, qword [rbp-8]
+                | vmovq xmm2, qword [rbp-8]
                 break;
             }
         case 3:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm3, qword [rbp-8]
+                | vmovq xmm3, qword [rbp-8]
                 break;
             }
         case 4:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm4, qword [rbp-8]
+                | vmovq xmm4, qword [rbp-8]
                 break;
             }
         case 5:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm5, qword [rbp-8]
+                | vmovq xmm5, qword [rbp-8]
                 break;
             }
         case 6:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm6, qword [rbp-8]
+                | vmovq xmm6, qword [rbp-8]
                 break;
             }
         case 7:
             {
                 | fstp qword [rbp-8]
-                | movlpd xmm7, qword [rbp-8]
+                | vmovq xmm7, qword [rbp-8]
                 break;
             }
         default:
@@ -315,22 +315,22 @@ void Assembly::calculateDivision(){
 
 void Assembly::calculatePower(){
     // Backup xmm0 and xmm1.
-    | movq	xmm8, xmm0
-    | movlhps	xmm8, xmm1
+    | vmovq	xmm8, xmm0
+    | vmovq	xmm9, xmm1
 
     // Call pow function of c std math lib
     | fstp qword [rbp-8]
-    | movlpd xmm0, qword [rbp-8]
+    | vmovq xmm0, qword [rbp-8]
     | fstp qword [rbp-8]
-    | movlpd xmm1, qword [rbp-8]
+    | vmovq xmm1, qword [rbp-8]
     | mov64 rax, (uintptr_t) pow
     | call rax
-    | movlpd qword [rbp-8], xmm0
+    | vmovq qword [rbp-8], xmm0
     | fld qword [rbp-8]
 
      // Restore xmm0 and xmm1
-    | movhlps xmm1, xmm8
-    | movq xmm0, xmm8
+    | vmovq xmm1, xmm9
+    | vmovq xmm0, xmm8
 }
 
 void Assembly::calculateSQRT(){
@@ -344,7 +344,7 @@ void Assembly::performComparison(){
 
 void Assembly::extractResult(){
      | fstp qword [rbp-8]
-     | movlpd xmm0, qword [rbp-8]
+     | vmovq xmm0, qword [rbp-8]
 }
 
 

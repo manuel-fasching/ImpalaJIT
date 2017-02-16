@@ -21,7 +21,7 @@ project(ImpalaJIT)
 
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
-option( TESTS "Enable Tests" OFF )
+option( TESTS "Enable Tests" ON )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
