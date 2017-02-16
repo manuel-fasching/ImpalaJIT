@@ -26,8 +26,8 @@
 #include <stdlib.h>
 
 #define CONFIG_FILE_PATH "benchmark.conf"
-#define A 50000
-#define B 50000
+#define A 30000
+#define B 30000
 
 
 double pythagoras_static(double a, double b){
@@ -103,6 +103,14 @@ int main(){
     outputFile << "---------------------------------------------" << std::endl;
     outputFile.close();
 
-
+    //Clean up
+    for(int i=0; i<sizeof(result_dynamic[0]); i++) {
+        free(result_dynamic[i]);
+    }
+    for(int i=0; i<sizeof(result_static[0]); i++) {
+        free(result_static[i]);
+    }
+    free(result_dynamic);
+    free(result_static);
 
 }
