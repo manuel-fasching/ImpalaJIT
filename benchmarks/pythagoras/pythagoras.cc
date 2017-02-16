@@ -23,9 +23,11 @@
 #include <fstream>
 #include <vector>
 #include <math.h>
+#include <stdlib.h>
 
 #define CONFIG_FILE_PATH "benchmark.conf"
-
+#define A 50000
+#define B 50000
 
 
 double pythagoras_static(double a, double b){
@@ -37,9 +39,17 @@ double pythagoras_static(double a, double b){
     }
 }
 
-
 int main(){
     struct timeval tv;
+
+    double** result_static = (double**) malloc(A*sizeof(double**));
+    for(int i = 0; i< A; i++)
+        result_static[i] = (double*) malloc(B*sizeof(double*));
+
+    double** result_dynamic = (double**) malloc(A*sizeof(double**));
+    for(int i = 0; i< A; i++)
+        result_dynamic[i] = (double*) malloc(B*sizeof(double*));
+
 
     // Dynamic compilation
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
@@ -51,9 +61,9 @@ int main(){
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
-    for(int i = 0; i<50000; i++) {
-        for (int j = 0; j < 50000; j++) {
-            pythagoras_dynamic((double)i, (double)j);
+    for(int i = 0; i<A; i++) {
+        for (int j = 0; j < B; j++) {
+            result_dynamic[i][j] = pythagoras_dynamic((double)i, (double)j);
         }
     }
 
@@ -69,9 +79,9 @@ int main(){
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
-    for(int i = 0; i<50000; i++) {
-        for (int j = 0; j < 50000; j++) {
-            pythagoras_static((double)i, (double)j);
+    for(int i = 0; i<A; i++) {
+        for (int j = 0; j < B; j++) {
+            result_static[i][j] = pythagoras_static((double)i, (double)j);
         }
     }
 
@@ -92,5 +102,7 @@ int main(){
     outputFile << "Duration (ms): " << end_static-start_static << std::endl;
     outputFile << "---------------------------------------------" << std::endl;
     outputFile.close();
+
+
 
 }
