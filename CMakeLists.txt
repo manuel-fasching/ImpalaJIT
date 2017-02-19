@@ -46,7 +46,6 @@ set(source_files ${source_files}
         compiler/frontend/scanner.cc
         compiler/driver.cc
         compiler/function_context.cc
-        compiler/code-gen/assembly/assembly.cc
         compiler/semantic_analysis/semantic_analyzer.cc
         compiler/include/nodes/node.h
         impalajit.cc
@@ -55,7 +54,9 @@ set(source_files ${source_files}
         compiler/include/nodes/conditional_nodes.h
         compiler/include/nodes/boolean_nodes.h
         compiler/include/nodes/assignment_nodes.h
-        compiler/code-gen/code_generator.cc)
+        compiler/code-gen/code_generator.cc
+        compiler/code-gen/assembly/assembly__sse_4_1.cc
+        compiler/code-gen/assembly/assembly__avx.cc)
 
 
 if( SHARED_LIB )

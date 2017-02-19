@@ -2,10 +2,10 @@
 ** This file has been pre-processed with DynASM.
 ** http://luajit.org/dynasm.html
 ** DynASM version 1.4.0, DynASM x64 version 1.4.0
-** DO NOT EDIT! The original file is in "compiler/code-gen/assembly/assembly.dasc".
+** DO NOT EDIT! The original file is in "compiler/code-gen/assembly/assembly__avx.dasc".
 */
 
-#line 1 "compiler/code-gen/assembly/assembly.dasc"
+#line 1 "compiler/code-gen/assembly/assembly__avx.dasc"
 /**
  * Copyright 2017 Manuel Fasching <manuel.fasching@tum.de>
  * Distributed under the MIT License
@@ -25,7 +25,7 @@
  * THE SOFTWARE.
  */
 
-#include <assembly.hh>
+#include <assembly__avx.hh>
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -37,18 +37,18 @@
 #if DASM_VERSION != 10400
 #error "Version mismatch between DynASM and included encoding engine"
 #endif
-#line 29 "compiler/code-gen/assembly/assembly.dasc"
+#line 29 "compiler/code-gen/assembly/assembly__avx.dasc"
 
 //|.section code
 #define DASM_SECTION_CODE	0
 #define DASM_MAXSECTION		1
-#line 31 "compiler/code-gen/assembly/assembly.dasc"
+#line 31 "compiler/code-gen/assembly/assembly__avx.dasc"
 
 //|.globals lbl_
 enum {
   lbl__MAX
 };
-#line 33 "compiler/code-gen/assembly/assembly.dasc"
+#line 33 "compiler/code-gen/assembly/assembly__avx.dasc"
 //|.actionlist impala_actions
 static const unsigned char impala_actions[222] = {
   85,72,137,229,255,197,252,250,126,4,240,132,37,237,255,196,225,252,249,214,
@@ -65,7 +65,7 @@ static const unsigned char impala_actions[222] = {
   123,81,192,240,133,240,45,255,93,195,255
 };
 
-#line 34 "compiler/code-gen/assembly/assembly.dasc"
+#line 34 "compiler/code-gen/assembly/assembly__avx.dasc"
 
 #include <sys/mman.h>
 
@@ -73,12 +73,12 @@ static const unsigned char impala_actions[222] = {
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
-Assembly::~Assembly()
+Assembly__AVX::~Assembly__AVX()
 {
     dasm_free(&d);
 }
 
-void Assembly::initialize(int parameterCount) {
+void Assembly__AVX::initialize(int parameterCount) {
     dasm_init(&d, DASM_MAXSECTION);
 
     void* labels[lbl__MAX];
@@ -94,147 +94,147 @@ void Assembly::initialize(int parameterCount) {
     localVarPos = 0;
 }
 
-void Assembly::prologue(){
+void Assembly__AVX::prologue(){
     //| push rbp
     //| mov rbp, rsp
     dasm_put(Dst, 0);
-#line 65 "compiler/code-gen/assembly/assembly.dasc"
+#line 65 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::growPC(unsigned npc)
+void Assembly__AVX::growPC(unsigned npc)
 {
     dasm_growpc(&d, npc);
 }
 
-void Assembly::pushConstantToStack(double *value){
+void Assembly__AVX::pushConstantToStack(double *value){
     stackPos++;
     //| vmovq xmm(stackPos), qword [value]
     dasm_put(Dst, 5, (stackPos), value);
-#line 75 "compiler/code-gen/assembly/assembly.dasc"
+#line 75 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::storeLocalVariable() {
+void Assembly__AVX::storeLocalVariable() {
     localVarPos++;
     //| vmovq qword [rbp-8*localVarPos], xmm(stackPos)
     dasm_put(Dst, 15, (stackPos), -8*localVarPos);
-#line 80 "compiler/code-gen/assembly/assembly.dasc"
+#line 80 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::pushParameterToStack(int index) {
+void Assembly__AVX::pushParameterToStack(int index) {
     stackPos++;
     // See x64 calling conventions. Paramters 1-8 are passed in registers
     if(index <= 7){
         //| vmovq xmm(stackPos), xmm(index)
         dasm_put(Dst, 26, (stackPos), (index));
-#line 87 "compiler/code-gen/assembly/assembly.dasc"
+#line 87 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
     else {
         //| vmovq xmm(stackPos), qword [rbp+(8+(index-7)*8)]
         dasm_put(Dst, 36, (stackPos), (8+(index-7)*8));
-#line 90 "compiler/code-gen/assembly/assembly.dasc"
+#line 90 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
 }
 
-void Assembly::replaceParameter(int index) {
+void Assembly__AVX::replaceParameter(int index) {
     // See x64 calling conventions. Paramters 1-8 are passed in registers
     if(index <= 7){
         //| vmovq xmm(index), xmm(stackPos)
         dasm_put(Dst, 26, (index), (stackPos));
-#line 97 "compiler/code-gen/assembly/assembly.dasc"
+#line 97 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
     else {
         //| vmovq qword [rbp+(8+(index-7)*8)], xmm(stackPos)
         dasm_put(Dst, 15, (stackPos), (8+(index-7)*8));
-#line 100 "compiler/code-gen/assembly/assembly.dasc"
+#line 100 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
 }
 
-void Assembly::pushLocalVariableToStack(int index) {
+void Assembly__AVX::pushLocalVariableToStack(int index) {
     stackPos++;
     //| vmovq xmm(stackPos), qword [rbp-(8+index*8)]
     dasm_put(Dst, 36, (stackPos), -(8+index*8));
-#line 106 "compiler/code-gen/assembly/assembly.dasc"
+#line 106 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::replaceLocalVariable(int index) {
+void Assembly__AVX::replaceLocalVariable(int index) {
     //| vmovq qword [rbp-(8+index*8)], xmm(stackPos)
     dasm_put(Dst, 15, (stackPos), -(8+index*8));
-#line 110 "compiler/code-gen/assembly/assembly.dasc"
+#line 110 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::addDynamicLabel(unsigned labelNumber) {
+void Assembly__AVX::addDynamicLabel(unsigned labelNumber) {
     //| =>labelNumber:
     dasm_put(Dst, 46, labelNumber);
-#line 114 "compiler/code-gen/assembly/assembly.dasc"
+#line 114 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::jumpForwardToDynamicLabel(unsigned labelNumber) {
+void Assembly__AVX::jumpForwardToDynamicLabel(unsigned labelNumber) {
     //| jmp =>labelNumber
     dasm_put(Dst, 48, labelNumber);
-#line 118 "compiler/code-gen/assembly/assembly.dasc"
+#line 118 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 
-void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
+void Assembly__AVX::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
      //| vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
      //| vptestps xmm(stackPos), xmm(stackPos)
      dasm_put(Dst, 52, (stackPos), (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
-#line 124 "compiler/code-gen/assembly/assembly.dasc"
+#line 124 "compiler/code-gen/assembly/assembly__avx.dasc"
      if(condition){
          //| jnz => labelNumber
          dasm_put(Dst, 74,  labelNumber);
-#line 126 "compiler/code-gen/assembly/assembly.dasc"
+#line 126 "compiler/code-gen/assembly/assembly__avx.dasc"
      }
      else{
         //| jz => labelNumber
         dasm_put(Dst, 78,  labelNumber);
-#line 129 "compiler/code-gen/assembly/assembly.dasc"
+#line 129 "compiler/code-gen/assembly/assembly__avx.dasc"
      }
      stackPos--;
 }
 
-void Assembly::performNegation(){
+void Assembly__AVX::performNegation(){
     //| vmovq xmm(stackPos+1), xmm(stackPos)
     //| vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
     //| vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
     dasm_put(Dst, 82, (stackPos+1), (stackPos), (stackPos), (stackPos), (stackPos+1), (stackPos), (stackPos), (stackPos+1));
-#line 137 "compiler/code-gen/assembly/assembly.dasc"
+#line 137 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::calculateAddition(){
+void Assembly__AVX::calculateAddition(){
     //| vaddsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 114, (stackPos-1), (stackPos-1), (stackPos));
-#line 141 "compiler/code-gen/assembly/assembly.dasc"
+#line 141 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly::calculateSubtraction(){
+void Assembly__AVX::calculateSubtraction(){
     //| vsubsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 102, (stackPos-1), (stackPos-1), (stackPos));
-#line 146 "compiler/code-gen/assembly/assembly.dasc"
+#line 146 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly::calculateMultiplication(){
+void Assembly__AVX::calculateMultiplication(){
     //| vmulsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 126, (stackPos-1), (stackPos-1), (stackPos));
-#line 151 "compiler/code-gen/assembly/assembly.dasc"
+#line 151 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly::calculateDivision(){
+void Assembly__AVX::calculateDivision(){
     //| vdivsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 138, (stackPos-1), (stackPos-1), (stackPos));
-#line 156 "compiler/code-gen/assembly/assembly.dasc"
+#line 156 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly::calculatePower(){
+void Assembly__AVX::calculatePower(){
     // Backup xmm0 and xmm1
     //| vmovq	xmm(stackPos+1), xmm0
     //| vmovq	xmm(stackPos+2), xmm1
     dasm_put(Dst, 150, (stackPos+1), (stackPos+2));
-#line 163 "compiler/code-gen/assembly/assembly.dasc"
+#line 163 "compiler/code-gen/assembly/assembly__avx.dasc"
 
     // Call pow function of c std math lib
     //| vmovq xmm0, xmm(stackPos)
@@ -243,37 +243,37 @@ void Assembly::calculatePower(){
     //| call rax
     //| vmovq xmm(stackPos-1), xmm0
     dasm_put(Dst, 165, (stackPos), (stackPos-1), (unsigned int)((uintptr_t) pow), (unsigned int)(((uintptr_t) pow)>>32), (stackPos-1));
-#line 170 "compiler/code-gen/assembly/assembly.dasc"
+#line 170 "compiler/code-gen/assembly/assembly__avx.dasc"
 
      // Restore xmm0 and xmm1
     //| vmovq xmm1, xmm(stackPos+1)
     //| vmovq xmm0, xmm(stackPos+2)
     dasm_put(Dst, 194, (stackPos+1), (stackPos+2));
-#line 174 "compiler/code-gen/assembly/assembly.dasc"
+#line 174 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly::calculateSQRT(){
+void Assembly__AVX::calculateSQRT(){
     //| vsqrtsd xmm(stackPos), xmm(stackPos)
     dasm_put(Dst, 209, (stackPos), (stackPos));
-#line 179 "compiler/code-gen/assembly/assembly.dasc"
+#line 179 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-void Assembly::extractResult(){
+void Assembly__AVX::extractResult(){
      //| vmovq xmm0, xmm(stackPos)
      dasm_put(Dst, 201, (stackPos));
-#line 183 "compiler/code-gen/assembly/assembly.dasc"
+#line 183 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 
-void Assembly::epilogue(){
+void Assembly__AVX::epilogue(){
     //| pop rbp
     //| ret
     dasm_put(Dst, 219);
-#line 189 "compiler/code-gen/assembly/assembly.dasc"
+#line 189 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
-dasm_gen_func Assembly::linkAndEncode(){
+dasm_gen_func Assembly__AVX::linkAndEncode(){
   size_t sz;
   void* buf;
   dasm_link(Dst, &sz);

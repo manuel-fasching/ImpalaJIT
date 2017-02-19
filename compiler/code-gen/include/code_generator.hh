@@ -23,12 +23,19 @@
 #include <types.hh>
 #include <function_context.h>
 #include <vector>
-#include <assembly.hh>
+#include <assembly__avx.hh>
+#include <assembly__sse_4_1.hh>
 
 class CodeGenerator {
 private:
     unsigned dynamicLabelCount;
-    Assembly assembly;
+
+#if defined(__AVX__)
+    Assembly__AVX assembly;
+#elif defined(__SSE2__)
+    Assembly__SSE_4_1 assembly;
+#endif
+
     void evaluateAst(FunctionContext* &functionContext, Node* &node);
     void dsfUtil(FunctionContext* &functionContext, Node* &node);
     void conditionEvaluationHelper(FunctionContext* &functionContext, Node* &node, unsigned label1, unsigned label2);

@@ -1,0 +1,200 @@
+/**
+ * Copyright 2017 Manuel Fasching <manuel.fasching@tum.de>
+ * Distributed under the MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#include <assembly__sse_4_1.hh>
+#include <iostream>
+#include <math.h>
+#include <stdio.h>
+#include <stdint.h>
+
+
+
+|.arch x64
+
+|.section code
+
+|.globals lbl_
+|.actionlist impala_actions
+
+#include <sys/mman.h>
+
+#if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+
+Assembly__SSE_4_1::~Assembly__SSE_4_1()
+{
+    dasm_free(&d);
+}
+
+void Assembly__SSE_4_1::initialize(int parameterCount) {
+    dasm_init(&d, DASM_MAXSECTION);
+
+    void* labels[lbl__MAX];
+    dasm_setupglobal(&d, labels, lbl__MAX);
+
+    dasm_setup(&d, impala_actions);
+
+    dasm_growpc(&d, 0);
+
+    Dst = &d;
+
+    stackPos = parameterCount >= 8 ? 7 : parameterCount-1;
+    localVarPos = 0;
+}
+
+void Assembly__SSE_4_1::prologue(){
+    | push rbp
+    | mov rbp, rsp
+}
+
+void Assembly__SSE_4_1::growPC(unsigned npc)
+{
+    dasm_growpc(&d, npc);
+}
+
+void Assembly__SSE_4_1::pushConstantToStack(double *value){
+    stackPos++;
+    | movq xmm(stackPos), qword [value]
+}
+
+void Assembly__SSE_4_1::storeLocalVariable() {
+    localVarPos++;
+    | movq qword [rbp-8*localVarPos], xmm(stackPos)
+}
+
+void Assembly__SSE_4_1::pushParameterToStack(int index) {
+    stackPos++;
+    // See x64 calling conventions. Paramters 1-8 are passed in registers
+    if(index <= 7){
+        | movq xmm(stackPos), xmm(index)
+    }
+    else {
+        | movq xmm(stackPos), qword [rbp+(8+(index-7)*8)]
+    }
+}
+
+void Assembly__SSE_4_1::replaceParameter(int index) {
+    // See x64 calling conventions. Paramters 1-8 are passed in registers
+    if(index <= 7){
+        | movq xmm(index), xmm(stackPos)
+    }
+    else {
+        | movq qword [rbp+(8+(index-7)*8)], xmm(stackPos)
+    }
+}
+
+void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
+    stackPos++;
+    | movq xmm(stackPos), qword [rbp-(8+index*8)]
+}
+
+void Assembly__SSE_4_1::replaceLocalVariable(int index) {
+    | movq qword [rbp-(8+index*8)], xmm(stackPos)
+}
+
+void Assembly__SSE_4_1::addDynamicLabel(unsigned labelNumber) {
+    | =>labelNumber:
+}
+
+void Assembly__SSE_4_1::jumpForwardToDynamicLabel(unsigned labelNumber) {
+    | jmp =>labelNumber
+}
+
+
+void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
+     | cmpsd xmm(stackPos), xmm(stackPos-1), operator_
+     | ptest xmm(stackPos), xmm(stackPos)
+     if(condition){
+         | jnz => labelNumber
+     }
+     else{
+        | jz => labelNumber
+     }
+     stackPos--;
+}
+
+void Assembly__SSE_4_1::performNegation(){
+    | movq xmm(stackPos+1), xmm(stackPos)
+    | subsd xmm(stackPos), xmm(stackPos+1)
+    | subsd xmm(stackPos), xmm(stackPos+1)
+}
+
+void Assembly__SSE_4_1::calculateAddition(){
+    | addsd xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
+}
+
+void Assembly__SSE_4_1::calculateSubtraction(){
+    | subsd xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
+}
+
+void Assembly__SSE_4_1::calculateMultiplication(){
+    | mulsd xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
+}
+
+void Assembly__SSE_4_1::calculateDivision(){
+    | divsd xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
+}
+
+void Assembly__SSE_4_1::calculatePower(){
+    // Backup xmm0 and xmm1
+    | movq	xmm(stackPos+1), xmm0
+    | movq	xmm(stackPos+2), xmm1
+
+    // Call pow function of c std math lib
+    | movq xmm0, xmm(stackPos)
+    | movq xmm1, xmm(stackPos-1)
+    | mov64 rax, (uintptr_t) pow
+    | call rax
+    | movq xmm(stackPos-1), xmm0
+
+     // Restore xmm0 and xmm1
+    | movq xmm1, xmm(stackPos+1)
+    | movq xmm0, xmm(stackPos+2)
+    stackPos--;
+}
+
+void Assembly__SSE_4_1::calculateSQRT(){
+    | sqrtsd xmm(stackPos), xmm(stackPos)
+}
+
+void Assembly__SSE_4_1::extractResult(){
+     | movq xmm0, xmm(stackPos)
+}
+
+
+void Assembly__SSE_4_1::epilogue(){
+    | pop rbp
+    | ret
+}
+
+dasm_gen_func Assembly__SSE_4_1::linkAndEncode(){
+  size_t sz;
+  void* buf;
+  dasm_link(Dst, &sz);
+  buf = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  dasm_encode(Dst, buf);
+  mprotect(buf, sz, PROT_READ | PROT_EXEC);
+  return (dasm_gen_func) buf;
+}
+

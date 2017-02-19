@@ -29,53 +29,51 @@ class Assembly {
 
 public:
 
-    virtual ~Assembly();
+    virtual void initialize(int parameterCount) = 0;
 
-    void initialize(int parameterCount);
+    virtual void prologue()= 0;
 
-    void prologue();
+    virtual void epilogue()= 0;
 
-    void epilogue();
+    virtual void growPC(unsigned npc)= 0;
 
-    void growPC(unsigned npc);
+    virtual void pushParameterToStack(int index)= 0;
 
-    void pushParameterToStack(int index);
+    virtual void pushLocalVariableToStack(int index)= 0;
 
-    void pushLocalVariableToStack(int index);
+    virtual void replaceParameter(int index)= 0;
 
-    void replaceParameter(int index);
+    virtual void pushConstantToStack(double *value)= 0;
 
-    void pushConstantToStack(double *value);
+    virtual void storeLocalVariable()= 0;
 
-    void storeLocalVariable();
+    virtual void replaceLocalVariable(int index)= 0;
 
-    void replaceLocalVariable(int index);
+    virtual void performNegation()= 0;
 
-    void performNegation();
+    virtual void calculateAddition()= 0;
 
-    void calculateAddition();
+    virtual void calculateSubtraction()= 0;
 
-    void calculateSubtraction();
+    virtual void calculateMultiplication()= 0;
 
-    void calculateMultiplication();
+    virtual void calculateDivision()= 0;
 
-    void calculateDivision();
+    virtual void calculatePower()= 0;
 
-    void calculatePower();
+    virtual void calculateSQRT()= 0;
 
-    void calculateSQRT();
+    virtual void addDynamicLabel(unsigned labelNumber)= 0;
 
-    void addDynamicLabel(unsigned labelNumber);
+    virtual void jumpForwardToDynamicLabel(unsigned labelNumber)= 0;
 
-    void jumpForwardToDynamicLabel(unsigned labelNumber);
+    virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_)= 0;
 
-    void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
+    virtual void extractResult()= 0;
 
-    void extractResult();
+    virtual dasm_gen_func linkAndEncode()= 0;
 
-    dasm_gen_func linkAndEncode();
-
-private:
+protected:
     dasm_State* d;
     dasm_State** Dst;
     void** labels;

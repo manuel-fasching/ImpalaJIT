@@ -47,7 +47,9 @@ endmacro(translate_flex_file)
 macro(translate_dynasm_file)
     execute_process(COMMAND gcc -o minilua 3rd_party/LuaJIT/src/host/minilua.c -lm
             )
-    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/code-gen/assembly/assembly.cc -D X64 compiler/code-gen/assembly/assembly.dasc
+    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/code-gen/assembly/assembly__sse_4_1.cc -D X64 compiler/code-gen/assembly/assembly__sse_4_1.dasc
+            )
+    execute_process(COMMAND ${CMAKE_CURRENT_BINARY_DIR}/minilua 3rd_party/LuaJIT/dynasm/dynasm.lua -o compiler/code-gen/assembly/assembly__avx.cc -D X64 compiler/code-gen/assembly/assembly__avx.dasc
             )
     execute_process(COMMAND rm minilua
             )
