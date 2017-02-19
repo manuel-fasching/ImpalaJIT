@@ -27,21 +27,10 @@
 
 |.arch x64
 
-|.section code, imports
+|.section code
 
 |.globals lbl_
 |.actionlist impala_actions
-
-
-|.macro call_extern, target
-|  .imports
-|  ->__imp__..target:
-|  .dword  (uint32_t)target
-|  .dword ((uint64_t)target >> 32)
-|  .code
-|  call qword [->__imp__..target]
-|.endmacro
-
 
 #include <sys/mman.h>
 
@@ -54,7 +43,7 @@ Assembly::~Assembly()
     dasm_free(&d);
 }
 
-void Assembly::initialize() {
+void Assembly::initialize(int parameterCount) {
     dasm_init(&d, DASM_MAXSECTION);
 
     void* labels[lbl__MAX];
@@ -65,14 +54,14 @@ void Assembly::initialize() {
     dasm_growpc(&d, 0);
 
     Dst = &d;
+
+    stackPos = parameterCount >= 8 ? 7 : parameterCount-1;
+    localVarPos = 0;
 }
 
 void Assembly::prologue(){
-
     | push rbp
     | mov rbp, rsp
-    | mov rax, rbp
-    | sub rax, 16
 }
 
 void Assembly::growPC(unsigned npc)
@@ -80,137 +69,44 @@ void Assembly::growPC(unsigned npc)
     dasm_growpc(&d, npc);
 }
 
-void Assembly::pushConstantToFPUStack(double *value){
-    | fld qword [value]
+void Assembly::pushConstantToStack(double *value){
+    stackPos++;
+    | vmovq xmm(stackPos), qword [value]
 }
 
 void Assembly::storeLocalVariable() {
-    | fstp qword [rax]
-    | sub rax, 8
+    localVarPos++;
+    | vmovq qword [rbp-8*localVarPos], xmm(stackPos)
 }
 
-void Assembly::pushParameterToFPUStack(int index) {
-    switch(index){
-        case 0:
-            {
-                | vmovlpd qword [rbp-8], xmm0
-                | fld qword [rbp-8]
-                break;
-            }
-        case 1:
-            {
-                | vmovlpd qword [rbp-8], xmm1
-                | fld qword [rbp-8]
-                break;
-            }
-        case 2:
-            {
-                | vmovlpd qword [rbp-8], xmm2
-                | fld qword [rbp-8]
-                break;
-            }
-        case 3:
-            {
-                | vmovlpd qword [rbp-8], xmm3
-                | fld qword [rbp-8]
-                break;
-            }
-        case 4:
-            {
-                | vmovlpd qword [rbp-8], xmm4
-                | fld qword [rbp-8]
-                break;
-            }
-        case 5:
-            {
-                | vmovlpd qword [rbp-8], xmm5
-                | fld qword [rbp-8]
-                break;
-            }
-        case 6:
-            {
-                | vmovlpd qword [rbp-8], xmm6
-                | fld qword [rbp-8]
-                break;
-            }
-        case 7:
-            {
-                | vmovlpd qword [rbp-8], xmm7
-                | fld qword [rbp-8]
-                break;
-            }
-        default:
-            {
-                | fld qword [rbp+(8+(index-7)*8)]
-                break;
-            }
+void Assembly::pushParameterToStack(int index) {
+    stackPos++;
+    // See x64 calling conventions. Paramters 1-8 are passed in registers
+    if(index <= 7){
+        | vmovq xmm(stackPos), xmm(index)
+    }
+    else {
+        | vmovq xmm(stackPos), qword [rbp+(8+(index-7)*8)]
     }
 }
 
 void Assembly::replaceParameter(int index) {
-    switch(index){
-        case 0:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm0, qword [rbp-8]
-                break;
-            }
-        case 1:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm1, qword [rbp-8]
-                break;
-            }
-        case 2:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm2, qword [rbp-8]
-                break;
-            }
-        case 3:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm3, qword [rbp-8]
-                break;
-            }
-        case 4:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm4, qword [rbp-8]
-                break;
-            }
-        case 5:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm5, qword [rbp-8]
-                break;
-            }
-        case 6:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm6, qword [rbp-8]
-                break;
-            }
-        case 7:
-            {
-                | fstp qword [rbp-8]
-                | vmovq xmm7, qword [rbp-8]
-                break;
-            }
-        default:
-            {
-                | fstp qword [rbp+(8+(index-7)*8)]
-                break;
-            }
+    // See x64 calling conventions. Paramters 1-8 are passed in registers
+    if(index <= 7){
+        | vmovq xmm(index), xmm(stackPos)
+    }
+    else {
+        | vmovq qword [rbp+(8+(index-7)*8)], xmm(stackPos)
     }
 }
 
-void Assembly::pushLocalVariableToFPUStack(int index) {
-    | fld qword [rbp-(16+index*8)]
+void Assembly::pushLocalVariableToStack(int index) {
+    stackPos++;
+    | vmovq xmm(stackPos), qword [rbp-(8+index*8)]
 }
 
 void Assembly::replaceLocalVariable(int index) {
-    | fstp qword [rbp-(16+index*8)]
+    | vmovq qword [rbp-(8+index*8)], xmm(stackPos)
 }
 
 void Assembly::addDynamicLabel(unsigned labelNumber) {
@@ -223,128 +119,67 @@ void Assembly::jumpForwardToDynamicLabel(unsigned labelNumber) {
 
 
 void Assembly::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
-    if(condition == false){
-        switch(operator_){
-            case EQ:
-            {
-                | jne  =>labelNumber
-                break;
-            }
-            case NE:
-            {
-                | je  =>labelNumber
-                break;
-            }
-            case GT:
-            {
-                | jbe  =>labelNumber
-                break;
-            }
-            case LT:
-            {
-                | jae  =>labelNumber
-                break;
-            }
-            case GTE:
-            {
-                | jb  =>labelNumber
-                break;
-            }
-            case LTE:
-            {
-                | ja  =>labelNumber
-                break;
-            }
-        }
-    }
-    else{
-        switch(operator_){
-            case EQ:
-            {
-                | je  =>labelNumber
-                break;
-            }
-            case NE:
-            {
-                | jne  =>labelNumber
-                break;
-            }
-            case GT:
-            {
-                | ja  =>labelNumber
-                break;
-            }
-            case LT:
-            {
-                | jb  =>labelNumber
-                break;
-            }
-            case GTE:
-            {
-                | jge  =>labelNumber
-                break;
-            }
-            case LTE:
-            {
-                | jbe  =>labelNumber
-                break;
-            }
-        }
+     | vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
+     | vptestps xmm(stackPos), xmm(stackPos)
+     if(condition){
+         | jnz => labelNumber
      }
+     else{
+        | jz => labelNumber
+     }
+     stackPos--;
 }
 
 void Assembly::performNegation(){
-    | fchs
+    | vmovq xmm(stackPos+1), xmm(stackPos)
+    | vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
+    | vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
 }
 
 void Assembly::calculateAddition(){
-    | faddp st1
+    | vaddsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly::calculateSubtraction(){
-    | fsubp st1
+    | vsubsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly::calculateMultiplication(){
-    | fmulp st1
+    | vmulsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly::calculateDivision(){
-    | fdivp st1
+    | vdivsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly::calculatePower(){
-    // Backup xmm0 and xmm1.
-    | vmovq	xmm8, xmm0
-    | vmovq	xmm9, xmm1
+    // Backup xmm0 and xmm1
+    | vmovq	xmm(stackPos+1), xmm0
+    | vmovq	xmm(stackPos+2), xmm1
 
     // Call pow function of c std math lib
-    | fstp qword [rbp-8]
-    | vmovq xmm0, qword [rbp-8]
-    | fstp qword [rbp-8]
-    | vmovq xmm1, qword [rbp-8]
+    | vmovq xmm0, xmm(stackPos)
+    | vmovq xmm1, xmm(stackPos-1)
     | mov64 rax, (uintptr_t) pow
     | call rax
-    | vmovq qword [rbp-8], xmm0
-    | fld qword [rbp-8]
+    | vmovq xmm(stackPos-1), xmm0
 
      // Restore xmm0 and xmm1
-    | vmovq xmm1, xmm9
-    | vmovq xmm0, xmm8
+    | vmovq xmm1, xmm(stackPos+1)
+    | vmovq xmm0, xmm(stackPos+2)
+    stackPos--;
 }
 
 void Assembly::calculateSQRT(){
-    | fsqrt
-}
-
-void Assembly::performComparison(){
-    | fcomip st1
-    | fpop
+    | vsqrtsd xmm(stackPos), xmm(stackPos)
 }
 
 void Assembly::extractResult(){
-     | fstp qword [rbp-8]
-     | vmovq xmm0, qword [rbp-8]
+     | vmovq xmm0, xmm(stackPos)
 }
 
 

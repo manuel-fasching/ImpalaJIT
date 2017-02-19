@@ -31,7 +31,7 @@ public:
 
     virtual ~Assembly();
 
-    void initialize();
+    void initialize(int parameterCount);
 
     void prologue();
 
@@ -39,13 +39,13 @@ public:
 
     void growPC(unsigned npc);
 
-    void pushParameterToFPUStack(int index);
+    void pushParameterToStack(int index);
 
-    void pushLocalVariableToFPUStack(int index);
+    void pushLocalVariableToStack(int index);
 
     void replaceParameter(int index);
 
-    void pushConstantToFPUStack(double *value);
+    void pushConstantToStack(double *value);
 
     void storeLocalVariable();
 
@@ -65,8 +65,6 @@ public:
 
     void calculateSQRT();
 
-    void performComparison();
-
     void addDynamicLabel(unsigned labelNumber);
 
     void jumpForwardToDynamicLabel(unsigned labelNumber);
@@ -81,6 +79,8 @@ private:
     dasm_State* d;
     dasm_State** Dst;
     void** labels;
+    int stackPos;
+    int localVarPos;
 };
 
 #endif //IMPALAJIT_ASSEMBLY_HH

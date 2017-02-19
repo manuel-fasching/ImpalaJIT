@@ -43,7 +43,7 @@ enum NodeType {
 };
 
 enum CompareOperatorType{
-    EQ, NE, GT, LT, GTE, LTE
+    EQ=0, NE=4, GT=6, LT=9, GTE=5, LTE=2
 };
 
 enum BooleanJunctionType{

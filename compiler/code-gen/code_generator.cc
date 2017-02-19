@@ -31,7 +31,7 @@ CodeGenerator::~CodeGenerator()
 
 dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
-    assembly.initialize();
+    assembly.initialize(functionContext->parameters.size());
     assembly.prologue();
 
     evaluateAst(functionContext, functionContext->root);
@@ -48,7 +48,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         }
         case CONSTANT:
         {
-            assembly.pushConstantToFPUStack(&(static_cast<ConstantNode*>(node)->value));
+            assembly.pushConstantToStack(&(static_cast<ConstantNode *>(node)->value));
             break;
         }
 
@@ -56,13 +56,13 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         {
             try {
                 int index = functionContext->getIndexOfParameter((static_cast<VariableNode *>(node)->name));
-                assembly.pushParameterToFPUStack(index);
+                assembly.pushParameterToStack(index);
                 break;
             }
             catch(std::exception& e) {
             }
             int index = functionContext->getIndexOfVariable((static_cast<VariableNode *>(node)->name));
-            assembly.pushLocalVariableToFPUStack(index);
+            assembly.pushLocalVariableToStack(index);
             break;
         }
 
@@ -222,7 +222,6 @@ void CodeGenerator::conditionEvaluationHelper(FunctionContext* &functionContext,
             case COMPARISON:
             {
                 dsfUtil(functionContext, node);
-                assembly.performComparison();
                 assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(node)->compareOperator);
                 break;
             }
@@ -232,7 +231,6 @@ void CodeGenerator::conditionEvaluationHelper(FunctionContext* &functionContext,
                     case COMPARISON:
                     {
                         dsfUtil(functionContext, *it);
-                        assembly.performComparison();
                         assembly.conditionalJumpForwardToDynamicLabel(label1, true, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
@@ -257,7 +255,6 @@ void CodeGenerator::conditionEvaluationHelper(FunctionContext* &functionContext,
                 switch((*it)->nodeType) {
                     case COMPARISON: {
                         dsfUtil(functionContext, *it);
-                        assembly.performComparison();
                         assembly.conditionalJumpForwardToDynamicLabel(label2, false, static_cast<CompareNode*>(*it)->compareOperator);
                         break;
                     }
