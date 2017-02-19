@@ -17,6 +17,8 @@
  * THE SOFTWARE.
  */
 
+#include <stdexcept>
+
 #include <semantic_analyzer.hh>
 #include <expression_nodes.h>
 
