@@ -41,15 +41,15 @@ public:
 
     virtual void pushLocalVariableToStack(int index)= 0;
 
+    virtual void popStack() = 0;
+
     virtual void replaceParameter(int index)= 0;
 
-    virtual void pushConstantToStack(double *value)= 0;
+    virtual void pushConstantToStack(double value)= 0;
 
     virtual void storeLocalVariable()= 0;
 
     virtual void replaceLocalVariable(int index)= 0;
-
-    virtual void performNegation()= 0;
 
     virtual void calculateAddition()= 0;
 
@@ -59,15 +59,19 @@ public:
 
     virtual void calculateDivision()= 0;
 
-    virtual void calculatePower()= 0;
-
-    virtual void calculateSQRT()= 0;
+    virtual void callExternalFunction(externalFunction functionPtr, unsigned NumberOfArguments)= 0;
 
     virtual void addDynamicLabel(unsigned labelNumber)= 0;
 
+    virtual void addLocalLabel(unsigned labelNumber)= 0;
+
     virtual void jumpForwardToDynamicLabel(unsigned labelNumber)= 0;
 
+    virtual void jumpForwardToLocalLabel(unsigned labelNumber)= 0;
+
     virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_)= 0;
+
+    virtual void conditionalJumpForwardToLocalLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_)= 0;
 
     virtual void extractResult()= 0;
 
@@ -79,6 +83,7 @@ protected:
     void** labels;
     int stackPos;
     int localVarPos;
+    int initialStackPos;
 };
 
 #endif //IMPALAJIT_ASSEMBLY_HH

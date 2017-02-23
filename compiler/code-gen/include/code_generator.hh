@@ -21,14 +21,19 @@
 #define IMPALAJIT_CODE_GENERATOR_HH
 
 #include <types.hh>
+#include <internal_types.hh>
 #include <function_context.h>
 #include <vector>
+#include <map>
 #include <assembly__avx.hh>
 #include <assembly__sse_4_1.hh>
+#include <math.h>
+
 
 class CodeGenerator {
 private:
     unsigned dynamicLabelCount;
+    std::map<std::string, externalFunction> functionPtrMap;
 
 #if defined(__AVX__)
     Assembly__AVX assembly;
@@ -41,6 +46,7 @@ private:
     void conditionEvaluationHelper(FunctionContext* &functionContext, Node* &node, unsigned label1, unsigned label2);
     unsigned countLabels(Node* node);
     CompareOperatorType  comparisonEvaluationHelper(Node *node);
+    externalFunction getFunctionPointerByName(std::string &name);
 
 public:
     CodeGenerator();

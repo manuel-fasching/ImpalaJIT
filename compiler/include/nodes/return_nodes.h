@@ -25,7 +25,7 @@
 class ReturnNode : public Node
 {
 public:
-    explicit ReturnNode(Node* _node)
+    ReturnNode(Node* _node)
             : Node(RETURN)
     {
         nodes.push_back(_node);

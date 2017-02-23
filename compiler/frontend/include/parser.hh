@@ -40,7 +40,7 @@
 #ifndef YY_YY_PARSER_HH_INCLUDED
 # define YY_YY_PARSER_HH_INCLUDED
 // //                    "%code requires" blocks.
-#line 79 "parser.yy" // lalr1.cc:377
+#line 80 "parser.yy" // lalr1.cc:377
 
   #include <set>
 
@@ -114,7 +114,7 @@
 # define YYDEBUG 1
 #endif
 
-#line 58 "parser.yy" // lalr1.cc:377
+#line 59 "parser.yy" // lalr1.cc:377
 namespace impalajit {
 #line 120 "parser.hh" // lalr1.cc:377
 
@@ -130,16 +130,17 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 83 "parser.yy" // lalr1.cc:377
+    #line 84 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
     std::set<std::string>* stringSet;
+    std::vector<Node*>* nodeVector;
     class FunctionContext* functionContext;
 
-#line 143 "parser.hh" // lalr1.cc:377
+#line 144 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -480,12 +481,12 @@ namespace impalajit {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 106,     ///< Last index in yytable_.
+      yylast_ = 107,     ///< Last index in yytable_.
       yynnts_ = 21,  ///< Number of nonterminal symbols.
       yyfinal_ = 6, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 26  ///< Number of tokens.
+      yyntokens_ = 25  ///< Number of tokens.
     };
 
 
@@ -494,9 +495,9 @@ namespace impalajit {
   };
 
 
-#line 58 "parser.yy" // lalr1.cc:377
+#line 59 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 500 "parser.hh" // lalr1.cc:377
+#line 501 "parser.hh" // lalr1.cc:377
 
 
 

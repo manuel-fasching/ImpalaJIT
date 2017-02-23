@@ -32,7 +32,6 @@ set(include_dirs
         compiler/include
         compiler/include/nodes
         compiler/include/types
-        compiler/semantic_analysis/include
         compiler/frontend/include
         compiler/code-gen/include
         compiler/code-gen/assembly/include
@@ -46,7 +45,6 @@ set(source_files ${source_files}
         compiler/frontend/scanner.cc
         compiler/driver.cc
         compiler/function_context.cc
-        compiler/semantic_analysis/semantic_analyzer.cc
         compiler/include/nodes/node.h
         impalajit.cc
         compiler/include/nodes/expression_nodes.h

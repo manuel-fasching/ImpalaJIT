@@ -31,6 +31,7 @@
 #include <assignment_nodes.h>
 #include <boolean_nodes.h>
 #include <return_nodes.h>
+#include <external_function_nodes.h>
 
 #include <driver.h>
 #include <scanner.h>
@@ -86,6 +87,7 @@
     std::string*		stringVal;
     class Node*		node;
     std::set<std::string>* stringSet;
+    std::vector<Node*>* nodeVector;
     class FunctionContext* functionContext;
 }
 
@@ -106,12 +108,13 @@
 
 
 %type <node>	constant variable
-%type <node>	atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
+%type <node>	atomexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
 %type <stringSet> parameter_list
 %type <functionContext> function
+%type <nodeVector> expr_list
 
 %destructor { delete $$; } constant variable 
-%destructor { delete $$; } atomexpr powexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
+%destructor { delete $$; } atomexpr unaryexpr mulexpr addexpr expr expr_list atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
 
 %{
 
@@ -199,6 +202,21 @@ variable : STRING
 	   		}
 
 
+expr_list :  expr
+            {
+                std::vector<Node*>* params = new std::vector<Node*>();
+                params->push_back($1);
+                $$ = params;
+            }
+
+            |
+            expr_list COMMA expr
+            {
+                $$ = $1;
+                (*$$).push_back($3);
+            }
+
+
 atomexpr : constant
            	{
 	       		$$ = $1;
@@ -208,40 +226,34 @@ atomexpr : constant
 	       	{
 		       	$$ = $1;
 		   	}
+
+		   	| STRING '('')'
+            {
+                $$ = new ExternalFunctionNode(*$1);
+            }
 		   	
-		   	| FUNCTION '(' expr ')'
+		   	| STRING '(' expr_list ')'
 		   	{
-		       	$$ = new SQRTNode($3);
+		       	$$ = new ExternalFunctionNode(*$1, *$3);
 		   	}
 	        
 	        | '(' expr ')'
 	        {
 		       	$$ = $2;
 		   	}
-	     
 
 
-powexpr	: atomexpr
-          	{
-	      		$$ = $1;
-	  		}
-        	
-        	| atomexpr '^' powexpr
-          	{
-	      		$$ = new PowerNode($1, $3);
-	  		}
-
-unaryexpr : powexpr
+unaryexpr : atomexpr
             {
 				$$ = $1;
 			}
 		    
-		    | '+' powexpr
+		    | '+' atomexpr
 	        {
 				$$ = $2;
 			}
 		    
-		    | '-' powexpr
+		    | '-' atomexpr
 		    {
 				$$ = new NegationNode($2);
 			}
@@ -278,10 +290,12 @@ addexpr : mulexpr
 		  	}
 
 
-expr	: addexpr
+expr	:   addexpr
           	{
 	      		$$ = $1;
 	  		}
+
+
 
 
 assignment : STRING '=' expr

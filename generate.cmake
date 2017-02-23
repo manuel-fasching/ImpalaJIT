@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 2.6)
 
 # Parser generation macro
 macro(translate_bison_file)
-    execute_process(COMMAND bison -o parser.cc parser.yy
+    execute_process(COMMAND bison -o parser.cc -Wconflicts-sr parser.yy
             WORKING_DIRECTORY compiler/frontend
             )
     execute_process(COMMAND mv stack.hh ./include

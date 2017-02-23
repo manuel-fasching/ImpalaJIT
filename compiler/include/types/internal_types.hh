@@ -20,6 +20,8 @@
 #ifndef IMPALAJIT_AST_TYPES_HH
 #define IMPALAJIT_AST_TYPES_HH
 
+typedef void (*externalFunction)();
+
 enum NodeType {
     ROOT,
     CONSTANT,
@@ -30,7 +32,8 @@ enum NodeType {
     MULTIPLICATION,
     DIVISION,
     POWER,
-    SQRT,
+    EXTERNAL_FUNCTION,
+    EXTERNAL_FUNCTION_PARAMETER,
     ASSIGNMENT,
     COMPARISON,
     BOOLEAN_AND_JUNCTION,

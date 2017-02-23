@@ -25,7 +25,8 @@
 class Assembly__AVX : public Assembly {
 public:
     virtual ~Assembly__AVX();
-    virtual void initialize(int parameterCount);
+
+    virtual void initialize(int parameterCount) ;
 
     virtual void prologue();
 
@@ -37,15 +38,15 @@ public:
 
     virtual void pushLocalVariableToStack(int index);
 
+    virtual void popStack();
+
     virtual void replaceParameter(int index);
 
-    virtual void pushConstantToStack(double *value);
+    virtual void pushConstantToStack(double value);
 
     virtual void storeLocalVariable();
 
     virtual void replaceLocalVariable(int index);
-
-    virtual void performNegation();
 
     virtual void calculateAddition();
 
@@ -55,15 +56,19 @@ public:
 
     virtual void calculateDivision();
 
-    virtual void calculatePower();
-
-    virtual void calculateSQRT();
+    virtual void callExternalFunction(externalFunction functionPtr, unsigned NumberOfArguments);
 
     virtual void addDynamicLabel(unsigned labelNumber);
 
+    virtual void addLocalLabel(unsigned labelNumber);
+
     virtual void jumpForwardToDynamicLabel(unsigned labelNumber);
 
+    virtual void jumpForwardToLocalLabel(unsigned labelNumber);
+
     virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
+
+    virtual void conditionalJumpForwardToLocalLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
 
     virtual void extractResult();
 

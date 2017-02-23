@@ -56,7 +56,6 @@ void Assembly__SSE_4_1::initialize(int parameterCount) {
     Dst = &d;
 
     stackPos = parameterCount >= 8 ? 7 : parameterCount-1;
-    localVarPos = 0;
 }
 
 void Assembly__SSE_4_1::prologue(){
@@ -69,14 +68,17 @@ void Assembly__SSE_4_1::growPC(unsigned npc)
     dasm_growpc(&d, npc);
 }
 
-void Assembly__SSE_4_1::pushConstantToStack(double *value){
+void Assembly__SSE_4_1::pushConstantToStack(double value){
     stackPos++;
-    | movq xmm(stackPos), qword [value]
+    double* ptr = static_cast<double*>(malloc(sizeof(double)));
+    *ptr = value;
+    | movq xmm(stackPos), qword[ptr]
 }
 
 void Assembly__SSE_4_1::storeLocalVariable() {
-    localVarPos++;
-    | movq qword [rbp-8*localVarPos], xmm(stackPos)
+    | sub rsp, 8
+    | movq qword [rsp], xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly__SSE_4_1::pushParameterToStack(int index) {
@@ -86,8 +88,12 @@ void Assembly__SSE_4_1::pushParameterToStack(int index) {
         | movq xmm(stackPos), xmm(index)
     }
     else {
-        | movq xmm(stackPos), qword [rbp+(8+(index-7)*8)]
+        | movq xmm(stackPos), qword [rbp+8+(index-7)*8]
     }
+}
+
+void Assembly__SSE_4_1::popStack(){
+    stackPos--;
 }
 
 void Assembly__SSE_4_1::replaceParameter(int index) {
@@ -96,17 +102,19 @@ void Assembly__SSE_4_1::replaceParameter(int index) {
         | movq xmm(index), xmm(stackPos)
     }
     else {
-        | movq qword [rbp+(8+(index-7)*8)], xmm(stackPos)
+        | movq qword [rbp+8+(index-7)*8], xmm(stackPos)
     }
+    stackPos--;
 }
 
 void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
     stackPos++;
-    | movq xmm(stackPos), qword [rbp-(8+index*8)]
+    | movq xmm(stackPos), qword [rbp-8-index*8]
 }
 
 void Assembly__SSE_4_1::replaceLocalVariable(int index) {
-    | movq qword [rbp-(8+index*8)], xmm(stackPos)
+    | movq qword [rbp-8-index*8], xmm(stackPos)
+    stackPos--;
 }
 
 void Assembly__SSE_4_1::addDynamicLabel(unsigned labelNumber) {
@@ -130,10 +138,76 @@ void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumbe
      stackPos--;
 }
 
-void Assembly__SSE_4_1::performNegation(){
-    | movq xmm(stackPos+1), xmm(stackPos)
-    | subsd xmm(stackPos), xmm(stackPos+1)
-    | subsd xmm(stackPos), xmm(stackPos+1)
+void Assembly__SSE_4_1::addLocalLabel(unsigned labelNumber) {
+    switch(labelNumber){
+        case 1: {
+            | 1:
+            break;
+            }
+        case 2: {
+            | 2:
+            break;
+        }
+        case 3: {
+            | 3:
+            break;
+        }
+    }
+}
+
+void Assembly__SSE_4_1::jumpForwardToLocalLabel(unsigned labelNumber) {
+    switch(labelNumber){
+        case 1: {
+            | jmp >1
+            break;
+            }
+        case 2: {
+            | jmp >2
+            break;
+        }
+        case 3: {
+            | jmp >3
+            break;
+        }
+    }
+}
+
+void Assembly__SSE_4_1::conditionalJumpForwardToLocalLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
+     | vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
+     | vptestps xmm(stackPos), xmm(stackPos)
+     if(condition){
+        switch(labelNumber){
+            case 1: {
+                | jnz >1
+                break;
+            }
+            case 2: {
+                | jnz >2
+                break;
+            }
+            case 3: {
+                | jnz >3
+                break;
+            }
+        }
+     }
+     else{
+        switch(labelNumber){
+            case 1: {
+                | jz >1
+                break;
+            }
+            case 2: {
+                | jz >2
+                break;
+            }
+            case 3: {
+                | jz >3
+                break;
+            }
+        }
+     }
+     stackPos--;
 }
 
 void Assembly__SSE_4_1::calculateAddition(){
@@ -156,26 +230,37 @@ void Assembly__SSE_4_1::calculateDivision(){
     stackPos--;
 }
 
-void Assembly__SSE_4_1::calculatePower(){
-    // Backup xmm0 and xmm1
-    | movq	xmm(stackPos+1), xmm0
-    | movq	xmm(stackPos+2), xmm1
+void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsigned numberOfArguments){
 
-    // Call pow function of c std math lib
-    | movq xmm0, xmm(stackPos)
-    | movq xmm1, xmm(stackPos-1)
-    | mov64 rax, (uintptr_t) pow
+    //Backup registers which will be filled with parameters
+    for(int i=0; i<numberOfArguments; i++){
+       | sub rsp, 8
+       | movq qword [rsp], xmm(i)
+    }
+
+    //Load parameters to register
+    for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
+       | movq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
+    }
+
+    //Function parameters are not needed anymore
+    //Set the stackPos accordingly
+    stackPos = stackPos-(numberOfArguments-1);
+
+    //Perform function Call
+    | mov64 rax, (uintptr_t) functionPtr
     | call rax
-    | movq xmm(stackPos-1), xmm0
 
-     // Restore xmm0 and xmm1
-    | movq xmm1, xmm(stackPos+1)
-    | movq xmm0, xmm(stackPos+2)
-    stackPos--;
-}
+    //Put function result on top of stack
+    | movq xmm(stackPos), xmm0
 
-void Assembly__SSE_4_1::calculateSQRT(){
-    | sqrtsd xmm(stackPos), xmm(stackPos)
+    //Restore registers
+     for(int i=numberOfArguments-1; i>=0; i--){
+        if(i < stackPos){
+            | movq xmm(i), qword [rsp]
+        }
+        | add rsp, 8
+     }
 }
 
 void Assembly__SSE_4_1::extractResult(){
@@ -184,6 +269,7 @@ void Assembly__SSE_4_1::extractResult(){
 
 
 void Assembly__SSE_4_1::epilogue(){
+    | mov rsp, rbp
     | pop rbp
     | ret
 }

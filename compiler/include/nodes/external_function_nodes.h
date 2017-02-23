@@ -17,58 +17,42 @@
  * THE SOFTWARE.
  */
 
-#ifndef IMPALAJIT_COMPLEX_EXPRESSION_H
-#define IMPALAJIT_COMPLEX_EXPRESSION_H
+#ifndef IMPALAJIT_EXTERNAL_FUNCTION_NODE_H
+#define IMPALAJIT_EXTERNAL_FUNCTION_NODE_H
 
 #include <node.h>
+#include <iostream>
 
-class IfStmtNode : public Node
+class ExternalFunctionNode: public Node
 {
 public:
-    IfStmtNode(Node* _condition, Node* _if_body)
-            : Node(IF_STATEMENT)
+    std::string &name;
+    ExternalFunctionNode(std::string &_name, std::vector<Node*> &_parameters)
+            : name(_name), Node(EXTERNAL_FUNCTION)
     {
-        nodes.push_back(_condition);
-        nodes.push_back(_if_body);
+        nodes.insert(nodes.end(), _parameters.begin(), _parameters.end());
     }
-};
-
-class IfElseStmtNode : public Node
-{
-public:
-
-    IfElseStmtNode(Node* _condition, Node* _if_body, Node* _else_body)
-            : Node(IF_ELSE_STATEMENT)
-    {
-        nodes.push_back(_condition);
-        nodes.push_back(_if_body);
-        nodes.push_back(_else_body);
-    }
-};
-
-class IfBodyNode : public Node
-{
-public:
-    IfBodyNode()
-            : Node(IF_BODY)
+    ExternalFunctionNode(std::string &_name)
+            : name(_name), Node(EXTERNAL_FUNCTION)
     {
     }
-
-    virtual ~IfBodyNode()
+    virtual ~ExternalFunctionNode()
     {
     }
 };
 
-class ElseBodyNode : public Node
+class ExternalFunctionParametersNode : public Node
 {
 public:
-    ElseBodyNode()
-            : Node(ELSE_BODY)
+    ExternalFunctionParametersNode()
+            : Node(EXTERNAL_FUNCTION_PARAMETER)
     {
     }
 
-    virtual ~ElseBodyNode()
+    virtual ~ExternalFunctionParametersNode()
     {
     }
 };
-#endif //IMPALAJIT_COMPLEX_EXPRESSION_H
+
+
+#endif //IMPALAJIT_EXTERNAL_FUNCTION_NODE_H

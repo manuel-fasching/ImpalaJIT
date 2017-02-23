@@ -20,6 +20,8 @@
 #include <code_generator.hh>
 #include <expression_nodes.h>
 #include <compare_nodes.h>
+#include <external_function_nodes.h>
+#include <calculation_helper.hh>
 
 CodeGenerator::CodeGenerator() {
     dynamicLabelCount = 0;
@@ -31,6 +33,12 @@ CodeGenerator::~CodeGenerator()
 
 dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
+    functionPtrMap["pow"] = reinterpret_cast<externalFunction>(pow);
+    functionPtrMap["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
+    functionPtrMap["fmin"] = reinterpret_cast<externalFunction>(fmin);
+    functionPtrMap["fmax"] = reinterpret_cast<externalFunction>(fmax);
+    functionPtrMap["fabs"] = reinterpret_cast<externalFunction>(fabs);
+    functionPtrMap["abs"] = reinterpret_cast<externalFunction>(abs);
     assembly.initialize(functionContext->parameters.size());
     assembly.prologue();
 
@@ -48,7 +56,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         }
         case CONSTANT:
         {
-            assembly.pushConstantToStack(&(static_cast<ConstantNode *>(node)->value));
+            assembly.pushConstantToStack((static_cast<ConstantNode *>(node)->value));
             break;
         }
 
@@ -69,7 +77,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         case NEGATION:
         {
             dsfUtil(functionContext, node);
-            assembly.performNegation();
+            assembly.callExternalFunction(reinterpret_cast<externalFunction>(changeSign), 1);
             break;
         }
 
@@ -101,17 +109,10 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
             break;
         }
 
-        case POWER:
+        case EXTERNAL_FUNCTION:
         {
             dsfUtil(functionContext, node);
-            assembly.calculatePower();
-            break;
-        }
-
-        case SQRT:
-        {
-            dsfUtil(functionContext, node);
-            assembly.calculateSQRT();
+            assembly.callExternalFunction(functionPtrMap.find((static_cast<ExternalFunctionNode *>(node)->name))->second, node->nodes.size());
             break;
         }
 
@@ -132,6 +133,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
             }
             catch(std::exception& e) {
             }
+            functionContext->variables.insert((static_cast<VariableNode *>(node)->name));
             assembly.storeLocalVariable();
             break;
         }

@@ -121,17 +121,6 @@ typedef impalajit::Parser::token_type token_type;
     return token::OR;
 }
 
-
-
- /*** Functions ***/
-sqrt {
-    yylval->stringVal = new std::string(yytext, yyleng);
-    return token::FUNCTION;
-}
-
-
-
-
  /*** Conditionals ***/
 if {
     yylval->stringVal = new std::string(yytext, yyleng);

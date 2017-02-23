@@ -50,19 +50,20 @@ enum {
 };
 #line 33 "compiler/code-gen/assembly/assembly__avx.dasc"
 //|.actionlist impala_actions
-static const unsigned char impala_actions[222] = {
-  85,72,137,229,255,197,252,250,126,4,240,132,37,237,255,196,225,252,249,214,
-  133,253,240,133,233,255,196,225,122,126,192,240,133,240,45,255,197,252,250,
-  126,133,253,240,132,233,255,249,255,252,233,245,255,196,225,123,240,160,194,
-  192,240,133,240,45,235,196,226,121,14,192,240,133,240,37,255,15,133,245,255,
-  15,132,245,255,196,225,122,126,192,240,133,240,45,196,225,123,240,160,92,
-  192,240,133,240,45,196,225,123,240,160,92,192,240,133,240,45,255,196,225,
-  123,240,160,88,192,240,133,240,45,255,196,225,123,240,160,89,192,240,133,
-  240,45,255,196,225,123,240,160,94,192,240,133,240,45,255,197,252,250,126,
-  192,240,132,197,252,250,126,193,240,132,255,196,225,122,126,192,240,45,196,
-  225,122,126,200,240,45,72,184,237,237,252,255,208,197,252,250,126,192,240,
-  132,255,196,225,122,126,200,240,45,196,225,122,126,192,240,45,255,196,225,
-  123,81,192,240,133,240,45,255,93,195,255
+static const unsigned char impala_actions[244] = {
+  85,72,137,229,255,197,252,250,126,4,240,132,37,237,255,72,131,252,236,8,196,
+  225,252,249,214,4,240,133,36,255,196,225,122,126,192,240,133,240,45,255,197,
+  252,250,126,133,253,240,132,233,255,196,225,252,249,214,133,253,240,133,233,
+  255,249,255,252,233,245,255,196,225,123,240,160,194,192,240,133,240,45,235,
+  196,226,121,14,192,240,133,240,37,255,15,133,245,255,15,132,245,255,248,1,
+  255,248,2,255,248,3,255,252,233,244,247,255,252,233,244,248,255,252,233,244,
+  249,255,15,133,244,247,255,15,133,244,248,255,15,133,244,249,255,15,132,244,
+  247,255,15,132,244,248,255,15,132,244,249,255,196,225,123,240,160,88,192,
+  240,133,240,45,255,196,225,123,240,160,92,192,240,133,240,45,255,196,225,
+  123,240,160,89,192,240,133,240,45,255,196,225,123,240,160,94,192,240,133,
+  240,45,255,72,184,237,237,252,255,208,255,197,252,250,126,192,240,132,255,
+  197,252,250,126,4,240,132,36,255,72,131,196,8,255,196,225,122,126,192,240,
+  45,255,72,137,252,236,93,195,255
 };
 
 #line 34 "compiler/code-gen/assembly/assembly__avx.dasc"
@@ -91,14 +92,13 @@ void Assembly__AVX::initialize(int parameterCount) {
     Dst = &d;
 
     stackPos = parameterCount >= 8 ? 7 : parameterCount-1;
-    localVarPos = 0;
 }
 
 void Assembly__AVX::prologue(){
     //| push rbp
     //| mov rbp, rsp
     dasm_put(Dst, 0);
-#line 65 "compiler/code-gen/assembly/assembly__avx.dasc"
+#line 64 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 void Assembly__AVX::growPC(unsigned npc)
@@ -106,18 +106,21 @@ void Assembly__AVX::growPC(unsigned npc)
     dasm_growpc(&d, npc);
 }
 
-void Assembly__AVX::pushConstantToStack(double *value){
+void Assembly__AVX::pushConstantToStack(double value){
     stackPos++;
-    //| vmovq xmm(stackPos), qword [value]
-    dasm_put(Dst, 5, (stackPos), value);
-#line 75 "compiler/code-gen/assembly/assembly__avx.dasc"
+    double* ptr = static_cast<double*>(malloc(sizeof(double)));
+    *ptr = value;
+    //| vmovq xmm(stackPos), qword[ptr]
+    dasm_put(Dst, 5, (stackPos), ptr);
+#line 76 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 void Assembly__AVX::storeLocalVariable() {
-    localVarPos++;
-    //| vmovq qword [rbp-8*localVarPos], xmm(stackPos)
-    dasm_put(Dst, 15, (stackPos), -8*localVarPos);
-#line 80 "compiler/code-gen/assembly/assembly__avx.dasc"
+    //| sub rsp, 8
+    //| vmovq qword [rsp], xmm(stackPos)
+    dasm_put(Dst, 15, (stackPos));
+#line 81 "compiler/code-gen/assembly/assembly__avx.dasc"
+    stackPos--;
 }
 
 void Assembly__AVX::pushParameterToStack(int index) {
@@ -125,152 +128,264 @@ void Assembly__AVX::pushParameterToStack(int index) {
     // See x64 calling conventions. Paramters 1-8 are passed in registers
     if(index <= 7){
         //| vmovq xmm(stackPos), xmm(index)
-        dasm_put(Dst, 26, (stackPos), (index));
-#line 87 "compiler/code-gen/assembly/assembly__avx.dasc"
+        dasm_put(Dst, 30, (stackPos), (index));
+#line 89 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
     else {
-        //| vmovq xmm(stackPos), qword [rbp+(8+(index-7)*8)]
-        dasm_put(Dst, 36, (stackPos), (8+(index-7)*8));
-#line 90 "compiler/code-gen/assembly/assembly__avx.dasc"
+        //| vmovq xmm(stackPos), qword [rbp+8+(index-7)*8]
+        dasm_put(Dst, 40, (stackPos), 8+(index-7)*8);
+#line 92 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
+}
+
+void Assembly__AVX::popStack(){
+    stackPos--;
 }
 
 void Assembly__AVX::replaceParameter(int index) {
     // See x64 calling conventions. Paramters 1-8 are passed in registers
     if(index <= 7){
         //| vmovq xmm(index), xmm(stackPos)
-        dasm_put(Dst, 26, (index), (stackPos));
-#line 97 "compiler/code-gen/assembly/assembly__avx.dasc"
+        dasm_put(Dst, 30, (index), (stackPos));
+#line 103 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
     else {
-        //| vmovq qword [rbp+(8+(index-7)*8)], xmm(stackPos)
-        dasm_put(Dst, 15, (stackPos), (8+(index-7)*8));
-#line 100 "compiler/code-gen/assembly/assembly__avx.dasc"
+        //| vmovq qword [rbp+8+(index-7)*8], xmm(stackPos)
+        dasm_put(Dst, 50, (stackPos), 8+(index-7)*8);
+#line 106 "compiler/code-gen/assembly/assembly__avx.dasc"
     }
+    stackPos--;
 }
 
 void Assembly__AVX::pushLocalVariableToStack(int index) {
     stackPos++;
-    //| vmovq xmm(stackPos), qword [rbp-(8+index*8)]
-    dasm_put(Dst, 36, (stackPos), -(8+index*8));
-#line 106 "compiler/code-gen/assembly/assembly__avx.dasc"
+    //| vmovq xmm(stackPos), qword [rbp-8-index*8]
+    dasm_put(Dst, 40, (stackPos), -8-index*8);
+#line 113 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 void Assembly__AVX::replaceLocalVariable(int index) {
-    //| vmovq qword [rbp-(8+index*8)], xmm(stackPos)
-    dasm_put(Dst, 15, (stackPos), -(8+index*8));
-#line 110 "compiler/code-gen/assembly/assembly__avx.dasc"
+    //| vmovq qword [rbp-8-index*8], xmm(stackPos)
+    dasm_put(Dst, 50, (stackPos), -8-index*8);
+#line 117 "compiler/code-gen/assembly/assembly__avx.dasc"
+    stackPos--;
 }
 
 void Assembly__AVX::addDynamicLabel(unsigned labelNumber) {
     //| =>labelNumber:
-    dasm_put(Dst, 46, labelNumber);
-#line 114 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 61, labelNumber);
+#line 122 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 void Assembly__AVX::jumpForwardToDynamicLabel(unsigned labelNumber) {
     //| jmp =>labelNumber
-    dasm_put(Dst, 48, labelNumber);
-#line 118 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 63, labelNumber);
+#line 126 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 
 void Assembly__AVX::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
      //| vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
      //| vptestps xmm(stackPos), xmm(stackPos)
-     dasm_put(Dst, 52, (stackPos), (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
-#line 124 "compiler/code-gen/assembly/assembly__avx.dasc"
+     dasm_put(Dst, 67, (stackPos), (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
+#line 132 "compiler/code-gen/assembly/assembly__avx.dasc"
      if(condition){
          //| jnz => labelNumber
-         dasm_put(Dst, 74,  labelNumber);
-#line 126 "compiler/code-gen/assembly/assembly__avx.dasc"
+         dasm_put(Dst, 89,  labelNumber);
+#line 134 "compiler/code-gen/assembly/assembly__avx.dasc"
      }
      else{
         //| jz => labelNumber
-        dasm_put(Dst, 78,  labelNumber);
-#line 129 "compiler/code-gen/assembly/assembly__avx.dasc"
+        dasm_put(Dst, 93,  labelNumber);
+#line 137 "compiler/code-gen/assembly/assembly__avx.dasc"
      }
      stackPos--;
 }
 
-void Assembly__AVX::performNegation(){
-    //| vmovq xmm(stackPos+1), xmm(stackPos)
-    //| vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
-    //| vsubsd xmm(stackPos), xmm(stackPos), xmm(stackPos+1)
-    dasm_put(Dst, 82, (stackPos+1), (stackPos), (stackPos), (stackPos), (stackPos+1), (stackPos), (stackPos), (stackPos+1));
-#line 137 "compiler/code-gen/assembly/assembly__avx.dasc"
+void Assembly__AVX::addLocalLabel(unsigned labelNumber) {
+    switch(labelNumber){
+        case 1: {
+            //| 1:
+            dasm_put(Dst, 97);
+#line 145 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+            }
+        case 2: {
+            //| 2:
+            dasm_put(Dst, 100);
+#line 149 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+        }
+        case 3: {
+            //| 3:
+            dasm_put(Dst, 103);
+#line 153 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+        }
+    }
+}
+
+void Assembly__AVX::jumpForwardToLocalLabel(unsigned labelNumber) {
+    switch(labelNumber){
+        case 1: {
+            //| jmp >1
+            dasm_put(Dst, 106);
+#line 162 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+        }
+        case 2: {
+            //| jmp >2
+            dasm_put(Dst, 111);
+#line 166 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+        }
+        case 3: {
+            //| jmp >3
+            dasm_put(Dst, 116);
+#line 170 "compiler/code-gen/assembly/assembly__avx.dasc"
+            break;
+        }
+    }
+}
+
+void Assembly__AVX::conditionalJumpForwardToLocalLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
+     //| vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
+     //| vptestps xmm(stackPos), xmm(stackPos)
+     dasm_put(Dst, 67, (stackPos), (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
+#line 178 "compiler/code-gen/assembly/assembly__avx.dasc"
+     if(condition){
+        switch(labelNumber){
+            case 1: {
+                //| jnz >1
+                dasm_put(Dst, 121);
+#line 182 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+            case 2: {
+                //| jnz >2
+                dasm_put(Dst, 126);
+#line 186 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+            case 3: {
+                //| jnz >3
+                dasm_put(Dst, 131);
+#line 190 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+        }
+     }
+     else{
+        switch(labelNumber){
+            case 1: {
+                //| jz >1
+                dasm_put(Dst, 136);
+#line 198 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+            case 2: {
+                //| jz >2
+                dasm_put(Dst, 141);
+#line 202 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+            case 3: {
+                //| jz >3
+                dasm_put(Dst, 146);
+#line 206 "compiler/code-gen/assembly/assembly__avx.dasc"
+                break;
+            }
+        }
+     }
+     stackPos--;
 }
 
 void Assembly__AVX::calculateAddition(){
     //| vaddsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
-    dasm_put(Dst, 114, (stackPos-1), (stackPos-1), (stackPos));
-#line 141 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 151, (stackPos-1), (stackPos-1), (stackPos));
+#line 215 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
 void Assembly__AVX::calculateSubtraction(){
     //| vsubsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
-    dasm_put(Dst, 102, (stackPos-1), (stackPos-1), (stackPos));
-#line 146 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 163, (stackPos-1), (stackPos-1), (stackPos));
+#line 220 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
 void Assembly__AVX::calculateMultiplication(){
     //| vmulsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
-    dasm_put(Dst, 126, (stackPos-1), (stackPos-1), (stackPos));
-#line 151 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 175, (stackPos-1), (stackPos-1), (stackPos));
+#line 225 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
 void Assembly__AVX::calculateDivision(){
     //| vdivsd xmm(stackPos-1), xmm(stackPos-1), xmm(stackPos)
-    dasm_put(Dst, 138, (stackPos-1), (stackPos-1), (stackPos));
-#line 156 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 187, (stackPos-1), (stackPos-1), (stackPos));
+#line 230 "compiler/code-gen/assembly/assembly__avx.dasc"
     stackPos--;
 }
 
-void Assembly__AVX::calculatePower(){
-    // Backup xmm0 and xmm1
-    //| vmovq	xmm(stackPos+1), xmm0
-    //| vmovq	xmm(stackPos+2), xmm1
-    dasm_put(Dst, 150, (stackPos+1), (stackPos+2));
-#line 163 "compiler/code-gen/assembly/assembly__avx.dasc"
+void Assembly__AVX::callExternalFunction(externalFunction functionPtr, unsigned numberOfArguments){
 
-    // Call pow function of c std math lib
-    //| vmovq xmm0, xmm(stackPos)
-    //| vmovq xmm1, xmm(stackPos-1)
-    //| mov64 rax, (uintptr_t) pow
+    //Backup registers which will be filled with parameters
+    for(int i=0; i<numberOfArguments; i++){
+       //| sub rsp, 8
+       //| vmovq qword [rsp], xmm(i)
+       dasm_put(Dst, 15, (i));
+#line 239 "compiler/code-gen/assembly/assembly__avx.dasc"
+    }
+
+    //Load parameters to register
+    for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
+       //| vmovq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
+       dasm_put(Dst, 30, (i-(stackPos-(numberOfArguments-1))), (i));
+#line 244 "compiler/code-gen/assembly/assembly__avx.dasc"
+    }
+
+    //Function parameters are not needed anymore
+    //Set the stackPos accordingly
+    stackPos = stackPos-(numberOfArguments-1);
+
+    //Perform function Call
+    //| mov64 rax, (uintptr_t) functionPtr
     //| call rax
-    //| vmovq xmm(stackPos-1), xmm0
-    dasm_put(Dst, 165, (stackPos), (stackPos-1), (unsigned int)((uintptr_t) pow), (unsigned int)(((uintptr_t) pow)>>32), (stackPos-1));
-#line 170 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 199, (unsigned int)((uintptr_t) functionPtr), (unsigned int)(((uintptr_t) functionPtr)>>32));
+#line 253 "compiler/code-gen/assembly/assembly__avx.dasc"
 
-     // Restore xmm0 and xmm1
-    //| vmovq xmm1, xmm(stackPos+1)
-    //| vmovq xmm0, xmm(stackPos+2)
-    dasm_put(Dst, 194, (stackPos+1), (stackPos+2));
-#line 174 "compiler/code-gen/assembly/assembly__avx.dasc"
-    stackPos--;
-}
+    //Put function result on top of stack
+    //| vmovq xmm(stackPos), xmm0
+    dasm_put(Dst, 207, (stackPos));
+#line 256 "compiler/code-gen/assembly/assembly__avx.dasc"
 
-void Assembly__AVX::calculateSQRT(){
-    //| vsqrtsd xmm(stackPos), xmm(stackPos)
-    dasm_put(Dst, 209, (stackPos), (stackPos));
-#line 179 "compiler/code-gen/assembly/assembly__avx.dasc"
+    //Restore registers
+     for(int i=numberOfArguments-1; i>=0; i--){
+        if(i < stackPos){
+            //| vmovq xmm(i), qword [rsp]
+            dasm_put(Dst, 215, (i));
+#line 261 "compiler/code-gen/assembly/assembly__avx.dasc"
+        }
+        //| add rsp, 8
+        dasm_put(Dst, 224);
+#line 263 "compiler/code-gen/assembly/assembly__avx.dasc"
+     }
 }
 
 void Assembly__AVX::extractResult(){
      //| vmovq xmm0, xmm(stackPos)
-     dasm_put(Dst, 201, (stackPos));
-#line 183 "compiler/code-gen/assembly/assembly__avx.dasc"
+     dasm_put(Dst, 229, (stackPos));
+#line 268 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 
 void Assembly__AVX::epilogue(){
+    //| mov rsp, rbp
     //| pop rbp
     //| ret
-    dasm_put(Dst, 219);
-#line 189 "compiler/code-gen/assembly/assembly__avx.dasc"
+    dasm_put(Dst, 237);
+#line 275 "compiler/code-gen/assembly/assembly__avx.dasc"
 }
 
 dasm_gen_func Assembly__AVX::linkAndEncode(){

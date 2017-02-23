@@ -36,7 +36,7 @@ class VariableNode : public Node {
 
 public:
     std::string &name;
-    explicit VariableNode(std::string &_name)
+    VariableNode(std::string &_name)
             : Node(VARIABLE), name(_name) {
     }
 };
@@ -44,7 +44,7 @@ public:
 class NegationNode : public Node
 {
 public:
-    explicit NegationNode(Node* _node)
+    NegationNode(Node* _node)
             : Node(NEGATION)
     {
         nodes.push_back(_node);
@@ -54,7 +54,7 @@ public:
 class AdditionNode : public Node
 {
 public:
-    explicit AdditionNode(Node* _left, Node* _right)
+    AdditionNode(Node* _left, Node* _right)
             : Node(ADDITION)
     {
         nodes.push_back(_left);
@@ -65,7 +65,7 @@ public:
 class SubtractionNode : public Node
 {
 public:
-    explicit SubtractionNode(Node* _left, Node* _right)
+    SubtractionNode(Node* _left, Node* _right)
             : Node(SUBTRACTION)
     {
         nodes.push_back(_left);
@@ -76,7 +76,7 @@ public:
 class MultiplicationNode : public Node
 {
 public:
-    explicit MultiplicationNode(Node* _left, Node* _right)
+    MultiplicationNode(Node* _left, Node* _right)
             : Node(MULTIPLICATION)
     {
         nodes.push_back(_left);
@@ -87,7 +87,7 @@ public:
 class DivisionNode : public Node
 {
 public:
-    explicit DivisionNode(Node* &_left, Node* &_right)
+    DivisionNode(Node* &_left, Node* &_right)
             : Node(DIVISION)
     {
         nodes.push_back(_left);
@@ -95,20 +95,10 @@ public:
     }
 };
 
-class SQRTNode: public Node
-{
-public:
-    explicit SQRTNode(Node* &_node)
-            : Node(SQRT)
-    {
-        nodes.push_back(_node);
-    }
-};
-
 class PowerNode : public Node
 {
 public:
-    explicit PowerNode(Node* _base, Node* _exponent)
+    PowerNode(Node* _base, Node* _exponent)
             : Node(POWER)
     {
         nodes.push_back(_exponent);
