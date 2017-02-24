@@ -873,26 +873,26 @@ namespace impalajit {
     break;
 
   case 14:
-#line 205 "parser.yy" // lalr1.cc:859
+#line 206 "parser.yy" // lalr1.cc:859
     {
                 std::vector<Node*>* params = new std::vector<Node*>();
                 params->push_back((yystack_[0].value.node));
                 (yylhs.value.nodeVector) = params;
-              }
+            }
 #line 883 "parser.cc" // lalr1.cc:859
     break;
 
   case 15:
-#line 213 "parser.yy" // lalr1.cc:859
+#line 214 "parser.yy" // lalr1.cc:859
     {
                 (yylhs.value.nodeVector) = (yystack_[2].value.nodeVector);
                 (*(yylhs.value.nodeVector)).push_back((yystack_[0].value.node));
-              }
+            }
 #line 892 "parser.cc" // lalr1.cc:859
     break;
 
   case 16:
-#line 219 "parser.yy" // lalr1.cc:859
+#line 221 "parser.yy" // lalr1.cc:859
     {
 	       		(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
@@ -900,7 +900,7 @@ namespace impalajit {
     break;
 
   case 17:
-#line 224 "parser.yy" // lalr1.cc:859
+#line 226 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[0].value.node);
 		   	}
@@ -908,7 +908,7 @@ namespace impalajit {
     break;
 
   case 18:
-#line 229 "parser.yy" // lalr1.cc:859
+#line 231 "parser.yy" // lalr1.cc:859
     {
                 (yylhs.value.node) = new ExternalFunctionNode(*(yystack_[2].value.stringVal));
             }
@@ -916,7 +916,7 @@ namespace impalajit {
     break;
 
   case 19:
-#line 234 "parser.yy" // lalr1.cc:859
+#line 236 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = new ExternalFunctionNode(*(yystack_[3].value.stringVal), *(yystack_[1].value.nodeVector));
 		   	}
@@ -924,7 +924,7 @@ namespace impalajit {
     break;
 
   case 20:
-#line 239 "parser.yy" // lalr1.cc:859
+#line 241 "parser.yy" // lalr1.cc:859
     {
 		       	(yylhs.value.node) = (yystack_[1].value.node);
 		   	}
@@ -1581,8 +1581,8 @@ namespace impalajit {
   Parser::yyrline_[] =
   {
        0,   133,   133,   138,   144,   151,   157,   163,   169,   175,
-     181,   188,   193,   199,   204,   212,   218,   223,   228,   233,
-     238,   246,   251,   256,   261,   266,   271,   277,   282,   287,
+     181,   188,   193,   199,   205,   213,   220,   225,   230,   235,
+     240,   246,   251,   256,   261,   266,   271,   277,   282,   287,
      293,   301,   307,   312,   318,   323,   330,   335,   343,   349,
      355,   361,   367,   373,   379,   385,   391,   397,   405,   410,
      416

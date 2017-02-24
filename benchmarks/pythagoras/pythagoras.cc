@@ -24,37 +24,23 @@
 #include <vector>
 #include <math.h>
 #include <stdlib.h>
+#include "static_pythagoras_function.hh"
 
-#define CONFIG_FILE_PATH "benchmark.conf"
-#define A 30000
-#define B 30000
+#define CONFIG_FILE_PATH "../benchmark.conf"
+#define A 50000
+#define B 50000
 
-
-double pythagoras_static(double a, double b){
-    if(a<0 || b<0){
-        return -1;
-    }
-    else {
-        return sqrt(pow(a, 2) + pow(b, 2));
-    }
-}
-
-int main(){
+int main(int argc, char* argv[]){
     struct timeval tv;
-
-    double** result_static = (double**) malloc(A*sizeof(double**));
-    for(int i = 0; i< A; i++)
-        result_static[i] = (double*) malloc(B*sizeof(double*));
-
-    double** result_dynamic = (double**) malloc(A*sizeof(double**));
-    for(int i = 0; i< A; i++)
-        result_dynamic[i] = (double*) malloc(B*sizeof(double*));
-
 
     // Dynamic compilation
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func pythagoras_dynamic = compiler.getFunction("pythagoras");
+
+
+    //Static
+    Pythagoras pythagoras;
 
     gettimeofday(&tv, NULL);
     unsigned long long start_dynamic =
@@ -63,7 +49,7 @@ int main(){
 
     for(int i = 0; i<A; i++) {
         for (int j = 0; j < B; j++) {
-            result_dynamic[i][j] = pythagoras_dynamic((double)i, (double)j);
+            pythagoras_dynamic(static_cast<double>(i), static_cast<double>(j));
         }
     }
 
@@ -71,7 +57,6 @@ int main(){
     unsigned long long end_dynamic =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
-
 
     // Static compilation
     gettimeofday(&tv, NULL);
@@ -81,7 +66,7 @@ int main(){
 
     for(int i = 0; i<A; i++) {
         for (int j = 0; j < B; j++) {
-            result_static[i][j] = pythagoras_static((double)i, (double)j);
+            pythagoras.pythagoras_static(static_cast<double>(i), static_cast<double>(j));
         }
     }
 
@@ -89,7 +74,6 @@ int main(){
     unsigned long long end_static =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
-
 
     // Write results
     std::ofstream outputFile;
@@ -102,15 +86,4 @@ int main(){
     outputFile << "Duration (ms): " << end_static-start_static << std::endl;
     outputFile << "---------------------------------------------" << std::endl;
     outputFile.close();
-
-    //Clean up
-    for(int i=0; i<sizeof(result_dynamic[0]); i++) {
-        free(result_dynamic[i]);
-    }
-    for(int i=0; i<sizeof(result_static[0]); i++) {
-        free(result_static[i]);
-    }
-    free(result_dynamic);
-    free(result_static);
-
 }

@@ -3,6 +3,6 @@ pythagoras(a, b){
         return -1;
     }
     else {
-        return sqrt(a^2+b^2);
+        return sqrt(pow(a,2)+pow(b,2));
     }
 }
