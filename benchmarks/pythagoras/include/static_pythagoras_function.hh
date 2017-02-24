@@ -20,7 +20,11 @@
 #ifndef IMPALAJIT_STATIC_PYTHAGORAS_FUNCTION_HH
 #define IMPALAJIT_STATIC_PYTHAGORAS_FUNCTION_HH
 
+#ifdef __INTEL_COMPILER
+#include <mathimf.h>
+#else
 #include <math.h>
+#endif
 
 /**
  * Static implemenation of the pythagoras function.

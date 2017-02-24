@@ -27,7 +27,11 @@
 #include <map>
 #include <assembly__avx.hh>
 #include <assembly__sse_4_1.hh>
+#ifdef __INTEL_COMPILER
+#include <mathimf.h>
+#else
 #include <math.h>
+#endif
 
 
 class CodeGenerator {

@@ -27,7 +27,6 @@
 
 #include <assembly__sse_4_1.hh>
 #include <iostream>
-#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -37,18 +36,18 @@
 #if DASM_VERSION != 10400
 #error "Version mismatch between DynASM and included encoding engine"
 #endif
-#line 29 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 28 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 //|.section code
 #define DASM_SECTION_CODE	0
 #define DASM_MAXSECTION		1
-#line 31 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 30 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 //|.globals lbl_
 enum {
   lbl__MAX
 };
-#line 33 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 32 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 //|.actionlist impala_actions
 static const unsigned char impala_actions[266] = {
   85,72,137,229,255,252,243,64,15,126,4,240,140,37,237,255,72,131,252,236,8,
@@ -67,7 +66,7 @@ static const unsigned char impala_actions[266] = {
   93,195,255
 };
 
-#line 34 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 33 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 #include <sys/mman.h>
 
@@ -99,7 +98,7 @@ void Assembly__SSE_4_1::prologue(){
     //| push rbp
     //| mov rbp, rsp
     dasm_put(Dst, 0);
-#line 64 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 63 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 void Assembly__SSE_4_1::growPC(unsigned npc)
@@ -113,14 +112,14 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
     *ptr = value;
     //| movq xmm(stackPos), qword[ptr]
     dasm_put(Dst, 5, (stackPos), ptr);
-#line 76 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 75 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 void Assembly__SSE_4_1::storeLocalVariable() {
     //| sub rsp, 8
     //| movq qword [rsp], xmm(stackPos)
     dasm_put(Dst, 16, (stackPos));
-#line 81 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 80 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
@@ -130,12 +129,12 @@ void Assembly__SSE_4_1::pushParameterToStack(int index) {
     if(index <= 7){
         //| movq xmm(stackPos), xmm(index)
         dasm_put(Dst, 30, (stackPos), (index));
-#line 89 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 88 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else {
         //| movq xmm(stackPos), qword [rbp+8+(index-7)*8]
         dasm_put(Dst, 41, (stackPos), 8+(index-7)*8);
-#line 92 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 91 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 }
 
@@ -148,12 +147,12 @@ void Assembly__SSE_4_1::replaceParameter(int index) {
     if(index <= 7){
         //| movq xmm(index), xmm(stackPos)
         dasm_put(Dst, 30, (index), (stackPos));
-#line 103 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 102 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else {
         //| movq qword [rbp+8+(index-7)*8], xmm(stackPos)
         dasm_put(Dst, 52, (stackPos), 8+(index-7)*8);
-#line 106 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 105 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -162,26 +161,26 @@ void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
     stackPos++;
     //| movq xmm(stackPos), qword [rbp-8-index*8]
     dasm_put(Dst, 41, (stackPos), -8-index*8);
-#line 113 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 112 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 void Assembly__SSE_4_1::replaceLocalVariable(int index) {
     //| movq qword [rbp-8-index*8], xmm(stackPos)
     dasm_put(Dst, 52, (stackPos), -8-index*8);
-#line 117 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 116 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
 void Assembly__SSE_4_1::addDynamicLabel(unsigned labelNumber) {
     //| =>labelNumber:
     dasm_put(Dst, 62, labelNumber);
-#line 122 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 121 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 void Assembly__SSE_4_1::jumpForwardToDynamicLabel(unsigned labelNumber) {
     //| jmp =>labelNumber
     dasm_put(Dst, 64, labelNumber);
-#line 126 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 125 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 
@@ -189,16 +188,16 @@ void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumbe
      //| cmpsd xmm(stackPos), xmm(stackPos-1), operator_
      //| ptest xmm(stackPos), xmm(stackPos)
      dasm_put(Dst, 68, (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
-#line 132 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 131 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      if(condition){
          //| jnz => labelNumber
          dasm_put(Dst, 90,  labelNumber);
-#line 134 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 133 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
      else{
         //| jz => labelNumber
         dasm_put(Dst, 94,  labelNumber);
-#line 137 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 136 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
      stackPos--;
 }
@@ -208,19 +207,19 @@ void Assembly__SSE_4_1::addLocalLabel(unsigned labelNumber) {
         case 1: {
             //| 1:
             dasm_put(Dst, 98);
-#line 145 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 144 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
             }
         case 2: {
             //| 2:
             dasm_put(Dst, 101);
-#line 149 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 148 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
         }
         case 3: {
             //| 3:
             dasm_put(Dst, 104);
-#line 153 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 152 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
         }
     }
@@ -231,19 +230,19 @@ void Assembly__SSE_4_1::jumpForwardToLocalLabel(unsigned labelNumber) {
         case 1: {
             //| jmp >1
             dasm_put(Dst, 107);
-#line 162 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 161 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
             }
         case 2: {
             //| jmp >2
             dasm_put(Dst, 112);
-#line 166 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 165 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
         }
         case 3: {
             //| jmp >3
             dasm_put(Dst, 117);
-#line 170 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 169 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
             break;
         }
     }
@@ -253,25 +252,25 @@ void Assembly__SSE_4_1::conditionalJumpForwardToLocalLabel(unsigned labelNumber,
      //| vcmpsd xmm(stackPos), xmm(stackPos), xmm(stackPos-1), operator_
      //| vptestps xmm(stackPos), xmm(stackPos)
      dasm_put(Dst, 122, (stackPos), (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
-#line 178 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 177 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      if(condition){
         switch(labelNumber){
             case 1: {
                 //| jnz >1
                 dasm_put(Dst, 144);
-#line 182 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 181 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
             case 2: {
                 //| jnz >2
                 dasm_put(Dst, 149);
-#line 186 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 185 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
             case 3: {
                 //| jnz >3
                 dasm_put(Dst, 154);
-#line 190 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 189 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
         }
@@ -281,19 +280,19 @@ void Assembly__SSE_4_1::conditionalJumpForwardToLocalLabel(unsigned labelNumber,
             case 1: {
                 //| jz >1
                 dasm_put(Dst, 159);
-#line 198 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 197 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
             case 2: {
                 //| jz >2
                 dasm_put(Dst, 164);
-#line 202 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 201 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
             case 3: {
                 //| jz >3
                 dasm_put(Dst, 169);
-#line 206 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 205 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
                 break;
             }
         }
@@ -304,28 +303,28 @@ void Assembly__SSE_4_1::conditionalJumpForwardToLocalLabel(unsigned labelNumber,
 void Assembly__SSE_4_1::calculateAddition(){
     //| addsd xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 174, (stackPos-1), (stackPos));
-#line 215 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 214 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
 void Assembly__SSE_4_1::calculateSubtraction(){
     //| subsd xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 185, (stackPos-1), (stackPos));
-#line 220 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 219 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
 void Assembly__SSE_4_1::calculateMultiplication(){
     //| mulsd xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 196, (stackPos-1), (stackPos));
-#line 225 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 224 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
 void Assembly__SSE_4_1::calculateDivision(){
     //| divsd xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 207, (stackPos-1), (stackPos));
-#line 230 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 229 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     stackPos--;
 }
 
@@ -336,14 +335,14 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
        //| sub rsp, 8
        //| movq qword [rsp], xmm(i)
        dasm_put(Dst, 16, (i));
-#line 239 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 238 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
     //Load parameters to register
     for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
        //| movq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
        dasm_put(Dst, 30, (i-(stackPos-(numberOfArguments-1))), (i));
-#line 244 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 243 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
     //Function parameters are not needed anymore
@@ -354,30 +353,30 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     //| mov64 rax, (uintptr_t) functionPtr
     //| call rax
     dasm_put(Dst, 218, (unsigned int)((uintptr_t) functionPtr), (unsigned int)(((uintptr_t) functionPtr)>>32));
-#line 253 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 252 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     //Put function result on top of stack
     //| movq xmm(stackPos), xmm0
     dasm_put(Dst, 226, (stackPos));
-#line 256 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 255 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     //Restore registers
      for(int i=numberOfArguments-1; i>=0; i--){
         if(i < stackPos){
             //| movq xmm(i), qword [rsp]
             dasm_put(Dst, 235, (i));
-#line 261 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 260 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         //| add rsp, 8
         dasm_put(Dst, 245);
-#line 263 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 262 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
 }
 
 void Assembly__SSE_4_1::extractResult(){
      //| movq xmm0, xmm(stackPos)
      dasm_put(Dst, 250, (stackPos));
-#line 268 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 267 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 
@@ -386,7 +385,7 @@ void Assembly__SSE_4_1::epilogue(){
     //| pop rbp
     //| ret
     dasm_put(Dst, 259);
-#line 275 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 274 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 dasm_gen_func Assembly__SSE_4_1::linkAndEncode(){

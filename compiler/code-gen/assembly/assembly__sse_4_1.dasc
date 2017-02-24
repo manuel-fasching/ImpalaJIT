@@ -19,7 +19,6 @@
 
 #include <assembly__sse_4_1.hh>
 #include <iostream>
-#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 

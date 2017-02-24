@@ -21,10 +21,19 @@ project(ImpalaJIT)
 
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
-option( TESTS "Enable Tests" OFF )
+option( TESTS "Enable Tests" ON )
+option( INTEL_COMPILER "Use Intel compiler" OFF)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -O3")
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+if (INTEL_CC)
+    find_program(CMAKE_C_COMPILER NAMES icc)
+    find_program(CMAKE_CXX_COMPILER NAMES icpc)
+    find_program(CMAKE_AR NAMES xiar)
+    find_program(CMAKE_LINKER NAMES xild)
+endif()
+
 
 set(include_dirs
         include
@@ -56,10 +65,15 @@ set(source_files ${source_files}
         compiler/code-gen/assembly/assembly__sse_4_1.cc
         compiler/code-gen/assembly/assembly__avx.cc)
 
+if( INTEL_COMPILER)
+    set(math_library imf)
+else()
+    set(math_library m)
+endif()
 
 if( SHARED_LIB )
     add_library( impalajit SHARED ${source_files})
-    target_link_libraries( impalajit m )
+    target_link_libraries( impalajit ${math_library} )
 endif( SHARED_LIB )
 
 if( STATIC_LIB )

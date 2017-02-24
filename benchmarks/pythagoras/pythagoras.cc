@@ -22,7 +22,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <math.h>
 #include <stdlib.h>
 #include "static_pythagoras_function.hh"
 

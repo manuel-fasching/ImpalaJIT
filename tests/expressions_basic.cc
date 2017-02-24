@@ -22,7 +22,6 @@
 #include <fstream>
 #include <assert.h>
 #include <defines.hh>
-#include <math.h>
 #include <double_comparison.hh>
 using namespace std;
 
