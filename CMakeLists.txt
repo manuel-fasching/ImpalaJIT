@@ -17,23 +17,19 @@
 
 
 cmake_minimum_required(VERSION 2.6)
-project(ImpalaJIT)
 
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
 option( TESTS "Enable Tests" ON )
-option( INTEL_COMPILER "Use Intel compiler" OFF)
-
+option( INTEL_COMPILER "Use Intel compiler" ON)
+if(INTEL_COMPILER)
+	set(CMAKE_C_COMPILER icc)
+	set(CMAKE_CXX_COMPILER icpc)
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -O3")
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-if (INTEL_CC)
-    find_program(CMAKE_C_COMPILER NAMES icc)
-    find_program(CMAKE_CXX_COMPILER NAMES icpc)
-    find_program(CMAKE_AR NAMES xiar)
-    find_program(CMAKE_LINKER NAMES xild)
-endif()
-
+project(ImpalaJIT)
 
 set(include_dirs
         include
