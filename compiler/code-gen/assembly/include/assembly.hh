@@ -82,8 +82,6 @@ protected:
     dasm_State** Dst;
     void** labels;
     int stackPos;
-    int localVarPos;
-    int initialStackPos;
 };
 
 #endif //IMPALAJIT_ASSEMBLY_HH

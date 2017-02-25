@@ -231,8 +231,9 @@ void Assembly__SSE_4_1::calculateDivision(){
 
 void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsigned numberOfArguments){
 
-    //Backup registers which will be filled with parameters
-    for(int i=0; i<numberOfArguments; i++){
+    //Backup the stack. Function arguments will be replaced by a result
+    //and therefor excluded from the backup.
+    for(int i=0; i<stackPos-(numberOfArguments-1); i++){
        | sub rsp, 8
        | movq qword [rsp], xmm(i)
     }
@@ -253,11 +254,9 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     //Put function result on top of stack
     | movq xmm(stackPos), xmm0
 
-    //Restore registers
-     for(int i=numberOfArguments-1; i>=0; i--){
-        if(i < stackPos){
-            | movq xmm(i), qword [rsp]
-        }
+    //Restore old stack
+     for(int i=stackPos-1; i>=0; i--){
+        | movq xmm(i), qword [rsp]
         | add rsp, 8
      }
 }
