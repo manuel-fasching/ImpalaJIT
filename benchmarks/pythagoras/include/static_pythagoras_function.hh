@@ -20,7 +20,7 @@
 #ifndef IMPALAJIT_STATIC_PYTHAGORAS_FUNCTION_HH
 #define IMPALAJIT_STATIC_PYTHAGORAS_FUNCTION_HH
 
-#include <math.h>
+#include <cmath>
 
 /**
  * Static implemenation of the pythagoras function.

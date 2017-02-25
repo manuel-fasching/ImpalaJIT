@@ -35,10 +35,9 @@ dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
     functionPtrMap["pow"] = reinterpret_cast<externalFunction>(pow);
     functionPtrMap["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
-    functionPtrMap["fmin"] = reinterpret_cast<externalFunction>(fmin);
-    functionPtrMap["fmax"] = reinterpret_cast<externalFunction>(fmax);
-    functionPtrMap["fabs"] = reinterpret_cast<externalFunction>(fabs);
-    functionPtrMap["abs"] = reinterpret_cast<externalFunction>(abs);
+    functionPtrMap["min"] = reinterpret_cast<externalFunction>(fmin);
+    functionPtrMap["max"] = reinterpret_cast<externalFunction>(fmax);
+    functionPtrMap["abs"] = reinterpret_cast<externalFunction>(fabs);
     assembly.initialize(functionContext->parameters.size());
     assembly.prologue();
 
