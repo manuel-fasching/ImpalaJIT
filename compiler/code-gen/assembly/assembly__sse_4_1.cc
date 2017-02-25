@@ -49,7 +49,7 @@ enum {
 };
 #line 32 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 //|.actionlist impala_actions
-static const unsigned char impala_actions[266] = {
+static const unsigned char impala_actions[265] = {
   85,72,137,229,255,252,243,64,15,126,4,240,140,37,237,255,72,131,252,236,8,
   102,64,15,214,4,240,140,36,255,252,243,64,15,126,192,240,132,240,52,255,252,
   243,64,15,126,133,253,240,140,233,255,102,64,15,214,133,253,240,140,233,255,
@@ -62,8 +62,8 @@ static const unsigned char impala_actions[266] = {
   132,240,52,255,252,242,64,15,92,192,240,132,240,52,255,252,242,64,15,89,192,
   240,132,240,52,255,252,242,64,15,94,192,240,132,240,52,255,72,184,237,237,
   252,255,208,255,252,243,64,15,126,192,240,140,255,252,243,64,15,126,4,240,
-  140,36,255,72,131,196,8,255,252,243,64,15,126,192,240,44,255,72,137,252,236,
-  93,195,255
+  140,36,72,131,196,8,255,252,243,64,15,126,192,240,44,255,72,137,252,236,93,
+  195,255
 };
 
 #line 33 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
@@ -330,19 +330,20 @@ void Assembly__SSE_4_1::calculateDivision(){
 
 void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsigned numberOfArguments){
 
-    //Backup registers which will be filled with parameters
-    for(int i=0; i<numberOfArguments; i++){
+    //Backup the stack. Function arguments will be replaced by a result
+    //and therefor excluded from the backup.
+    for(int i=0; i<stackPos-(numberOfArguments-1); i++){
        //| sub rsp, 8
        //| movq qword [rsp], xmm(i)
        dasm_put(Dst, 16, (i));
-#line 238 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 239 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
     //Load parameters to register
     for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
        //| movq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
        dasm_put(Dst, 30, (i-(stackPos-(numberOfArguments-1))), (i));
-#line 243 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 244 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
     //Function parameters are not needed anymore
@@ -353,30 +354,26 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     //| mov64 rax, (uintptr_t) functionPtr
     //| call rax
     dasm_put(Dst, 218, (unsigned int)((uintptr_t) functionPtr), (unsigned int)(((uintptr_t) functionPtr)>>32));
-#line 252 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 253 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     //Put function result on top of stack
     //| movq xmm(stackPos), xmm0
     dasm_put(Dst, 226, (stackPos));
-#line 255 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 256 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
-    //Restore registers
-     for(int i=numberOfArguments-1; i>=0; i--){
-        if(i < stackPos){
-            //| movq xmm(i), qword [rsp]
-            dasm_put(Dst, 235, (i));
-#line 260 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
-        }
+    //Restore old stack
+     for(int i=stackPos-1; i>=0; i--){
+        //| movq xmm(i), qword [rsp]
         //| add rsp, 8
-        dasm_put(Dst, 245);
-#line 262 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+        dasm_put(Dst, 235, (i));
+#line 261 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
 }
 
 void Assembly__SSE_4_1::extractResult(){
      //| movq xmm0, xmm(stackPos)
-     dasm_put(Dst, 250, (stackPos));
-#line 267 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+     dasm_put(Dst, 249, (stackPos));
+#line 266 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 
@@ -384,8 +381,8 @@ void Assembly__SSE_4_1::epilogue(){
     //| mov rsp, rbp
     //| pop rbp
     //| ret
-    dasm_put(Dst, 259);
-#line 274 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+    dasm_put(Dst, 258);
+#line 273 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 dasm_gen_func Assembly__SSE_4_1::linkAndEncode(){
