@@ -17,11 +17,22 @@
 
 
 cmake_minimum_required(VERSION 2.6)
-project(Pythagoras Benchmark)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -O3")
+option( INTEL_COMPILER "Use Intel compiler" OFF)
 
-set(impalajitDir /home/manuel/git/ImpalaJIT)
+if(INTEL_COMPILER)
+        set(CMAKE_C_COMPILER icc)
+        set(CMAKE_CXX_COMPILER icpc)
+	set(math_library imf)
+else()
+	set(math_library m)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3")
+
+project(Pythagoras)
+
+set(impalajitDir /home/hpc/pr63so/ga56mob2/ImpalaJIT)
 
 link_directories(${impalajitDir}/lib)
 include_directories(${impalajitDir}/include include)
@@ -29,6 +40,6 @@ include_directories(${impalajitDir}/include include)
 add_executable( pythagoras_benchmark pythagoras.cc
         static_pythagoras_function.cc )
 
-target_link_libraries( pythagoras_benchmark impalajit m stdc++)
+target_link_libraries( pythagoras_benchmark impalajit ${math_library})
 
 
