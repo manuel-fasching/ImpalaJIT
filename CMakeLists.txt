@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.6)
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
 option( TESTS "Enable Tests" OFF )
-option( INTEL_COMPILER "Use Intel compiler" OFF)
+option( INTEL_COMPILER "Use Intel compiler" ON)
 
 if(INTEL_COMPILER)
 	set(CMAKE_C_COMPILER icc)
@@ -69,6 +69,35 @@ else()
     set(math_library m)
 endif()
 
+##### pkg-config #####
+find_package( PkgConfig )
+if( PKG_CONFIG_FOUND )
+    # Detect private libs and directories
+
+    set( _PKG_CONFIG_PROJECT_NAME ${PROJECT_NAME} )
+    set( _PKG_CONFIG_DESCRIPTION "JIT Compilation to realize flexible data access" )
+    set( _PKG_CONFIG_URL "https://github.com/Manuel1605/ImpalaJIT" )
+    set( _PKG_CONFIG_VERSION "0.9" )
+
+    set( _PKG_CONFIG_PREFIX ${CMAKE_INSTALL_PREFIX} )
+    set( _PKG_CONFIG_LIBDIR "\${prefix}/lib" )
+    set( _PKG_CONFIG_INCLUDEDIR "\${prefix}/include" )
+
+    set( _PKG_CONFIG_LIBS "${CMAKE_LIBRARY_PATH_FLAG}\${libdir} ${CMAKE_LINK_LIBRARY_FLAG}impalajit" )
+
+    set( _PKG_CONFIG_LIBS_PRIVATE  "${_PKG_CONFIG_LIBDIRS_PRIVATE} ${_PKG_CONFIG_LIBS_PRIVATE}" )
+    set( _PKG_CONFIG_CFLAGS "-I\${includedir}" )
+
+    # Where to install the pkg-config file?
+    set( _PKG_CONFIG_DIR ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
+
+    # Configure the pkgconfig file
+    configure_file( CMake/pkg-config.pc.in impalajit.pc )
+
+    # Install the pkg file
+    install( FILES ${CMAKE_CURRENT_BINARY_DIR}/impalajit.pc	DESTINATION lib/pkgconfig )
+endif( PKG_CONFIG_FOUND )
+
 if( SHARED_LIB )
     add_library( impalajit SHARED ${source_files})
     target_link_libraries( impalajit ${math_library} )
@@ -97,6 +126,8 @@ if( STATIC_LIB )
 endif( STATIC_LIB )
 install( FILES include/impalajit.hh
          DESTINATION include )
+install( FILES include/impalajit.f90
+        DESTINATION include )
 install( FILES include/impalajit/types.hh
          DESTINATION include/impalajit )
 

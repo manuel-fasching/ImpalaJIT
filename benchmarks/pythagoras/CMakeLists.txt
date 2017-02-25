@@ -32,7 +32,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3")
 
 project(Pythagoras)
 
-set(impalajitDir /home/hpc/pr63so/ga56mob2/ImpalaJIT)
+set(impalajitDir /home/manuel/git/ImpalaJIT)
 
 link_directories(${impalajitDir}/lib)
 include_directories(${impalajitDir}/include include)
