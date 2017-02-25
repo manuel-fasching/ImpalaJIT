@@ -7,7 +7,7 @@
 #ifdef __INTEL_COMPILER
 #include <mathimf.h>
 #else
-#include <cmath>
+#include <math.h>
 #endif
 bool double_equals(double a, double b, double epsilon = pow(10, -12))
 {

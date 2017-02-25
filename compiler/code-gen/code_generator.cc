@@ -33,7 +33,7 @@ CodeGenerator::~CodeGenerator()
 
 dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
-    functionPtrMap["pow"] = reinterpret_cast<externalFunction>(pow);
+    functionPtrMap["pow"] = reinterpret_cast<externalFunction>(std::pow);
     functionPtrMap["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
     functionPtrMap["fmin"] = reinterpret_cast<externalFunction>(fmin);
     functionPtrMap["fmax"] = reinterpret_cast<externalFunction>(fmax);

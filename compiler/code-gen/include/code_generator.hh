@@ -27,7 +27,7 @@
 #include <map>
 #include <assembly__avx.hh>
 #include <assembly__sse_4_1.hh>
-#include <cmath>
+#include <math.h>
 
 
 class CodeGenerator {
