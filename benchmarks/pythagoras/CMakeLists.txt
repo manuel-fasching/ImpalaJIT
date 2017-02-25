@@ -23,9 +23,6 @@ option( INTEL_COMPILER "Use Intel compiler" OFF)
 if(INTEL_COMPILER)
         set(CMAKE_C_COMPILER icc)
         set(CMAKE_CXX_COMPILER icpc)
-	set(math_library imf)
-else()
-	set(math_library m)
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3")
@@ -40,6 +37,6 @@ include_directories(${impalajitDir}/include include)
 add_executable( pythagoras_benchmark pythagoras.cc
         static_pythagoras_function.cc )
 
-target_link_libraries( pythagoras_benchmark impalajit ${math_library})
+target_link_libraries( pythagoras_benchmark impalajit )
 
 

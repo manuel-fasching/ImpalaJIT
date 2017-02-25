@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.6)
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
 option( TESTS "Enable Tests" OFF )
-option( INTEL_COMPILER "Use Intel compiler" ON)
+option( INTEL_COMPILER "Use Intel compiler" OFF)
 
 if(INTEL_COMPILER)
 	set(CMAKE_C_COMPILER icc)
@@ -62,12 +62,6 @@ set(source_files ${source_files}
         compiler/code-gen/code_generator.cc
         compiler/code-gen/assembly/assembly__sse_4_1.cc
         compiler/code-gen/assembly/assembly__avx.cc)
-
-if( INTEL_COMPILER)
-    set(math_library imf)
-else()
-    set(math_library m)
-endif()
 
 ##### pkg-config #####
 find_package( PkgConfig )
