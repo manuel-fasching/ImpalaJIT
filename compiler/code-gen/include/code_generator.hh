@@ -29,11 +29,9 @@
 #include <assembly__sse_4_1.hh>
 #include <cmath>
 
-
 class CodeGenerator {
 private:
     unsigned dynamicLabelCount;
-    std::map<std::string, externalFunction> functionPtrMap;
 
 #if defined(__AVX__)
     Assembly__AVX assembly;

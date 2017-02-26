@@ -16,31 +16,26 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef IMPALAJIT_FUNCTION_CONTEXT_HH
-#define IMPALAJIT_FUNCTION_CONTEXT_HH
 
-#include <vector>
-#include <node.h>
-#include <iostream>
-#include <algorithm>
+#ifndef IMPALAJIT_EXTERNAL_FUNCTION_DEFINITION_HH
+#define IMPALAJIT_EXTERNAL_FUNCTION_DEFINITION_HH
 
-class FunctionContext {
+#include <math.h>
+#include <internal_types.hh>
+#include <calculation_helper.hh>
 
+class FunctionPtrMap{
 public:
-    std::vector<std::string> parameters;
-    std::vector<std::string> variables;
-    Node* root;
-    std::string name;
-
-    FunctionContext(std::string &_name, std::vector<std::string> &_parameters, Node* &_root);
-
-    ~FunctionContext();
-
-    int getIndexOfParameter(std::string& name);
-
-    int getIndexOfVariable(std::string &name);
-
-    void clear();
-
+    static std::map<std::string, externalFunction> map;
+    static void initialize_map() {
+        map["pow"] = reinterpret_cast<externalFunction>(pow);
+        map["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
+        map["min"] = reinterpret_cast<externalFunction>(fmin);
+        map["max"] = reinterpret_cast<externalFunction>(fmax);
+        map["abs"] = reinterpret_cast<externalFunction>(fabs);
+    }
+private:
+    FunctionPtrMap() {}
 };
-#endif //IMPALAJIT_FUNCTION_CONTEXT_HH
+
+#endif //IMPALAJIT_EXTERNAL_FUNCTION_DEFINITION_HH

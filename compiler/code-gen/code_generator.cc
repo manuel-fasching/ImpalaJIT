@@ -22,6 +22,9 @@
 #include <compare_nodes.h>
 #include <external_function_nodes.h>
 #include <calculation_helper.hh>
+#include <ptr_map_container.hh>
+
+std::map<std::string, externalFunction> FunctionPtrMap::map;
 
 CodeGenerator::CodeGenerator() {
     dynamicLabelCount = 0;
@@ -33,11 +36,7 @@ CodeGenerator::~CodeGenerator()
 
 dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
 {
-    functionPtrMap["pow"] = reinterpret_cast<externalFunction>(pow);
-    functionPtrMap["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
-    functionPtrMap["min"] = reinterpret_cast<externalFunction>(fmin);
-    functionPtrMap["max"] = reinterpret_cast<externalFunction>(fmax);
-    functionPtrMap["abs"] = reinterpret_cast<externalFunction>(fabs);
+    FunctionPtrMap::initialize_map();
     assembly.initialize(functionContext->parameters.size());
     assembly.prologue();
 
@@ -76,7 +75,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         case NEGATION:
         {
             dsfUtil(functionContext, node);
-            assembly.callExternalFunction(reinterpret_cast<externalFunction>(changeSign), 1);
+            assembly.callExternalFunction(reinterpret_cast<externalFunction>(CalculationHelper::changeSign), 1);
             break;
         }
 
@@ -111,7 +110,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
         case EXTERNAL_FUNCTION:
         {
             dsfUtil(functionContext, node);
-            assembly.callExternalFunction(functionPtrMap.find((static_cast<ExternalFunctionNode *>(node)->name))->second, node->nodes.size());
+            assembly.callExternalFunction(FunctionPtrMap::map.find((static_cast<ExternalFunctionNode *>(node)->name))->second, node->nodes.size());
             break;
         }
 
@@ -132,7 +131,7 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
             }
             catch(std::exception& e) {
             }
-            functionContext->variables.insert((static_cast<VariableNode *>(node)->name));
+            functionContext->variables.push_back((static_cast<VariableNode *>(node)->name));
             assembly.storeLocalVariable();
             break;
         }

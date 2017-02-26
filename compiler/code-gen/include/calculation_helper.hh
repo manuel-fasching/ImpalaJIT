@@ -20,7 +20,11 @@
 #ifndef IMPALAJIT_CALCULATION_HELPER_HH
 #define IMPALAJIT_CALCULATION_HELPER_HH
 
-double changeSign(double value){
-    return -value;
-}
+
+class CalculationHelper {
+public:
+    static double changeSign(double value) {
+        return -value;
+    }
+};
 #endif //IMPALAJIT_CALCULATION_HELPER_HH

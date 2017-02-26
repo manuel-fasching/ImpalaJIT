@@ -22,7 +22,7 @@
 #include <function_context.h>
 
 
-FunctionContext::FunctionContext(std::string &_name, std::set<std::string> &_parameters, Node* &_root)
+FunctionContext::FunctionContext(std::string &_name, std::vector<std::string> &_parameters, Node* &_root)
 : name(_name), parameters(_parameters), root(_root)
 {
 }
@@ -35,7 +35,7 @@ FunctionContext::~FunctionContext() {
 }
 
 int FunctionContext::getIndexOfParameter(std::string &name) {
-    std::set<std::string>::iterator it = std::find(parameters.begin(), parameters.end(), name);
+    std::vector<std::string>::iterator it = std::find(parameters.begin(), parameters.end(), name);
     if (it == parameters.end()) {
         throw std::runtime_error("Parameter not found");
     }
@@ -45,7 +45,7 @@ int FunctionContext::getIndexOfParameter(std::string &name) {
 }
 
 int FunctionContext::getIndexOfVariable(std::string &name) {
-    std::set<std::string>::iterator it = std::find(variables.begin(), variables.end(), name);
+    std::vector<std::string>::iterator it = std::find(variables.begin(), variables.end(), name);
     if (it == variables.end()) {
         throw std::runtime_error("Variable not found");
     }

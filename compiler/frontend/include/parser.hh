@@ -39,12 +39,6 @@
 
 #ifndef YY_YY_PARSER_HH_INCLUDED
 # define YY_YY_PARSER_HH_INCLUDED
-// //                    "%code requires" blocks.
-#line 80 "parser.yy" // lalr1.cc:377
-
-  #include <set>
-
-#line 48 "parser.hh" // lalr1.cc:377
 
 
 # include <cstdlib> // std::abort
@@ -116,7 +110,7 @@
 
 #line 59 "parser.yy" // lalr1.cc:377
 namespace impalajit {
-#line 120 "parser.hh" // lalr1.cc:377
+#line 114 "parser.hh" // lalr1.cc:377
 
 
 
@@ -130,17 +124,17 @@ namespace impalajit {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 84 "parser.yy" // lalr1.cc:377
+    #line 80 "parser.yy" // lalr1.cc:377
 
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
-    std::set<std::string>* stringSet;
+    std::vector<std::string>* stringVector;
     std::vector<Node*>* nodeVector;
     class FunctionContext* functionContext;
 
-#line 144 "parser.hh" // lalr1.cc:377
+#line 138 "parser.hh" // lalr1.cc:377
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -497,7 +491,7 @@ namespace impalajit {
 
 #line 59 "parser.yy" // lalr1.cc:377
 } // impalajit
-#line 501 "parser.hh" // lalr1.cc:377
+#line 495 "parser.hh" // lalr1.cc:377
 
 
 

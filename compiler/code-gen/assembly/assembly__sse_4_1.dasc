@@ -21,6 +21,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdint.h>
+#include <cmath>
 
 
 
@@ -238,6 +239,7 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
        | movq qword [rsp], xmm(i)
     }
 
+
     //Load parameters to register
     for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
        | movq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
@@ -246,19 +248,45 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     //Function parameters are not needed anymore
     //Set the stackPos accordingly
     stackPos = stackPos-(numberOfArguments-1);
-
     //Perform function Call
+
+    // Save rsp register
+    | mov r12, rsp
+
+    // Align frame pointer
+    | and rsp, -16
+
+    // Save old rsp value in aligned environment
+    | push r12
+
+    // Add Shadow space (32bit) and take care of alignment
+    // We pushed r12, which caused -8bit. To align on 16bit: 32+8=40
+    | sub rsp, 40
+
+    // Move address of function to register
     | mov64 rax, (uintptr_t) functionPtr
+
+    // Call function
     | call rax
+
+    // Delete shadow space
+    | add rsp, 40
+
+    // Move original rsp value to r12
+    | pop r12
+
+    // Restore rsp
+    | mov rsp, r12
+
 
     //Put function result on top of stack
     | movq xmm(stackPos), xmm0
 
     //Restore old stack
-     for(int i=stackPos-1; i>=0; i--){
+    for(int i=stackPos-1; i>=0; i--){
         | movq xmm(i), qword [rsp]
         | add rsp, 8
-     }
+    }
 }
 
 void Assembly__SSE_4_1::extractResult(){

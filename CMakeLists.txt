@@ -59,6 +59,8 @@ set(source_files ${source_files}
         compiler/include/nodes/conditional_nodes.h
         compiler/include/nodes/boolean_nodes.h
         compiler/include/nodes/assignment_nodes.h
+        compiler/code-gen/include/ptr_map_container.hh
+        compiler/code-gen/include/calculation_helper.hh
         compiler/code-gen/code_generator.cc
         compiler/code-gen/assembly/assembly__sse_4_1.cc
         compiler/code-gen/assembly/assembly__avx.cc)

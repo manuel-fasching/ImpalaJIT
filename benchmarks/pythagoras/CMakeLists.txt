@@ -29,7 +29,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3")
 
 project(Pythagoras)
 
-set(impalajitDir /home/manuel/git/ImpalaJIT)
+# Set impalajit directory
+#set( impalajitDir /path/to/impalajit )
 
 link_directories(${impalajitDir}/lib)
 include_directories(${impalajitDir}/include include)

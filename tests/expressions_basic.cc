@@ -27,7 +27,7 @@ using namespace std;
 
 
 double reference_function(double x, double y){
-    return pow(sqrt(3.01*x+(-y+12.65)), 2.54)/3.4331;
+    return pow(x, y)+pow(sqrt(3.01*x+(-y+12.65)), 2.54)/3.4331;
 }
 
 int main(int argc, char** argv) {

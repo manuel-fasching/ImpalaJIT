@@ -77,16 +77,12 @@
 /* verbose error messages */
 %error-verbose
 
-%code requires {
-  #include <set>
-}
-
 %union {
 	int			integerVal;
     double 			doubleVal;
     std::string*		stringVal;
     class Node*		node;
-    std::set<std::string>* stringSet;
+    std::vector<std::string>* stringVector;
     std::vector<Node*>* nodeVector;
     class FunctionContext* functionContext;
 }
@@ -109,7 +105,7 @@
 
 %type <node>	constant variable
 %type <node>	atomexpr unaryexpr mulexpr addexpr expr atomcondition booleanand booleanor ifstmt assignment if_body else_body function_body return_stmt
-%type <stringSet> parameter_list
+%type <stringVector> parameter_list
 %type <functionContext> function
 %type <nodeVector> expr_list
 
@@ -135,23 +131,23 @@ function : STRING '(' parameter_list ')' '{' function_body '}'
 				$$ = new FunctionContext(*$1, *$3, $6);
 			}
 
-parameter_list : %empty 
+parameter_list : %empty
 			{
-				std::set<std::string>* parameters = new std::set<std::string>();
+				std::vector<std::string>* parameters = new std::vector<std::string>();
 				$$ = parameters;
 			}
 
 			| parameter_list STRING
 			{
 				$$ = $1;
-				(*$$).insert(*$2);
+				(*$$).push_back(*$2);
 			}
 
 			|
 			parameter_list COMMA STRING 
 			{
 				$$ = $1;
-				(*$$).insert(*$3);
+				(*$$).push_back(*$3);
 			}
 
 function_body : %empty 
