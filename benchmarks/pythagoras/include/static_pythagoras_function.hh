@@ -23,12 +23,17 @@
 #include <cmath>
 
 /**
- * Static implemenation of the pythagoras function.
+ * Implemenation of the pythagoras function.
  * It was moved to a dedicated source file, to avoid
  * compilers from optimizing.
  */
 class Pythagoras{
 public:
+    /**
+     * @param a a
+     * @param b b
+     * @return c
+     */
     double pythagoras_static(double a, double b);
 };
 #endif //IMPALAJIT_STATIC_PYTHAGORAS_FUNCTION_HH

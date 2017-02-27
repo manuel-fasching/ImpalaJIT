@@ -19,6 +19,9 @@
 
 #include "include/static_pythagoras_function.hh"
 
+/**
+ * @see static_pythagoras_function.hh
+ */
 double Pythagoras::pythagoras_static(double a, double b){
     if(a<0 || b<0){
         return -1;

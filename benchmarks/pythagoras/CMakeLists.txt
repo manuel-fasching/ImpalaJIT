@@ -18,7 +18,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-option( INTEL_COMPILER "Use Intel compiler" OFF)
+option( INTEL_COMPILER "Use Intel compiler" ON)
 
 if(INTEL_COMPILER)
         set(CMAKE_C_COMPILER icc)
@@ -30,7 +30,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3")
 project(Pythagoras)
 
 # Set impalajit directory
-#set( impalajitDir /path/to/impalajit )
+set( impalajitDir /path/to/impalajit )
 
 link_directories(${impalajitDir}/lib)
 include_directories(${impalajitDir}/include include)

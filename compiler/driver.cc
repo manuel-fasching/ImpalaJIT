@@ -26,7 +26,6 @@
 #include <code_generator.hh>
 
 namespace impalajit {
-
 Driver::~Driver(){
 }
 

@@ -22,56 +22,118 @@
 
 #include <assembly.hh>
 
+/**
+ * This class generates VEX encoded assembly.
+ * It utilizes AVX instructions
+ *
+ * @see Assembly
+ */
 class Assembly__AVX : public Assembly {
 public:
+
+    /**
+     * Destructor. Calls the cleanup function of dynasm.
+     */
     virtual ~Assembly__AVX();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void initialize(int parameterCount) ;
 
+    /**
+     * @see assembly.hh
+     */
     virtual void prologue();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void epilogue();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void growPC(unsigned npc);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void pushParameterToStack(int index);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void pushLocalVariableToStack(int index);
 
-    virtual void popStack();
-
+    /**
+     * @see assembly.hh
+     */
     virtual void replaceParameter(int index);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void pushConstantToStack(double value);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void storeLocalVariable();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void replaceLocalVariable(int index);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void calculateAddition();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void calculateSubtraction();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void calculateMultiplication();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void calculateDivision();
 
+    /**
+     * @see assembly.hh
+     */
     virtual void callExternalFunction(externalFunction functionPtr, unsigned NumberOfArguments);
 
+    /**
+     * @see assembly.hh
+     */
     virtual void addDynamicLabel(unsigned labelNumber);
 
-    virtual void addLocalLabel(unsigned labelNumber);
-
+    /**
+     * @see assembly.hh
+     */
     virtual void jumpForwardToDynamicLabel(unsigned labelNumber);
 
-    virtual void jumpForwardToLocalLabel(unsigned labelNumber);
-
+    /**
+     * @see assembly.hh
+     */
     virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
 
-    virtual void conditionalJumpForwardToLocalLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
-
+    /**
+     * @see assembly.hh
+     */
     virtual void extractResult();
 
+    /**
+     * @see assembly.hh
+     */
     virtual dasm_gen_func linkAndEncode();
 };
 

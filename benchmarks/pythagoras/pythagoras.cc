@@ -29,26 +29,38 @@
 #define A 50000
 #define B 50000
 
+/**
+ * This benchmark contains fully vectorizeable loops.
+ * It's a worst case scenario for ImpalaJIT.
+ *
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char* argv[]){
     struct timeval tv;
 
-    // Dynamic compilation
+    // ImpalaJIT initialization
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func pythagoras_dynamic = compiler.getFunction("pythagoras");
 
-
-    //Static
+    // Static function.
+    // It is placed in another source file, to avoid compilers from removing it.
+    // They would do so, because the returned value is never read.
     Pythagoras pythagoras;
 
+    // Time measure
     gettimeofday(&tv, NULL);
     unsigned long long start_dynamic =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
+
+    // Execute dynamic compiled pythagoras function
     for(int i = 0; i<A; i++) {
         for (int j = 0; j < B; j++) {
-            pythagoras_dynamic(static_cast<double>(i), static_cast<double>(j));
+           pythagoras_dynamic(static_cast<double>(i), static_cast<double>(j));
         }
     }
 
@@ -57,8 +69,9 @@ int main(int argc, char* argv[]){
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
-    // Static compilation
     gettimeofday(&tv, NULL);
+
+    // Execute static compiled pythagoras function
     unsigned long long start_static =
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
@@ -74,7 +87,7 @@ int main(int argc, char* argv[]){
             (unsigned long long)(tv.tv_sec) * 1000 +
             (unsigned long long)(tv.tv_usec) / 1000;
 
-    // Write results
+    // Output results
     std::ofstream outputFile;
     outputFile.open ("result.txt");
     outputFile << "------------ Dynamic compilation ------------" << std::endl;

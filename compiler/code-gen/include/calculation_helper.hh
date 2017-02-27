@@ -20,9 +20,19 @@
 #ifndef IMPALAJIT_CALCULATION_HELPER_HH
 #define IMPALAJIT_CALCULATION_HELPER_HH
 
-
+/**
+ * This class contains functions, which are available
+ * in impala files. If you add functions, add also the
+ * pointer in ptr_map_container.hh
+ */
 class CalculationHelper {
 public:
+    /**
+     * Trivial...
+     *
+     * @param value value
+     * @return -value
+     */
     static double changeSign(double value) {
         return -value;
     }
