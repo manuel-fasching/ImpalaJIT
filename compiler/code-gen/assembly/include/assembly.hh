@@ -65,6 +65,13 @@ public:
     virtual void growPC(unsigned npc)= 0;
 
     /**
+     * Moves the frame pointer downwards and reserves space for local variables.
+     *
+     * @param variableCount The amount of local variables
+     */
+    virtual void reserveMemoryForLocalVariables(int variableCount)=0;
+
+    /**
      * Pushes a parameter onto the rpn stack.
      * TODO: Rename to avoid confusion with call stack
      *
@@ -99,14 +106,7 @@ public:
     /**
      * Pushes the top value of the rpn stack onto the call stack.
      */
-    virtual void storeLocalVariable()= 0;
-
-    /**
-     * Replaces the value of a local variable
-     *
-     * @param index The index of the variable
-     */
-    virtual void replaceLocalVariable(int index)= 0;
+    virtual void storeLocalVariable(int index)= 0;
 
     /**
      * Performs a simple addition.

@@ -19,6 +19,7 @@
 
 #include <code_generator.hh>
 #include <expression_nodes.h>
+#include <assignment_nodes.h>
 #include <compare_nodes.h>
 #include <external_function_nodes.h>
 #include <calculation_helper.hh>
@@ -54,6 +55,8 @@ dasm_gen_func CodeGenerator::generateCode(FunctionContext* &functionContext)
     assembly.initialize(functionContext->parameters.size());
     assembly.prologue();
 
+    assembly.reserveMemoryForLocalVariables(functionContext->variables.size());
+
     evaluateAst(functionContext, functionContext->root);
 
     return assembly.linkAndEncode();
@@ -77,17 +80,18 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
 
         case VARIABLE:
         {
-            //TODO: Remove this try catch blocks and perform an explicit existence check. Throw Runtime Exception here, when nothing found
-            try {
-                int index = functionContext->getIndexOfParameter((static_cast<VariableNode *>(node)->name));
-                assembly.pushParameterToStack(index);
+            dsfUtil(functionContext, node);
+            if(functionContext->containsVariable(static_cast<VariableNode*>(node)->name)) {
+                assembly.pushLocalVariableToStack(functionContext->getIndexOfVariable(static_cast<VariableNode*>(node)->name));
                 break;
             }
-            catch(std::exception& e) {
+            else if(functionContext->containsParameter(static_cast<VariableNode*>(node)->name)) {
+                assembly.pushParameterToStack(functionContext->getIndexOfParameter(static_cast<VariableNode*>(node)->name));
+                break;
             }
-            int index = functionContext->getIndexOfVariable((static_cast<VariableNode *>(node)->name));
-            assembly.pushLocalVariableToStack(index);
-            break;
+            else{
+                throw std::runtime_error("Variable not found!");
+            }
         }
 
         case NEGATION:
@@ -134,25 +138,18 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
 
         case ASSIGNMENT:
         {
-            //TODO: Remove this try catch blocks and perform an explicit existence check.
             dsfUtil(functionContext, node);
-            try {
-                int index = functionContext->getIndexOfParameter((static_cast<VariableNode *>(node)->name));
-                assembly.replaceParameter(index);
+            if(functionContext->containsVariable(static_cast<AssignmentNode*>(node)->name)) {
+                assembly.storeLocalVariable(functionContext->getIndexOfVariable(static_cast<VariableNode*>(node)->name));
                 break;
             }
-            catch(std::exception& e) {
-            }
-            try {
-                int index = functionContext->getIndexOfVariable((static_cast<VariableNode *>(node)->name));
-                assembly.replaceLocalVariable(index);
+            else if(functionContext->containsParameter(static_cast<AssignmentNode*>(node)->name)) {
+                assembly.replaceParameter(functionContext->getIndexOfParameter(static_cast<AssignmentNode*>(node)->name));
                 break;
             }
-            catch(std::exception& e) {
+            else{
+                throw std::runtime_error("Variable was not found in semantic analysis phase!");
             }
-            functionContext->variables.push_back((static_cast<VariableNode *>(node)->name));
-            assembly.storeLocalVariable();
-            break;
         }
 
         case IF_STATEMENT:

@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <cmath>
 
+#define LAST_XMM_REG 15
 
 
 |.arch x64
@@ -47,8 +48,6 @@ Assembly__SSE_4_1::~Assembly__SSE_4_1()
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::initialize(int parameterCount) {
-    std::cout << "ImpalaJIT: AVX Support disabled" << std::endl;
-
     dasm_init(&d, DASM_MAXSECTION);
 
     void* labels[lbl__MAX];
@@ -60,6 +59,7 @@ void Assembly__SSE_4_1::initialize(int parameterCount) {
 
     Dst = &d;
 
+    // First 8 arguments are passed in registers
     stackPos = parameterCount >= 8 ? 7 : parameterCount-1;
 }
 /**
@@ -79,6 +79,10 @@ void Assembly__SSE_4_1::growPC(unsigned npc)
     dasm_growpc(&d, npc);
 }
 
+void Assembly__SSE_4_1::reserveMemoryForLocalVariables(int variableCount)
+{
+    | sub rsp, variableCount*8
+}
 /**
  * @see assembly.hh
  */
@@ -86,15 +90,29 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
     stackPos++;
     double* ptr = static_cast<double*>(malloc(sizeof(double)));
     *ptr = value;
-    | movq xmm(stackPos), qword[ptr]
+    if(stackPos <= LAST_XMM_REG) {
+        | movq xmm(stackPos), qword[ptr]
+    }
+    else {
+        | sub rsp, 8
+        | mov r10, qword[ptr]
+        | mov qword[rsp], r10
+    }
 }
 
 /**
  * @see assembly.hh
  */
-void Assembly__SSE_4_1::storeLocalVariable() {
-    | sub rsp, 8
-    | movq qword [rsp], xmm(stackPos)
+void Assembly__SSE_4_1::storeLocalVariable(int index) {
+    if(stackPos <= LAST_XMM_REG) {
+        | movq qword [rbp-8-index*8], xmm(stackPos)
+    }
+    else{
+        | mov r10, qword [rsp]
+        | mov qword [rbp-8-index*8], r10
+        | add rsp, 8
+    }
+
     stackPos--;
 }
 
@@ -104,12 +122,26 @@ void Assembly__SSE_4_1::storeLocalVariable() {
 void Assembly__SSE_4_1::pushParameterToStack(int index) {
     stackPos++;
     // See x64 calling conventions. Paramters 1-8 are passed in registers
-    if(index <= 7){
-        | movq xmm(stackPos), xmm(index)
+
+    if(stackPos <= LAST_XMM_REG) {
+        if(index <= 7){
+            | movq xmm(stackPos), xmm(index)
+        }
+        else {
+            | movq xmm(stackPos), qword [rbp+8+(index-7)*8]
+        }
     }
-    else {
-        | movq xmm(stackPos), qword [rbp+8+(index-7)*8]
+    else{
+        | sub rsp, 8
+        if(index <= 7){
+            | movq qword[rsp], xmm(index)
+        }
+        else {
+            | mov r10, qword [rbp+8+(index-7)*8]
+            | mov qword[rsp], r10
+        }
     }
+
 }
 
 /**
@@ -117,11 +149,23 @@ void Assembly__SSE_4_1::pushParameterToStack(int index) {
  */
 void Assembly__SSE_4_1::replaceParameter(int index) {
     // See x64 calling conventions. Paramters 1-8 are passed in registers
-    if(index <= 7){
-        | movq xmm(index), xmm(stackPos)
+    if(stackPos <= LAST_XMM_REG) {
+        if(index <= 7){
+            | movq xmm(index), xmm(stackPos)
+        }
+        else {
+            | movq qword [rbp+8+(index-7)*8], xmm(stackPos)
+        }
     }
-    else {
-        | movq qword [rbp+8+(index-7)*8], xmm(stackPos)
+    else{
+        if(index <= 7){
+            | movq xmm(index), qword[rsp]
+        }
+        else {
+            | mov r10, qword[rsp]
+            | mov qword [rbp+8+(index-7)*8], r10
+        }
+        | add rsp, 8
     }
     stackPos--;
 }
@@ -131,15 +175,15 @@ void Assembly__SSE_4_1::replaceParameter(int index) {
  */
 void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
     stackPos++;
-    | movq xmm(stackPos), qword [rbp-8-index*8]
-}
+    if(stackPos <= LAST_XMM_REG) {
+        | movq xmm(stackPos), qword [rbp-8-index*8]
+    }
+    else{
+        | sub rsp, 8
+        | mov r10, qword [rbp-8-index*8]
+        | mov qword[rsp], r10
+    }
 
-/**
- * @see assembly.hh
- */
-void Assembly__SSE_4_1::replaceLocalVariable(int index) {
-    | movq qword [rbp-8-index*8], xmm(stackPos)
-    stackPos--;
 }
 
 /**
@@ -160,22 +204,74 @@ void Assembly__SSE_4_1::jumpForwardToDynamicLabel(unsigned labelNumber) {
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_){
-     | cmpsd xmm(stackPos), xmm(stackPos-1), operator_
-     | ptest xmm(stackPos), xmm(stackPos)
-     if(condition){
-         | jnz => labelNumber
-     }
-     else{
+    if(stackPos <= LAST_XMM_REG) {
+        | cmpsd xmm(stackPos), xmm(stackPos-1), operator_
+        | ptest xmm(stackPos), xmm(stackPos)
+    }
+    else if (stackPos == LAST_XMM_REG+1){
+        //Backup one xmm register
+        | movq qword[rsp-8], xmm(0)
+
+        // Load value in registers for comparison
+        | movq xmm(0), qword[rsp]
+
+        //Conditions are not needed anymore, but only one was stored in memory
+        // rsp has to be adapted before ptest, since the instruction modifies flags
+        | add rsp, 8
+
+        | cmpsd xmm(0), xmm(LAST_XMM_REG), operator_
+        | ptest xmm(0), xmm(0)
+
+        // Restore register
+        | movq xmm(0), qword[rsp-16]
+    }
+    else{
+        // Backup one registers
+        | movq qword[rsp-8], xmm(0)
+
+        // Load values in registers for comparison
+        | movq xmm(0), qword[rsp]
+
+        //Conditions are not needed anymore
+        // rsp has to be adapted before ptest, since the instruction modifies flags
+        | add rsp, 16
+
+        | cmpsd xmm(0), qword[rsp-8], operator_
+        | ptest xmm(0), xmm(0)
+
+        //Restore register
+        | movq xmm(0), qword[rsp-24]
+
+    }
+    if(condition){
+        | jnz => labelNumber
+    }
+    else{
         | jz => labelNumber
-     }
-     stackPos--;
+    }
+    //Conditions are not needed anymore
+    stackPos=stackPos-2;
 }
 
 /**
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::calculateAddition(){
-    | addsd xmm(stackPos-1), xmm(stackPos)
+    if(stackPos <= LAST_XMM_REG) {
+        | addsd xmm(stackPos-1), xmm(stackPos)
+    }
+    else if(stackPos == LAST_XMM_REG+1){
+        | addsd xmm(LAST_XMM_REG), qword[rsp]
+        | add rsp, 8
+    }
+    else{
+        | movq qword[rsp-8], xmm(0)
+        | movq xmm(0), qword[rsp+8]
+        | addsd xmm(0), qword[rsp]
+        | movq qword[rsp+8], xmm(0)
+        | movq xmm(0), qword[rsp-8]
+        | add rsp, 8
+    }
     stackPos--;
 }
 
@@ -183,7 +279,21 @@ void Assembly__SSE_4_1::calculateAddition(){
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::calculateSubtraction(){
-    | subsd xmm(stackPos-1), xmm(stackPos)
+    if(stackPos <= LAST_XMM_REG) {
+        | subsd xmm(stackPos-1), xmm(stackPos)
+    }
+    else if(stackPos == LAST_XMM_REG+1){
+        | subsd xmm(LAST_XMM_REG), qword[rsp]
+        | add rsp, 8
+    }
+    else{
+        | movq qword[rsp-8], xmm(0)
+        | movq xmm(0), qword[rsp+8]
+        | subsd xmm(0), qword[rsp]
+        | movq qword[rsp+8], xmm(0)
+        | movq xmm(0), qword[rsp-8]
+        | add rsp, 8
+    }
     stackPos--;
 }
 
@@ -191,7 +301,21 @@ void Assembly__SSE_4_1::calculateSubtraction(){
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::calculateMultiplication(){
-    | mulsd xmm(stackPos-1), xmm(stackPos)
+    if(stackPos <= LAST_XMM_REG) {
+        | mulsd xmm(stackPos-1), xmm(stackPos)
+    }
+    else if(stackPos == LAST_XMM_REG+1){
+        | mulsd xmm(LAST_XMM_REG), qword[rsp]
+        | add rsp, 8
+    }
+    else{
+        | movq qword[rsp-8], xmm(0)
+        | movq xmm(0), qword[rsp+8]
+        | mulsd xmm(0), qword[rsp]
+        | movq qword[rsp+8], xmm(0)
+        | movq xmm(0), qword[rsp-8]
+        | add rsp, 8
+    }
     stackPos--;
 }
 
@@ -199,7 +323,21 @@ void Assembly__SSE_4_1::calculateMultiplication(){
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::calculateDivision(){
+    if(stackPos <= LAST_XMM_REG) {
     | divsd xmm(stackPos-1), xmm(stackPos)
+    }
+    else if(stackPos == LAST_XMM_REG+1){
+        | divsd xmm(LAST_XMM_REG), qword[rsp]
+        | add rsp, 8
+    }
+    else{
+        | movq qword[rsp-8], xmm(0)
+        | movq xmm(0), qword[rsp+8]
+        | divsd xmm(0), qword[rsp]
+        | movq qword[rsp+8], xmm(0)
+        | movq xmm(0), qword[rsp-8]
+        | add rsp, 8
+    }
     stackPos--;
 }
 
@@ -210,23 +348,34 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
 
     //Backup the stack. Function arguments will be replaced by a result
     //and therefor excluded from the backup.
-    for(int i=0; i<stackPos-(numberOfArguments-1); i++){
-       | sub rsp, 8
-       | movq qword [rsp], xmm(i)
+    //I assume, that there is no external function, which has more than 16 arguments...
+    for(int i=0; i<=stackPos-numberOfArguments; i++){
+        if(i<=LAST_XMM_REG){
+            | movq qword [rsp-(i+1)*8], xmm(i)
+        }
+        else {
+            | mov r10, qword [rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8]
+            | mov qword [rsp-(i+1)*8], r10
+        }
     }
 
 
     //Load parameters to register
-    for(int i=stackPos-(numberOfArguments-1); i<=stackPos; i++){
-       | movq xmm(i-(stackPos-(numberOfArguments-1))), xmm(i)
+    for(int i=stackPos-numberOfArguments; i<=stackPos; i++){
+        if(i<=LAST_XMM_REG){
+            | movq xmm(i-(stackPos-numberOfArguments+1)), xmm(i)
+        }
+        else {
+            | movq xmm(i-(stackPos-numberOfArguments+1)), qword[rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8 ]
+        }
     }
 
-    //Function parameters are not needed anymore
-    //Set the stackPos accordingly
-    stackPos = stackPos-(numberOfArguments-1);
 
     // Save frame pointer in non-volatile register
     | mov r12, rsp
+
+    // Subtract amount of register backup
+    | sub rsp, (stackPos-numberOfArguments)*8
 
     // Align frame pointer on 16 bit
     | and rsp, -16
@@ -245,13 +394,41 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     | mov rsp, r12
 
 
+    //Function parameters are not needed anymore
+    //Set the stackPos accordingly
+    | mov r10, rsp
+    if(stackPos > LAST_XMM_REG){
+        if(stackPos-LAST_XMM_REG<=(numberOfArguments)){
+            | add rsp, (stackPos-LAST_XMM_REG)*8
+        }
+        else{
+            | add rsp, numberOfArguments*8
+        }
+    }
+    stackPos = stackPos-numberOfArguments;
+
+
+
+    stackPos++;
     //Put function result on top of stack
-    | movq xmm(stackPos), xmm0
+    if(stackPos <= LAST_XMM_REG){
+        | movq xmm(stackPos), xmm0
+    }
+    else {
+        | sub rsp, 8
+        | movq qword[rsp], xmm0
+    }
+
 
     //Restore old stack
     for(int i=stackPos-1; i>=0; i--){
-        | movq xmm(i), qword [rsp]
-        | add rsp, 8
+        if(i<=LAST_XMM_REG){
+            | movq xmm(i), qword [r10-(i+1)*8]
+        }
+        else {
+            | mov r11, qword [r10-(i+1)*8]
+            | mov qword[rsp+(stackPos-i)*8], r11
+        }
     }
 }
 
@@ -259,7 +436,12 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
  * @see assembly.hh
  */
 void Assembly__SSE_4_1::extractResult(){
-     | movq xmm0, xmm(stackPos)
+     if(stackPos <= LAST_XMM_REG){
+        | movq xmm0, xmm(stackPos)
+     }
+     else {
+        | movq xmm0, qword[rsp]
+     }
 }
 
 /**

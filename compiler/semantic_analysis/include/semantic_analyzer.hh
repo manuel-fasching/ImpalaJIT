@@ -16,35 +16,19 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef IMPALAJIT_FUNCTION_CONTEXT_HH
-#define IMPALAJIT_FUNCTION_CONTEXT_HH
 
-#include <vector>
-#include <node.h>
-#include <iostream>
-#include <algorithm>
+#ifndef IMPALAJIT_SEM_ANALYSIS_HH
+#define IMPALAJIT_SEM_ANALYSIS_HH
 
-class FunctionContext {
+#include <function_context.h>
 
+class SemanticAnalyzer {
+private:
+    unsigned assignmentCount;
+    void evaluateAst(FunctionContext* &functionContext, Node* &node);
+    void dsfUtil(FunctionContext* &functionContext, Node* &node);
 public:
-    std::vector<std::string> parameters;
-    std::vector<std::string> variables;
-    Node* root;
-    std::string name;
-
-    FunctionContext(std::string &_name, std::vector<std::string> &_parameters, Node* &_root);
-
-    ~FunctionContext();
-
-    bool containsParameter(std::string& name);
-
-    bool containsVariable(std::string& name);
-
-    int getIndexOfParameter(std::string& name);
-
-    int getIndexOfVariable(std::string &name);
-
-    void clear();
-
+    ~SemanticAnalyzer();
+    void performSemanticAnalysis(FunctionContext* &functionContext);
 };
-#endif //IMPALAJIT_FUNCTION_CONTEXT_HH
+#endif //IMPALAJIT_SEM_ANALYSIS_HH

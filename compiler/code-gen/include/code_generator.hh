@@ -25,7 +25,6 @@
 #include <function_context.h>
 #include <vector>
 #include <map>
-#include <assembly__avx.hh>
 #include <assembly__sse_4_1.hh>
 #include <cmath>
 
@@ -37,12 +36,7 @@ class CodeGenerator {
 private:
     unsigned dynamicLabelCount; // Global count of assigned
 
-    // Initialize the right assembly class based on preprocessor directives
-#if defined(__AVX__)
-    Assembly__AVX assembly;
-#elif defined(__SSE2__)
     Assembly__SSE_4_1 assembly;
-#endif
 
     /**
      * This functions performs the depth-first search algorithm.

@@ -24,6 +24,7 @@
 #include <driver.h>
 #include <scanner.h>
 #include <code_generator.hh>
+#include <semantic_analyzer.hh>
 
 namespace impalajit {
 Driver::~Driver(){
@@ -38,6 +39,9 @@ std::map<std::string,dasm_gen_func> Driver::parse_stream(std::istream& in)
     Parser parser(*this);
     parser.set_debug_level(false);
     parser.parse();
+
+    SemanticAnalyzer semanticAnalyzer;
+    semanticAnalyzer.performSemanticAnalysis(functionContext);
 
     CodeGenerator codeGenerator;
     dasm_gen_func function = codeGenerator.generateCode(functionContext);

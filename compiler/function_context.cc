@@ -34,6 +34,20 @@ FunctionContext::~FunctionContext() {
     root = NULL;
 }
 
+bool FunctionContext::containsParameter(std::string &name) {
+    if (std::find(parameters.begin(), parameters.end(), name) != parameters.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool FunctionContext::containsVariable(std::string &name) {
+    if (std::find(variables.begin(), variables.end(), name) != variables.end()) {
+        return true;
+    }
+    return false;
+}
+
 int FunctionContext::getIndexOfParameter(std::string &name) {
     std::vector<std::string>::iterator it = std::find(parameters.begin(), parameters.end(), name);
     if (it == parameters.end()) {

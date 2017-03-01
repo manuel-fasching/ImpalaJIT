@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 2.6)
 
 option( SHARED_LIB "Compile the shared library" OFF )
 option( STATIC_LIB "Compile the static library" ON )
-option( TESTS "Enable Tests" ON )
+option( TESTS "Enable Tests" OFF )
 option( INTEL_COMPILER "Use Intel compiler" ON)
 
 if(INTEL_COMPILER)
@@ -42,6 +42,7 @@ set(include_dirs
         compiler/include/nodes
         compiler/include/types
         compiler/frontend/include
+        compiler/semantic_analysis/include
         compiler/code-gen/include
         compiler/code-gen/assembly/include
         )
@@ -61,11 +62,11 @@ set(source_files ${source_files}
         compiler/include/nodes/conditional_nodes.h
         compiler/include/nodes/boolean_nodes.h
         compiler/include/nodes/assignment_nodes.h
+        compiler/semantic_analysis/semantic_analyzer.cc
         compiler/code-gen/include/ptr_map_container.hh
         compiler/code-gen/include/calculation_helper.hh
         compiler/code-gen/code_generator.cc
-        compiler/code-gen/assembly/assembly__sse_4_1.cc
-        compiler/code-gen/assembly/assembly__avx.cc)
+        compiler/code-gen/assembly/assembly__sse_4_1.cc)
 
 ##### pkg-config #####
 find_package( PkgConfig )

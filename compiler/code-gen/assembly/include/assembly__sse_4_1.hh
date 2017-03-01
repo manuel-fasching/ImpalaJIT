@@ -58,6 +58,11 @@ public:
     /**
      * @see assembly.hh
      */
+    virtual void reserveMemoryForLocalVariables(int variableCount);
+
+    /**
+     * @see assembly.hh
+     */
     virtual void pushParameterToStack(int index);
 
     /**
@@ -78,12 +83,7 @@ public:
     /**
      * @see assembly.hh
      */
-    virtual void storeLocalVariable();
-
-    /**
-     * @see assembly.hh
-     */
-    virtual void replaceLocalVariable(int index);
+    virtual void storeLocalVariable(int index);
 
     /**
      * @see assembly.hh
