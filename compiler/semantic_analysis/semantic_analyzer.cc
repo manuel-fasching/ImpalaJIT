@@ -20,6 +20,7 @@
 #include <semantic_analyzer.hh>
 #include <expression_nodes.h>
 #include <assignment_nodes.h>
+#include <stdexcept>
 
 SemanticAnalyzer::~SemanticAnalyzer()
 {
