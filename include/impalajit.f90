@@ -18,15 +18,6 @@
 !!
 module impalajit
   implicit none
-  	abstract interface
-	    function impala_fun_template (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-		    use, intrinsic :: iso_c_binding
-		    real(c_double), intent(in), optional, value			:: a1, a2, a3, a4, a5, a6, a7, a8, a9, a10
-		    real(c_double), intent(in), optional, value			:: a11, a12, a13, a14, a15, a16, a17, a18, a19, a20 
-		    real(c_double) 										:: impala_fun_template
-		end function impala_fun_template
-    end interface
-
     interface
 
         subroutine impalajit_compiler_compile( handle ) bind( c, name="impalajit_compiler_compile" )
