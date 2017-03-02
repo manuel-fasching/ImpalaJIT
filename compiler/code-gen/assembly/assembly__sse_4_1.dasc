@@ -22,13 +22,14 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <cmath>
+#include <cstring>
 
 #define LAST_XMM_REG 15
 
 
 |.arch x64
 
-|.section code
+|.section code, data
 
 |.globals lbl_
 |.actionlist impala_actions
@@ -88,15 +89,22 @@ void Assembly__SSE_4_1::reserveMemoryForLocalVariables(int variableCount)
  */
 void Assembly__SSE_4_1::pushConstantToStack(double value){
     stackPos++;
-    double* ptr = static_cast<double*>(malloc(sizeof(double)));
-    *ptr = value;
+
+    // DynASM is only able to accept imm64 values, when the mov64 instruction is used.
+    // So we have to mask the floating point value as a 64 byte int. It's the only way
+    // to load a floating point constant in a register...
+    long long imm64;
+    memcpy(&imm64, &value, sizeof(value));
+
     if(stackPos <= LAST_XMM_REG) {
-        | movq xmm(stackPos), qword[ptr]
+        | mov64 rax, imm64
+        | mov qword[rsp-8], rax
+        | movq xmm(stackPos), qword [rsp-8]
     }
     else {
         | sub rsp, 8
-        | mov r10, qword[ptr]
-        | mov qword[rsp], r10
+        | mov64 rax, imm64
+        | mov qword[rsp], rax
     }
 }
 
