@@ -16,15 +16,23 @@
 !! ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 !! THE SOFTWARE.
 !!
-
+#include "impalajit.f90"
 program example
 	use impalajit
 	use, intrinsic :: iso_c_binding
  	implicit none
+  	abstract interface
+
+ 	function impala_fun_template_2 (a1, a2) bind(c)
+          use, intrinsic :: iso_c_binding
+          real(c_double), intent(in), value         :: a1, a2
+          real(c_double) 										:: impala_fun_template_2
+    end function impala_fun_template_2
+    end interface
 
  	type( c_ptr ) :: handle
  	type( c_funptr ) :: cfp
- 	procedure(impala_fun_template), pointer :: fpp
+ 	procedure(impala_fun_template_2), pointer :: fpp
 
  	handle = impalajit_compiler_create_with_config("example.conf")
  	CALL impalajit_compiler_compile(handle)
