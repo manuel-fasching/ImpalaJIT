@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <cmath>
 #include <cstring>
+#include <inttypes.h>
 
 #define LAST_XMM_REG 15
 
@@ -39,19 +40,19 @@
 #if DASM_VERSION != 10400
 #error "Version mismatch between DynASM and included encoding engine"
 #endif
-#line 31 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 32 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 //|.section code, data
 #define DASM_SECTION_CODE	0
 #define DASM_SECTION_DATA	1
 #define DASM_MAXSECTION		2
-#line 33 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 34 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 //|.globals lbl_
 enum {
   lbl__MAX
 };
-#line 35 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 36 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 //|.actionlist impala_actions
 static const unsigned char impala_actions[706] = {
   85,65,84,72,137,229,255,72,129,252,236,239,255,72,184,237,237,72,137,68,36,
@@ -90,7 +91,7 @@ static const unsigned char impala_actions[706] = {
   240,44,255,252,243,15,126,4,36,255,72,137,252,236,65,92,93,195,255
 };
 
-#line 36 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 37 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 #include <sys/mman.h>
 
@@ -129,7 +130,7 @@ void Assembly__SSE_4_1::prologue(){
     //| push r12
     //| mov rbp, rsp
     dasm_put(Dst, 0);
-#line 73 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 74 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 /**
@@ -144,7 +145,7 @@ void Assembly__SSE_4_1::reserveMemoryForLocalVariables(int variableCount)
 {
     //| sub rsp, variableCount*8
     dasm_put(Dst, 7, variableCount*8);
-#line 86 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 87 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 /**
  * @see assembly.hh
@@ -153,8 +154,9 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
     stackPos++;
 
     // DynASM is only able to accept imm64 values, when the mov64 instruction is used.
-    // So we have to mask the floating point value as a 64 byte int.
-    long long imm64;
+    // So we have to mask the floating point value as a 64 byte int. It's the only way
+    // to load a floating point constant in a register...
+    int64_t imm64;
     memcpy(&imm64, &value, sizeof(value));
 
     if(stackPos <= LAST_XMM_REG) {
@@ -162,14 +164,14 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
         //| mov qword[rsp-8], rax
         //| movq xmm(stackPos), qword [rsp-8]
         dasm_put(Dst, 13, (unsigned int)(imm64), (unsigned int)((imm64)>>32), (stackPos));
-#line 102 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 104 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else {
         //| sub rsp, 8
         //| mov64 rax, imm64
         //| mov qword[rsp], rax
         dasm_put(Dst, 35, (unsigned int)(imm64), (unsigned int)((imm64)>>32));
-#line 107 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 109 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 }
 
@@ -180,14 +182,14 @@ void Assembly__SSE_4_1::storeLocalVariable(int index) {
     if(stackPos <= LAST_XMM_REG) {
         //| movq qword [rbp-8-index*8], xmm(stackPos)
         dasm_put(Dst, 49, (stackPos), -8-index*8);
-#line 116 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 118 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| mov r10, qword [rsp]
         //| mov qword [rbp-8-index*8], r10
         //| add rsp, 8
         dasm_put(Dst, 59, -8-index*8);
-#line 121 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 123 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
     stackPos--;
@@ -204,28 +206,28 @@ void Assembly__SSE_4_1::pushParameterToStack(int index) {
         if(index <= 7){
             //| movq xmm(stackPos), xmm(index)
             dasm_put(Dst, 72, (stackPos), (index));
-#line 136 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 138 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| movq xmm(stackPos), qword [rbp+8+(index-7)*8]
             dasm_put(Dst, 83, (stackPos), 8+(index-7)*8);
-#line 139 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 141 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
     else{
         //| sub rsp, 8
         dasm_put(Dst, 94);
-#line 143 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 145 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         if(index <= 7){
             //| movq qword[rsp], xmm(index)
             dasm_put(Dst, 100, (index));
-#line 145 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 147 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| mov r10, qword [rbp+8+(index-7)*8]
             //| mov qword[rsp], r10
             dasm_put(Dst, 109, 8+(index-7)*8);
-#line 149 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 151 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
 
@@ -240,29 +242,29 @@ void Assembly__SSE_4_1::replaceParameter(int index) {
         if(index <= 7){
             //| movq xmm(index), xmm(stackPos)
             dasm_put(Dst, 72, (index), (stackPos));
-#line 162 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 164 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| movq qword [rbp+8+(index-7)*8], xmm(stackPos)
             dasm_put(Dst, 49, (stackPos), 8+(index-7)*8);
-#line 165 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 167 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
     else{
         if(index <= 7){
             //| movq xmm(index), qword[rsp]
             dasm_put(Dst, 118, (index));
-#line 170 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 172 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| mov r10, qword[rsp]
             //| mov qword [rbp+8+(index-7)*8], r10
             dasm_put(Dst, 128, 8+(index-7)*8);
-#line 174 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 176 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         //| add rsp, 8
         dasm_put(Dst, 67);
-#line 176 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 178 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -275,14 +277,14 @@ void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
     if(stackPos <= LAST_XMM_REG) {
         //| movq xmm(stackPos), qword [rbp-8-index*8]
         dasm_put(Dst, 83, (stackPos), -8-index*8);
-#line 187 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 189 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| sub rsp, 8
         //| mov r10, qword [rbp-8-index*8]
         //| mov qword[rsp], r10
         dasm_put(Dst, 137, -8-index*8);
-#line 192 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 194 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
 }
@@ -293,7 +295,7 @@ void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
 void Assembly__SSE_4_1::addDynamicLabel(unsigned labelNumber) {
     //| =>labelNumber:
     dasm_put(Dst, 151, labelNumber);
-#line 201 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 203 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 /**
@@ -302,7 +304,7 @@ void Assembly__SSE_4_1::addDynamicLabel(unsigned labelNumber) {
 void Assembly__SSE_4_1::jumpForwardToDynamicLabel(unsigned labelNumber) {
     //| jmp =>labelNumber
     dasm_put(Dst, 153, labelNumber);
-#line 208 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 210 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 /**
@@ -313,72 +315,72 @@ void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumbe
         //| cmpsd xmm(stackPos), xmm(stackPos-1), operator_
         //| ptest xmm(stackPos), xmm(stackPos)
         dasm_put(Dst, 157, (stackPos), (stackPos-1), operator_, (stackPos), (stackPos));
-#line 217 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 219 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else if (stackPos == LAST_XMM_REG+1){
         //Backup one xmm register
         //| movq qword[rsp-8], xmm(0)
         dasm_put(Dst, 179, (0));
-#line 221 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 223 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         // Load value in registers for comparison
         //| movq xmm(0), qword[rsp]
         dasm_put(Dst, 118, (0));
-#line 224 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 226 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         //Conditions are not needed anymore, but only one was stored in memory
         // rsp has to be adapted before ptest, since the instruction modifies flags
         //| add rsp, 8
         dasm_put(Dst, 67);
-#line 228 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 230 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         //| cmpsd xmm(0), xmm(LAST_XMM_REG), operator_
         //| ptest xmm(0), xmm(0)
         dasm_put(Dst, 157, (0), (LAST_XMM_REG), operator_, (0), (0));
-#line 231 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 233 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         // Restore register
         //| movq xmm(0), qword[rsp-16]
         dasm_put(Dst, 190, (0));
-#line 234 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 236 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         // Backup one registers
         //| movq qword[rsp-8], xmm(0)
         dasm_put(Dst, 179, (0));
-#line 238 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 240 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         // Load values in registers for comparison
         //| movq xmm(0), qword[rsp]
         dasm_put(Dst, 118, (0));
-#line 241 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 243 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         //Conditions are not needed anymore
         // rsp has to be adapted before ptest, since the instruction modifies flags
         //| add rsp, 16
         dasm_put(Dst, 202);
-#line 245 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 247 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         //| cmpsd xmm(0), qword[rsp-8], operator_
         //| ptest xmm(0), xmm(0)
         dasm_put(Dst, 207, (0), operator_, (0), (0));
-#line 248 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 250 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
         //Restore register
         //| movq xmm(0), qword[rsp-24]
         dasm_put(Dst, 230, (0));
-#line 251 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 253 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     }
     if(condition){
         //| jnz => labelNumber
         dasm_put(Dst, 241,  labelNumber);
-#line 255 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 257 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| jz => labelNumber
         dasm_put(Dst, 245,  labelNumber);
-#line 258 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 260 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     //Conditions are not needed anymore
     stackPos=stackPos-2;
@@ -391,13 +393,13 @@ void Assembly__SSE_4_1::calculateAddition(){
     if(stackPos <= LAST_XMM_REG) {
         //| addsd xmm(stackPos-1), xmm(stackPos)
         dasm_put(Dst, 249, (stackPos-1), (stackPos));
-#line 269 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 271 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else if(stackPos == LAST_XMM_REG+1){
         //| addsd xmm(LAST_XMM_REG), qword[rsp]
         //| add rsp, 8
         dasm_put(Dst, 260, (LAST_XMM_REG));
-#line 273 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 275 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| movq qword[rsp-8], xmm(0)
@@ -407,7 +409,7 @@ void Assembly__SSE_4_1::calculateAddition(){
         //| movq xmm(0), qword[rsp-8]
         //| add rsp, 8
         dasm_put(Dst, 274, (0), (0), (0), (0), (0));
-#line 281 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 283 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -419,13 +421,13 @@ void Assembly__SSE_4_1::calculateSubtraction(){
     if(stackPos <= LAST_XMM_REG) {
         //| subsd xmm(stackPos-1), xmm(stackPos)
         dasm_put(Dst, 328, (stackPos-1), (stackPos));
-#line 291 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 293 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else if(stackPos == LAST_XMM_REG+1){
         //| subsd xmm(LAST_XMM_REG), qword[rsp]
         //| add rsp, 8
         dasm_put(Dst, 339, (LAST_XMM_REG));
-#line 295 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 297 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| movq qword[rsp-8], xmm(0)
@@ -435,7 +437,7 @@ void Assembly__SSE_4_1::calculateSubtraction(){
         //| movq xmm(0), qword[rsp-8]
         //| add rsp, 8
         dasm_put(Dst, 353, (0), (0), (0), (0), (0));
-#line 303 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 305 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -447,13 +449,13 @@ void Assembly__SSE_4_1::calculateMultiplication(){
     if(stackPos <= LAST_XMM_REG) {
         //| mulsd xmm(stackPos-1), xmm(stackPos)
         dasm_put(Dst, 407, (stackPos-1), (stackPos));
-#line 313 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 315 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else if(stackPos == LAST_XMM_REG+1){
         //| mulsd xmm(LAST_XMM_REG), qword[rsp]
         //| add rsp, 8
         dasm_put(Dst, 418, (LAST_XMM_REG));
-#line 317 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 319 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| movq qword[rsp-8], xmm(0)
@@ -463,7 +465,7 @@ void Assembly__SSE_4_1::calculateMultiplication(){
         //| movq xmm(0), qword[rsp-8]
         //| add rsp, 8
         dasm_put(Dst, 432, (0), (0), (0), (0), (0));
-#line 325 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 327 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -475,13 +477,13 @@ void Assembly__SSE_4_1::calculateDivision(){
     if(stackPos <= LAST_XMM_REG) {
     //| divsd xmm(stackPos-1), xmm(stackPos)
     dasm_put(Dst, 486, (stackPos-1), (stackPos));
-#line 335 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 337 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else if(stackPos == LAST_XMM_REG+1){
         //| divsd xmm(LAST_XMM_REG), qword[rsp]
         //| add rsp, 8
         dasm_put(Dst, 497, (LAST_XMM_REG));
-#line 339 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 341 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else{
         //| movq qword[rsp-8], xmm(0)
@@ -491,7 +493,7 @@ void Assembly__SSE_4_1::calculateDivision(){
         //| movq xmm(0), qword[rsp-8]
         //| add rsp, 8
         dasm_put(Dst, 511, (0), (0), (0), (0), (0));
-#line 347 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 349 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     stackPos--;
 }
@@ -508,13 +510,13 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
         if(i<=LAST_XMM_REG){
             //| movq qword [rsp-(i+1)*8], xmm(i)
             dasm_put(Dst, 565, (i), -(i+1)*8);
-#line 362 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 364 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| mov r10, qword [rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8]
             //| mov qword [rsp-(i+1)*8], r10
             dasm_put(Dst, 576, (stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8, -(i+1)*8);
-#line 366 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 368 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
 
@@ -524,12 +526,12 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
         if(i<=LAST_XMM_REG){
             //| movq xmm(i-(stackPos-numberOfArguments+1)), xmm(i)
             dasm_put(Dst, 72, (i-(stackPos-numberOfArguments+1)), (i));
-#line 374 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 376 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| movq xmm(i-(stackPos-numberOfArguments+1)), qword[rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8 ]
             dasm_put(Dst, 589, (i-(stackPos-numberOfArguments+1)), (stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8);
-#line 377 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 379 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
 
@@ -537,55 +539,55 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     // Save frame pointer in non-volatile register
     //| mov r12, rsp
     dasm_put(Dst, 601);
-#line 383 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 385 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Subtract amount of register backup
     //| sub rsp, (stackPos-numberOfArguments)*8
     dasm_put(Dst, 7, (stackPos-numberOfArguments)*8);
-#line 386 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 388 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Align frame pointer on 16 bit
     //| and rsp, -16
     dasm_put(Dst, 605);
-#line 389 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 391 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Add Shadow space (32bit)
     // Not sure, if this is still needed.
     //| sub rsp, 32
     dasm_put(Dst, 611);
-#line 393 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 395 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Move address of function to register
     //| mov64 rax, (uintptr_t) functionPtr
     dasm_put(Dst, 617, (unsigned int)((uintptr_t) functionPtr), (unsigned int)(((uintptr_t) functionPtr)>>32));
-#line 396 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 398 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Call function
     //| call rax
     dasm_put(Dst, 622);
-#line 399 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 401 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
     // Restore rsp
     //| mov rsp, r12
     dasm_put(Dst, 626);
-#line 402 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 404 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 
 
     //Function parameters are not needed anymore
     //Set the stackPos accordingly
     //| mov r10, rsp
     dasm_put(Dst, 630);
-#line 407 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 409 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     if(stackPos > LAST_XMM_REG){
         if(stackPos-LAST_XMM_REG<=(numberOfArguments)){
             //| add rsp, (stackPos-LAST_XMM_REG)*8
             dasm_put(Dst, 634, (stackPos-LAST_XMM_REG)*8);
-#line 410 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 412 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else{
             //| add rsp, numberOfArguments*8
             dasm_put(Dst, 634, numberOfArguments*8);
-#line 413 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 415 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
     stackPos = stackPos-numberOfArguments;
@@ -597,13 +599,13 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     if(stackPos <= LAST_XMM_REG){
         //| movq xmm(stackPos), xmm0
         dasm_put(Dst, 639, (stackPos));
-#line 423 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 425 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
     else {
         //| sub rsp, 8
         //| movq qword[rsp], xmm0
         dasm_put(Dst, 648);
-#line 427 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 429 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
     }
 
 
@@ -612,13 +614,13 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
         if(i<=LAST_XMM_REG){
             //| movq xmm(i), qword [r10-(i+1)*8]
             dasm_put(Dst, 659, (i), -(i+1)*8);
-#line 434 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 436 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
         else {
             //| mov r11, qword [r10-(i+1)*8]
             //| mov qword[rsp+(stackPos-i)*8], r11
             dasm_put(Dst, 670, -(i+1)*8, (stackPos-i)*8);
-#line 438 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 440 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
         }
     }
 }
@@ -630,12 +632,12 @@ void Assembly__SSE_4_1::extractResult(){
      if(stackPos <= LAST_XMM_REG){
         //| movq xmm0, xmm(stackPos)
         dasm_put(Dst, 681, (stackPos));
-#line 448 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 450 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
      else {
         //| movq xmm0, qword[rsp]
         dasm_put(Dst, 690);
-#line 451 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 453 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
      }
 }
 
@@ -648,7 +650,7 @@ void Assembly__SSE_4_1::epilogue(){
     //| pop rbp
     //| ret
     dasm_put(Dst, 697);
-#line 462 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
+#line 464 "compiler/code-gen/assembly/assembly__sse_4_1.dasc"
 }
 
 /**

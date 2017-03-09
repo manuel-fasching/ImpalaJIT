@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <cmath>
 #include <cstring>
+#include <inttypes.h>
 
 #define LAST_XMM_REG 15
 
@@ -93,7 +94,7 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
     // DynASM is only able to accept imm64 values, when the mov64 instruction is used.
     // So we have to mask the floating point value as a 64 byte int. It's the only way
     // to load a floating point constant in a register...
-    long long imm64;
+    int64_t imm64;
     memcpy(&imm64, &value, sizeof(value));
 
     if(stackPos <= LAST_XMM_REG) {
