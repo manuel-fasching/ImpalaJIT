@@ -512,8 +512,8 @@ static yyconst flex_int16_t yy_chk[86] =
 
 static yyconst flex_int16_t yy_rule_linenum[19] =
     {   0,
-       80,   88,   92,   96,  100,  104,  108,  116,  120,  126,
-      130,  137,  144,  148,  154,  161,  166,  172
+       80,   87,   91,   95,   99,  103,  107,  115,  119,  125,
+      129,  136,  143,  147,  153,  160,  165,  171
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -862,14 +862,13 @@ YY_RULE_SETUP
 #line 80 "scanner.ll"
 {
     yylval->doubleVal = atof(yytext);
-    std::cout << "Double val: " << yylval->doubleVal << std::endl;
     return token::DOUBLE;
 }
 	YY_BREAK
 /*** COMPARE OPERATORS ***/
 case 2:
 YY_RULE_SETUP
-#line 88 "scanner.ll"
+#line 87 "scanner.ll"
 {
     yylval->integerVal = LTE;
     return token::CMPOP;
@@ -877,7 +876,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 92 "scanner.ll"
+#line 91 "scanner.ll"
 {
     yylval->integerVal = GTE;
     return token::CMPOP;
@@ -885,7 +884,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 96 "scanner.ll"
+#line 95 "scanner.ll"
 {
     yylval->integerVal = EQ;
     return token::CMPOP;
@@ -893,7 +892,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 100 "scanner.ll"
+#line 99 "scanner.ll"
 {
     yylval->integerVal = NE;
     return token::CMPOP;
@@ -901,7 +900,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 104 "scanner.ll"
+#line 103 "scanner.ll"
 {
     yylval->integerVal = LT;
     return token::CMPOP;
@@ -909,7 +908,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 108 "scanner.ll"
+#line 107 "scanner.ll"
 {
     yylval->integerVal = GT;
     return token::CMPOP;
@@ -918,7 +917,7 @@ YY_RULE_SETUP
 /*** BOOL OPERATORS ***/
 case 8:
 YY_RULE_SETUP
-#line 116 "scanner.ll"
+#line 115 "scanner.ll"
 {
     yylval->integerVal = AND;
     return token::AND;
@@ -926,7 +925,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 120 "scanner.ll"
+#line 119 "scanner.ll"
 {
     yylval->integerVal = OR;
     return token::OR;
@@ -935,7 +934,7 @@ YY_RULE_SETUP
 /*** Conditionals ***/
 case 10:
 YY_RULE_SETUP
-#line 126 "scanner.ll"
+#line 125 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::IF;
@@ -943,7 +942,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 130 "scanner.ll"
+#line 129 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::ELSE;
@@ -952,7 +951,7 @@ YY_RULE_SETUP
 /*** return ***/
 case 12:
 YY_RULE_SETUP
-#line 137 "scanner.ll"
+#line 136 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::RETURN;
@@ -961,7 +960,7 @@ YY_RULE_SETUP
 /*** Special strings ***/
 case 13:
 YY_RULE_SETUP
-#line 144 "scanner.ll"
+#line 143 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::COMMA;
@@ -969,7 +968,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 148 "scanner.ll"
+#line 147 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::SEMICOLON;
@@ -977,7 +976,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 154 "scanner.ll"
+#line 153 "scanner.ll"
 {
     yylval->stringVal = new std::string(yytext, yyleng);
     return token::STRING;
@@ -986,7 +985,7 @@ YY_RULE_SETUP
 /* gobble up white-spaces */
 case 16:
 YY_RULE_SETUP
-#line 161 "scanner.ll"
+#line 160 "scanner.ll"
 {
     yylloc->step();
 }
@@ -995,7 +994,7 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 166 "scanner.ll"
+#line 165 "scanner.ll"
 {
     yylloc->lines(yyleng); yylloc->step();
    // return token::EOL;
@@ -1004,7 +1003,7 @@ YY_RULE_SETUP
 /* pass all other characters up to bison */
 case 18:
 YY_RULE_SETUP
-#line 172 "scanner.ll"
+#line 171 "scanner.ll"
 {
     return static_cast<token_type>(*yytext);
 }
@@ -1012,10 +1011,10 @@ YY_RULE_SETUP
 /*** END EXAMPLE - Change the impalajit lexer rules above ***/
 case 19:
 YY_RULE_SETUP
-#line 178 "scanner.ll"
+#line 177 "scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1019 "scanner.cc"
+#line 1018 "scanner.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2128,7 +2127,7 @@ void ImpalaJITfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 178 "scanner.ll"
+#line 177 "scanner.ll"
 
 
 
