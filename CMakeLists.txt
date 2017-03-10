@@ -30,7 +30,7 @@ endif()
 
 # DO NOT REMOVE -mno-red-zone.
 # This flag enables function calls in imapala files.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -maxv -O3 -mno-red-zone")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -mavx -O3 -mno-red-zone")
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 project(ImpalaJIT)

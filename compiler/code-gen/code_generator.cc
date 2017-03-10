@@ -98,9 +98,17 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
 
         case NEGATION:
         {
-            dsfUtil(functionContext, node);
-            assembly.callExternalFunction(reinterpret_cast<externalFunction>(CalculationHelper::changeSign), 1);
+            // Check if this is just a negative number.
+            if(node->nodes.size()==1 && node->nodes.at(0)->nodeType==CONSTANT){
+                reinterpret_cast<ConstantNode*>(node->nodes.at(0))->value=-(reinterpret_cast<ConstantNode*>(node->nodes.at(0))->value);
+                dsfUtil(functionContext, node);
+            }
+            else {
+                dsfUtil(functionContext, node);
+                assembly.callExternalFunction(reinterpret_cast<externalFunction>(CalculationHelper::changeSign), 1);
+            }
             break;
+
         }
 
         case ADDITION:
