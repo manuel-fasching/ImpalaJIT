@@ -77,8 +77,9 @@ typedef impalajit::Parser::token_type token_type;
 %}
 
  /*** Numbers ***/
-[0-9]+["."[0-9]*]? {
+[-]?[0-9]+["."[0-9]*]? {
     yylval->doubleVal = atof(yytext);
+    std::cout << "Double val: " << yylval->doubleVal << std::endl;
     return token::DOUBLE;
 }
 
