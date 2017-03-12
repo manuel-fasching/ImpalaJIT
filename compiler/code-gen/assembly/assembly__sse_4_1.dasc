@@ -41,6 +41,7 @@
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
+
 Assembly__SSE_4_1::~Assembly__SSE_4_1()
 {
     dasm_free(&d);
@@ -90,20 +91,23 @@ void Assembly__SSE_4_1::reserveMemoryForLocalVariables(int variableCount)
  */
 void Assembly__SSE_4_1::pushConstantToStack(double value){
     stackPos++;
+    union {
+        double floatingPointValue;
+        int64_t integerValue;
+    };
 
     // DynASM is only able to accept imm64 values, when the mov64 instruction is used.
     // So we have to mask the floating point value as a 64 byte int. It's the only way
     // to load a floating point constant in a register...
-    int64_t imm64;
-    memcpy(&imm64, &value, sizeof(value));
+    floatingPointValue = value;
 
     if(stackPos <= LAST_XMM_REG) {
-        | mov64 rax, imm64
+        | mov64 rax, integerValue
         | mov qword[rsp-rspOffset()-8], rax
         | movq xmm(stackPos), qword [rsp-rspOffset()-8]
     }
     else {
-        | mov64 rax, imm64
+        | mov64 rax, integerValue
         | mov qword[rsp-rspOffset()], rax
     }
 }
@@ -402,8 +406,6 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
 
     //Restore old stack
     for(int i=stackPos-numberOfArguments; i>=0; i--){
-                std::cout << "3: " << i << std::endl;
-
         if(i<=LAST_XMM_REG){
             | movq xmm(i), qword [rsp-rspOffset()-(i+1)*8]
         }
