@@ -99,13 +99,12 @@ void Assembly__SSE_4_1::pushConstantToStack(double value){
 
     if(stackPos <= LAST_XMM_REG) {
         | mov64 rax, imm64
-        | mov qword[rsp-8], rax
-        | movq xmm(stackPos), qword [rsp-8]
+        | mov qword[rsp-rspOffset()-8], rax
+        | movq xmm(stackPos), qword [rsp-rspOffset()-8]
     }
     else {
-        | sub rsp, 8
         | mov64 rax, imm64
-        | mov qword[rsp], rax
+        | mov qword[rsp-rspOffset()], rax
     }
 }
 
@@ -117,9 +116,8 @@ void Assembly__SSE_4_1::storeLocalVariable(int index) {
         | movq qword [rbp-8-index*8], xmm(stackPos)
     }
     else{
-        | mov r10, qword [rsp]
+        | mov r10, qword [rsp-rspOffset()]
         | mov qword [rbp-8-index*8], r10
-        | add rsp, 8
     }
 
     stackPos--;
@@ -141,13 +139,12 @@ void Assembly__SSE_4_1::pushParameterToStack(int index) {
         }
     }
     else{
-        | sub rsp, 8
         if(index <= 7){
-            | movq qword[rsp], xmm(index)
+            | movq qword[rsp-rspOffset()], xmm(index)
         }
         else {
             | mov r10, qword [rbp+8+(index-7)*8]
-            | mov qword[rsp], r10
+            | mov qword[rsp-rspOffset()], r10
         }
     }
 
@@ -168,13 +165,12 @@ void Assembly__SSE_4_1::replaceParameter(int index) {
     }
     else{
         if(index <= 7){
-            | movq xmm(index), qword[rsp]
+            | movq xmm(index), qword[rsp-rspOffset()]
         }
         else {
-            | mov r10, qword[rsp]
+            | mov r10, qword[rsp-rspOffset()]
             | mov qword [rbp+8+(index-7)*8], r10
         }
-        | add rsp, 8
     }
     stackPos--;
 }
@@ -188,9 +184,8 @@ void Assembly__SSE_4_1::pushLocalVariableToStack(int index) {
         | movq xmm(stackPos), qword [rbp-8-index*8]
     }
     else{
-        | sub rsp, 8
         | mov r10, qword [rbp-8-index*8]
-        | mov qword[rsp], r10
+        | mov qword[rsp-rspOffset()], r10
     }
 
 }
@@ -219,37 +214,29 @@ void Assembly__SSE_4_1::conditionalJumpForwardToDynamicLabel(unsigned labelNumbe
     }
     else if (stackPos == LAST_XMM_REG+1){
         //Backup one xmm register
-        | movq qword[rsp-8], xmm(0)
+        | movq qword[rsp-rspOffset()-8], xmm(0)
 
         // Load value in registers for comparison
-        | movq xmm(0), qword[rsp]
-
-        //Conditions are not needed anymore, but only one was stored in memory
-        // rsp has to be adapted before ptest, since the instruction modifies flags
-        | add rsp, 8
+        | movq xmm(0), qword[rsp-rspOffset()]
 
         | cmpsd xmm(0), xmm(LAST_XMM_REG), operator_
         | ptest xmm(0), xmm(0)
 
         // Restore register
-        | movq xmm(0), qword[rsp-16]
+        | movq xmm(0), qword[rsp-rspOffset()-8]
     }
     else{
         // Backup one registers
-        | movq qword[rsp-8], xmm(0)
+        | movq qword[rsp-rspOffset()-8], xmm(0)
 
         // Load values in registers for comparison
-        | movq xmm(0), qword[rsp]
+        | movq xmm(0), qword[rsp-rspOffset()]
 
-        //Conditions are not needed anymore
-        // rsp has to be adapted before ptest, since the instruction modifies flags
-        | add rsp, 16
-
-        | cmpsd xmm(0), qword[rsp-8], operator_
+        | cmpsd xmm(0), qword[rsp-rspOffset()+8], operator_
         | ptest xmm(0), xmm(0)
 
         //Restore register
-        | movq xmm(0), qword[rsp-24]
+        | movq xmm(0), qword[rsp-rspOffset()-8]
 
     }
     if(condition){
@@ -270,16 +257,14 @@ void Assembly__SSE_4_1::calculateAddition(){
         | addsd xmm(stackPos-1), xmm(stackPos)
     }
     else if(stackPos == LAST_XMM_REG+1){
-        | addsd xmm(LAST_XMM_REG), qword[rsp]
-        | add rsp, 8
+        | addsd xmm(LAST_XMM_REG), qword[rsp-rspOffset()]
     }
     else{
-        | movq qword[rsp-8], xmm(0)
-        | movq xmm(0), qword[rsp+8]
-        | addsd xmm(0), qword[rsp]
-        | movq qword[rsp+8], xmm(0)
-        | movq xmm(0), qword[rsp-8]
-        | add rsp, 8
+        | movq qword[rsp-rspOffset()-8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()+8]
+        | addsd xmm(0), qword[rsp-rspOffset()]
+        | movq qword[rsp-rspOffset()+8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()-8]
     }
     stackPos--;
 }
@@ -292,16 +277,14 @@ void Assembly__SSE_4_1::calculateSubtraction(){
         | subsd xmm(stackPos-1), xmm(stackPos)
     }
     else if(stackPos == LAST_XMM_REG+1){
-        | subsd xmm(LAST_XMM_REG), qword[rsp]
-        | add rsp, 8
+        | subsd xmm(LAST_XMM_REG), qword[rsp-rspOffset()]
     }
     else{
-        | movq qword[rsp-8], xmm(0)
-        | movq xmm(0), qword[rsp+8]
-        | subsd xmm(0), qword[rsp]
-        | movq qword[rsp+8], xmm(0)
-        | movq xmm(0), qword[rsp-8]
-        | add rsp, 8
+        | movq qword[rsp-rspOffset()-8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()+8]
+        | subsd xmm(0), qword[rsp-rspOffset()]
+        | movq qword[rsp-rspOffset()+8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()-8]
     }
     stackPos--;
 }
@@ -314,16 +297,14 @@ void Assembly__SSE_4_1::calculateMultiplication(){
         | mulsd xmm(stackPos-1), xmm(stackPos)
     }
     else if(stackPos == LAST_XMM_REG+1){
-        | mulsd xmm(LAST_XMM_REG), qword[rsp]
-        | add rsp, 8
+        | mulsd xmm(LAST_XMM_REG), qword[rsp-rspOffset()]
     }
     else{
-        | movq qword[rsp-8], xmm(0)
-        | movq xmm(0), qword[rsp+8]
-        | mulsd xmm(0), qword[rsp]
-        | movq qword[rsp+8], xmm(0)
-        | movq xmm(0), qword[rsp-8]
-        | add rsp, 8
+        | movq qword[rsp-rspOffset()-8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()+8]
+        | mulsd xmm(0), qword[rsp-rspOffset()]
+        | movq qword[rsp-rspOffset()+8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()-8]
     }
     stackPos--;
 }
@@ -336,16 +317,14 @@ void Assembly__SSE_4_1::calculateDivision(){
     | divsd xmm(stackPos-1), xmm(stackPos)
     }
     else if(stackPos == LAST_XMM_REG+1){
-        | divsd xmm(LAST_XMM_REG), qword[rsp]
-        | add rsp, 8
+        | divsd xmm(LAST_XMM_REG), qword[rsp-rspOffset()]
     }
     else{
-        | movq qword[rsp-8], xmm(0)
-        | movq xmm(0), qword[rsp+8]
-        | divsd xmm(0), qword[rsp]
-        | movq qword[rsp+8], xmm(0)
-        | movq xmm(0), qword[rsp-8]
-        | add rsp, 8
+        | movq qword[rsp-rspOffset()-8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()+8]
+        | divsd xmm(0), qword[rsp-rspOffset()]
+        | movq qword[rsp-rspOffset()+8], xmm(0)
+        | movq xmm(0), qword[rsp-rspOffset()-8]
     }
     stackPos--;
 }
@@ -357,25 +336,29 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
 
     //Backup the stack. Function arguments will be replaced by a result
     //and therefor excluded from the backup.
-    //I assume, that there is no external function, which has more than 16 arguments...
-    for(int i=0; i<=stackPos-numberOfArguments; i++){
+    //I assume, that there is no external function, which has more than 8 arguments...
+    for(int i=0; i<=stackPos-numberOfArguments+1; i++){
+        int backupOffset = rspOffset() + (i+1)*8;
         if(i<=LAST_XMM_REG){
-            | movq qword [rsp-(i+1)*8], xmm(i)
+            | movq qword [rsp-backupOffset], xmm(i)
         }
         else {
-            | mov r10, qword [rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8]
-            | mov qword [rsp-(i+1)*8], r10
+            int localRspOffset = (i-LAST_XMM_REG)*8;
+            | mov r10, qword [rsp-localRspOffset]
+            | mov qword [rsp-backupOffset], r10
         }
     }
 
 
     //Load parameters to register
-    for(int i=stackPos-numberOfArguments; i<=stackPos; i++){
+    for(int i=stackPos-numberOfArguments+1; i<=stackPos; i++){
+        int argumentRegisterNumber = i-(stackPos-numberOfArguments+1);
         if(i<=LAST_XMM_REG){
-            | movq xmm(i-(stackPos-numberOfArguments+1)), xmm(i)
+            | movq xmm(argumentRegisterNumber), xmm(i)
         }
         else {
-            | movq xmm(i-(stackPos-numberOfArguments+1)), qword[rsp+(stackPos-LAST_XMM_REG)*8-(i-LAST_XMM_REG)*8 ]
+            int localRspOffset = (i-LAST_XMM_REG)*8;
+            | movq xmm(argumentRegisterNumber), qword[rsp-localRspOffset]
         }
     }
 
@@ -383,8 +366,12 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     // Save frame pointer in non-volatile register
     | mov r12, rsp
 
+    // Subtract rpn stack
+    if(stackPos > LAST_XMM_REG){
+        | sub rsp, rspOffset()
+    }
     // Subtract amount of register backup
-    | sub rsp, (stackPos-numberOfArguments)*8
+    | sub rsp, (stackPos-numberOfArguments+1)*8
 
     // Align frame pointer on 16 bit
     | and rsp, -16
@@ -403,42 +390,32 @@ void Assembly__SSE_4_1::callExternalFunction(externalFunction functionPtr, unsig
     | mov rsp, r12
 
 
-    //Function parameters are not needed anymore
-    //Set the stackPos accordingly
-    | mov r10, rsp
-    if(stackPos > LAST_XMM_REG){
-        if(stackPos-LAST_XMM_REG<=(numberOfArguments)){
-            | add rsp, (stackPos-LAST_XMM_REG)*8
-        }
-        else{
-            | add rsp, numberOfArguments*8
-        }
-    }
-    stackPos = stackPos-numberOfArguments;
-
-
-
-    stackPos++;
     //Put function result on top of stack
-    if(stackPos <= LAST_XMM_REG){
-        | movq xmm(stackPos), xmm0
+    if((stackPos-numberOfArguments+1) <= LAST_XMM_REG){
+        | movq xmm(stackPos-numberOfArguments+1), xmm0
     }
     else {
-        | sub rsp, 8
-        | movq qword[rsp], xmm0
+        int localRspOffset = ((stackPos-numberOfArguments+1)-LAST_XMM_REG)*8;
+        | movq qword[rsp-localRspOffset], xmm0
     }
 
 
     //Restore old stack
-    for(int i=stackPos-1; i>=0; i--){
+    for(int i=stackPos-numberOfArguments; i>=0; i--){
+                std::cout << "3: " << i << std::endl;
+
         if(i<=LAST_XMM_REG){
-            | movq xmm(i), qword [r10-(i+1)*8]
+            | movq xmm(i), qword [rsp-rspOffset()-(i+1)*8]
         }
         else {
-            | mov r11, qword [r10-(i+1)*8]
-            | mov qword[rsp+(stackPos-i)*8], r11
+            int localRspOffset = ((stackPos-numberOfArguments+1)-LAST_XMM_REG)*8;
+            | mov r11, qword [rsp-rspOffset()-(i+1)*8]
+            | mov qword[rsp-localRspOffset+(stackPos-i)*8], r11
         }
     }
+    //Function parameters are not needed anymore
+    //Set the stackPos accordingly
+    stackPos = stackPos-numberOfArguments+1;
 }
 
 /**
@@ -449,7 +426,7 @@ void Assembly__SSE_4_1::extractResult(){
         | movq xmm0, xmm(stackPos)
      }
      else {
-        | movq xmm0, qword[rsp]
+        | movq xmm0, qword[rsp-rspOffset()]
      }
 }
 
@@ -476,3 +453,18 @@ dasm_gen_func Assembly__SSE_4_1::linkAndEncode(){
   return (dasm_gen_func) buf;
 }
 
+int Assembly__SSE_4_1::rspOffset(){
+    if((stackPos-LAST_XMM_REG) <= 0){
+        return 0;
+    }
+    return (stackPos-LAST_XMM_REG)*8;
+}
+
+void Assembly__SSE_4_1::pushStackPos(){
+    stackPosStack.push(stackPos);
+}
+
+void Assembly__SSE_4_1::popStackPos(){
+    stackPos = stackPosStack.top();
+    stackPosStack.pop();
+}

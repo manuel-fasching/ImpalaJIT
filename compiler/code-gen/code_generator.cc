@@ -98,17 +98,9 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
 
         case NEGATION:
         {
-            // Check if this is just a negative number.
-            if(node->nodes.size()==1 && node->nodes.at(0)->nodeType==CONSTANT){
-                reinterpret_cast<ConstantNode*>(node->nodes.at(0))->value=-(reinterpret_cast<ConstantNode*>(node->nodes.at(0))->value);
-                dsfUtil(functionContext, node);
-            }
-            else {
-                dsfUtil(functionContext, node);
-                assembly.callExternalFunction(reinterpret_cast<externalFunction>(CalculationHelper::changeSign), 1);
-            }
+            dsfUtil(functionContext, node);
+            assembly.callExternalFunction(reinterpret_cast<externalFunction>(CalculationHelper::changeSign), 1);
             break;
-
         }
 
         case ADDITION:
@@ -174,7 +166,9 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
 
             conditionEvaluationHelper(functionContext, node->nodes.at(0), label1, label2); // Evaluate the condition
             assembly.addDynamicLabel(label1); // Place the good label
+            assembly.pushStackPos(); // Create a new branch
             dsfUtil(functionContext, node->nodes.at(1)); // Place the if body
+            assembly.popStackPos(); // Restore the original stack position
             assembly.addDynamicLabel(label2); // Place the bad label
             break;
         }
@@ -190,10 +184,14 @@ void CodeGenerator::evaluateAst(FunctionContext* &functionContext, Node* &node){
             conditionEvaluationHelper(functionContext, node->nodes.at(0), label1, label2); // Evaluate the condition
 
             assembly.addDynamicLabel(label1); // Place the good label
+            assembly.pushStackPos();
             dsfUtil(functionContext, node->nodes.at(1)); // Place the if body
+            assembly.popStackPos();
             assembly.jumpForwardToDynamicLabel(label3); // Jump forward to the exit label, if "if" was executed
             assembly.addDynamicLabel(label2); // Place the bad label
-            dsfUtil(functionContext, node->nodes.at(2)); // Place the if body
+           // assembly.pushStackPos();
+            dsfUtil(functionContext, node->nodes.at(2)); // Place the else body
+           // assembly.popStackPos();
             assembly.addDynamicLabel(label3); // Add the exit label
             break;
         }

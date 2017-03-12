@@ -28,6 +28,7 @@
 
 namespace impalajit {
 Driver::~Driver(){
+    free(functionContext);
 }
 
 std::map<std::string,dasm_gen_func> Driver::parse_stream(std::istream& in)

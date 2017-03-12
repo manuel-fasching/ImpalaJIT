@@ -61,5 +61,6 @@ int main(int argc, char** argv) {
     assert(compiler.getFunction("neq")(2.0, 1.0) == 1.0);
     assert(compiler.getFunction("neq")(1.0, 1.0) == 0.0);
     assert(compiler.getFunction("neq")(0.0, 1.0) == 1.0);
+    compiler.close();
     return 0;
 }

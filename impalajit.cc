@@ -88,6 +88,10 @@ dasm_gen_func impalajit::Compiler::getFunction(std::string functionName) {
     return functionMap.at(functionName);
 }
 
+void impalajit::Compiler::close(){
+    driver.~Driver();
+}
+
 //C Interface
 
 impalajit_compiler *impalajit_compiler_create() {
@@ -112,5 +116,9 @@ void impalajit_compiler_compile(impalajit_compiler *handle) {
 
 dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, const char* function_name){
     return handle->getFunction(std::string(function_name));
+}
+
+void impalajit_compiler_close(impalajit_compiler *handle){
+    handle->close();
 }
 

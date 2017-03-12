@@ -26,33 +26,70 @@
 using namespace std;
 
 
-double reference_function(double y, double i){
-    if(i == 1.0){
-        return 2670.0;
-    }
-    if(y < -800.0){
+double reference_function(double z, double i){
+    if(z < 10000.0 && z >= 500.0) {
+        if(i==1.0){
+            return 2100.0;
+        }
         if(i==2.0){
-            return 2.8167175680;
+            return 2100000000.0;
         }
         if(i==3.0){
-            return 28176157560.0;
+            return 3381000000.0;
         }
     }
-    if(y >= -800.0 && y <= 800.0){
+    if(z < -500.0 && z >= -1500.0) {
+        if(i==1.0){
+            return 2400.0;
+        }
         if(i==2.0){
-            return 12514890750.0;
+            return 9600000000.0;
         }
         if(i==3.0){
-            return 12517093500.0;
+            return 19200000000.0;
         }
     }
-    if(y > 800.0){
+    if(z < -1500.0  && z >= -4000.0) {
+        if(i==1.0){
+            return 2700.0;
+        }
         if(i==2.0){
-            return 32038120320.0;
+            return 27648000000.0;
         }
         if(i==3.0){
-            return 32043759360.0;
+            return 26379000000.0;
         }
+    }
+    if(z < -4000.0 && z >= -270000.0) {
+        if(i==1.0){
+            return 2800.0;
+        }
+        if(i==2.0){
+            return 36288000000.0;
+        }
+        if(i==3.0){
+            return 38556000000.0;
+        }
+    }
+    if(z < -270000.0 && z >= -400000.0) {
+        if(i==1.0){
+            return 2900.0;
+        }
+        if(i==2.0){
+            return 44109000000.0;
+        }
+        if(i==3.0){
+            return 45878000000.0;
+        }
+    }
+    if(i==1.0){
+        return 3300.0;
+    }
+    if(i==2.0){
+        return 66825000000.0;
+    }
+    if(i==3.0){
+        return 67122000000.0;
     }
 }
 
@@ -66,7 +103,8 @@ int main(int argc, char** argv) {
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func function = compiler.getFunction("many_if");
-    for(int i=-801; i<=801; i++){
+    compiler.close();
+    for(int i=-500000; i< 500000; i++) {
         assert(double_equals(function(static_cast<double>(i), 1.0), reference_function(static_cast<double>(i), 1.0)));
         assert(double_equals(function(static_cast<double>(i), 2.0), reference_function(static_cast<double>(i), 2.0)));
         assert(double_equals(function(static_cast<double>(i), 3.0), reference_function(static_cast<double>(i), 3.0)));

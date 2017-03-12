@@ -48,6 +48,8 @@ public:
 
     void compile();
     dasm_gen_func getFunction(std::string functionName);
+
+    void close();
 };
 
 typedef impalajit::Compiler impalajit_compiler;
@@ -72,6 +74,8 @@ extern "C" {
     void impalajit_compiler_compile(impalajit_compiler* handle);
 
     dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, const char* function_name);
+
+    void impalajit_compiler_close(impalajit_compiler* handle);
 
 
 #ifdef __cplusplus

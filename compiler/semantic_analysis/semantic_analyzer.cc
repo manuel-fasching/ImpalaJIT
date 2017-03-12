@@ -35,11 +35,6 @@ void SemanticAnalyzer::performSemanticAnalysis(FunctionContext* &functionContext
 void SemanticAnalyzer::evaluateAst(FunctionContext* &functionContext, Node* &node){
     switch(node->nodeType)
     {
-        case ROOT:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
         case VARIABLE:
         {
             dsfUtil(functionContext, node);
@@ -70,65 +65,16 @@ void SemanticAnalyzer::evaluateAst(FunctionContext* &functionContext, Node* &nod
 
         case NEGATION:
         {
+            // Check if this is just a negative constant.
+            if(node->nodes.size()==1 && node->nodes.at(0)->nodeType==CONSTANT) {
+                double value = -(reinterpret_cast<ConstantNode *>(node->nodes.at(0))->value);
+                free(node);
+                node =  new ConstantNode(value);
+            }
             dsfUtil(functionContext, node);
             break;
         }
-
-        case ADDITION:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case SUBTRACTION:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case MULTIPLICATION:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case DIVISION:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case EXTERNAL_FUNCTION:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case IF_STATEMENT:
-        {
-            dsfUtil(functionContext, node->nodes.at(0));
-            dsfUtil(functionContext, node->nodes.at(1)); // if body
-            break;
-        }
-        case IF_ELSE_STATEMENT:
-        {
-            dsfUtil(functionContext, node->nodes.at(0));
-            dsfUtil(functionContext, node->nodes.at(1)); // if body
-            dsfUtil(functionContext, node->nodes.at(2)); // else body
-            break;
-        }
-        case IF_BODY:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-        case ELSE_BODY:
-        {
-            dsfUtil(functionContext, node);
-            break;
-        }
-
-        case RETURN:
+        default:
         {
             dsfUtil(functionContext, node);
             break;

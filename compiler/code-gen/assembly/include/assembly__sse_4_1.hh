@@ -125,6 +125,16 @@ public:
      */
     virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_);
 
+     /**
+     * @see assembly.hh
+     */
+    virtual void pushStackPos();
+
+    /**
+     * @see assembly.hh
+     */
+    virtual void popStackPos();
+
     /**
      * @see assembly.hh
      */
@@ -134,6 +144,11 @@ public:
      * @see assembly.hh
      */
     virtual dasm_gen_func linkAndEncode();
+private:
+    /**
+     * @return the rsp offset of the rpn stack
+     */
+    int rspOffset();
 };
 
 #endif //IMPALAJIT_ASSEMBLY_SSE_4_1_HH

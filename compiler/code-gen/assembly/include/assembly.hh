@@ -24,6 +24,7 @@
 #include <dasm_x86.h>
 #include <types.hh>
 #include <internal_types.hh>
+#include <stack>
 /**
  * Base class for assembly implementations. Child classes
  * should implement these functions for different architectures.
@@ -158,6 +159,16 @@ public:
     virtual void conditionalJumpForwardToDynamicLabel(unsigned labelNumber, bool condition, CompareOperatorType operator_)= 0;
 
     /**
+     * Pushes the current stack position onto a stack
+     */
+    virtual void pushStackPos()=0;
+
+    /**
+     * Pops the current stack position and restores the stackPos
+     */
+    virtual void popStackPos()=0;
+
+    /**
      * Put execution result to register xmm0.
      * According to x64 calling conventions the return value of a function is expected in reg xmm0.
      */
@@ -175,6 +186,7 @@ protected:
     dasm_State** Dst;
     void** labels;
     int stackPos;   // The head of the rpn stack
+    std::stack<int> stackPosStack;
 };
 
 #endif //IMPALAJIT_ASSEMBLY_HH

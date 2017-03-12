@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func function = compiler.getFunction("assignment");
+    compiler.close();
 
     assert(double_equals(function(45.3, 43.6), reference_function(45.3, 43.6)));
     assert(double_equals(function(-23.3, 456.6), reference_function(-23.3, 456.6)));

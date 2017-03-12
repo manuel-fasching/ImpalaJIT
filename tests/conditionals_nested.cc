@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func function = compiler.getFunction("nested");
+    compiler.close();
 
     assert(function(1.0, 1.0, 1.0, 1.0) == 4.0);
     assert(function(1.0, 1.0, 1.0, 0.0) == 3.0);

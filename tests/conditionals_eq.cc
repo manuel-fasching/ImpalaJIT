@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     impalajit::Compiler compiler(CONFIG_FILE_PATH);
     compiler.compile();
     dasm_gen_func function = compiler.getFunction("eq");
+    compiler.close();
 
     assert(function(1.0,1.0) == 1.0);
     assert(function(1.0,0.0) == 0.0);

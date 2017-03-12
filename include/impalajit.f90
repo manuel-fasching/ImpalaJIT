@@ -38,6 +38,11 @@ module impalajit
           type( c_funptr )                                      :: impalajit_compiler_get_function_c
         end function impalajit_compiler_get_function_c
 
+        subroutine impalajit_compiler_close( handle ) bind( c, name="impalajit_compiler_close" )
+            use, intrinsic :: iso_c_binding
+            type( c_ptr ), value, intent(in)                    :: handle
+        end subroutine impalajit_compiler_close
+
     end interface
 
   	contains
