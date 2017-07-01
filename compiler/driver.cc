@@ -50,8 +50,6 @@ std::map<std::string,dasm_gen_func> Driver::parse_stream(std::istream& in)
     std::map<std::string,dasm_gen_func> resultMap;
     resultMap.insert(std::make_pair(functionContext->name, function));
 
-    delete functionContext;
-    functionContext = NULL;
     return resultMap;
 }
 
@@ -61,10 +59,18 @@ std::map<std::string,dasm_gen_func> Driver::parse_string(const std::string &inpu
     return parse_stream(iss);
 }
 
+void Driver::deleteFunctionContext(){
+    delete functionContext;
+    functionContext = NULL;
+}
+
 void Driver::setFunctionContext(FunctionContext* _functionContext){
     functionContext = _functionContext;
 }
 
+unsigned int Driver::getParameterCount(){
+    return functionContext->getParameterCount();
+}
 void Driver::error(const class location& l, const std::string& m)
 {
     std::cerr << l << ": " << m << std::endl;

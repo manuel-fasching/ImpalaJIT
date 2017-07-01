@@ -78,6 +78,8 @@ void impalajit::Compiler::compile(){
     for(std::vector<std::string>::iterator it = functionDefinitions.begin(); it != functionDefinitions.end(); ++it) {
         std::map<std::string,dasm_gen_func> parsedFunctions = driver.parse_string((*it));
         functionMap.insert(parsedFunctions.begin(), parsedFunctions.end());
+        parameterCountMap.insert(std::make_pair(parsedFunctions.begin()->first, driver.getParameterCount()));
+        driver.deleteFunctionContext();
     }
 }
 
@@ -86,6 +88,13 @@ dasm_gen_func impalajit::Compiler::getFunction(std::string functionName) {
         throw std::runtime_error("Function \""+functionName+"\" not found");
     }
     return functionMap.at(functionName);
+}
+
+unsigned int impalajit::Compiler::getParameterCount(std::string functionName) {
+    if(functionMap.find(functionName) == functionMap.end()){
+        throw std::runtime_error("Function \""+functionName+"\" not found");
+    }
+    return parameterCountMap.at(functionName);
 }
 
 void impalajit::Compiler::close(){
@@ -113,6 +122,11 @@ impalajit_compiler *impalajit_compiler_create_with_function_definitions(char** f
 void impalajit_compiler_compile(impalajit_compiler *handle) {
     handle->compile();
 }
+
+unsigned int impalajit_compiler_get_parameter_count(impalajit_compiler *handle, const char* function_name) {
+    return handle->getParameterCount(std::string(function_name));
+}
+
 
 dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, const char* function_name){
     return handle->getFunction(std::string(function_name));

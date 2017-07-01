@@ -38,6 +38,7 @@ class impalajit::Compiler{
 private:
     std::vector<std::string> functionDefinitions;
     std::map<std::string, dasm_gen_func> functionMap;
+    std::map<std::string, unsigned int> parameterCountMap;
 
     void loadFunctionDefinitionsFromInputFiles(std::string _configPath);
 public:
@@ -48,6 +49,7 @@ public:
 
     void compile();
     dasm_gen_func getFunction(std::string functionName);
+    unsigned int getParameterCount(std::string functionName);
 
     void close();
 };
@@ -74,6 +76,8 @@ extern "C" {
     void impalajit_compiler_compile(impalajit_compiler* handle);
 
     dasm_gen_func impalajit_compiler_get_function(impalajit_compiler *handle, const char* function_name);
+
+    unsigned int impalajit_compiler_get_parameter_count(impalajit_compiler *handle, const char* function_name);
 
     void impalajit_compiler_close(impalajit_compiler* handle);
 

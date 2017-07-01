@@ -16,37 +16,28 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef IMPALAJIT_FUNCTION_CONTEXT_HH
-#define IMPALAJIT_FUNCTION_CONTEXT_HH
 
-#include <vector>
-#include <node.h>
+#include "impalajit.hh"
 #include <iostream>
-#include <algorithm>
+#include <fstream>
+#include <assert.h>
+#include <defines.hh>
+using namespace std;
 
-class FunctionContext {
+int main(int argc, char** argv) {
 
-public:
-    std::vector<std::string> parameters;
-    std::vector<std::string> variables;
-    Node* root;
-    std::string name;
+    ofstream configFile;
+    configFile.open(CONFIG_FILE_PATH);
+    configFile << "../../tests/impala_files/conditional_eq.impala;";
+    configFile << "../../tests/impala_files/conditional_nested.impala;";
+    configFile.close();
 
-    FunctionContext(std::string &_name, std::vector<std::string> &_parameters, Node* &_root);
+    impalajit::Compiler compiler(CONFIG_FILE_PATH);
+    compiler.compile();
 
-    ~FunctionContext();
+    assert(compiler.getParameterCount("eq")==2);
+    assert(compiler.getParameterCount("nested")==4);
 
-    bool containsParameter(std::string& name);
-
-    bool containsVariable(std::string& name);
-
-    int getIndexOfParameter(std::string& name);
-
-    int getIndexOfVariable(std::string &name);
-
-    unsigned int getParameterCount();
-
-    void clear();
-
-};
-#endif //IMPALAJIT_FUNCTION_CONTEXT_HH
+    compiler.close();
+    return 0;
+}

@@ -48,6 +48,10 @@ public:
 
     void setFunctionContext(FunctionContext* _functionContext);
 
+    void deleteFunctionContext();
+
+    unsigned int getParameterCount();
+
     void error(const class location& l, const std::string& m);
 
     void error(const std::string& m);

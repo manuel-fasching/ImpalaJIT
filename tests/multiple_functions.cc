@@ -46,21 +46,28 @@ int main(int argc, char** argv) {
     assert(compiler.getFunction("gt")(0.0, 1.0) == 0.0);
     assert(compiler.getFunction("gt")(0.0, 0.0) == 0.0);
 
+
     assert(compiler.getFunction("gte")(2.0, 1.0) == 1.0);
     assert(compiler.getFunction("gte")(1.0, 1.0) == 1.0);
     assert(compiler.getFunction("gte")(0.0, 1.0) == 0.0);
+
 
     assert(compiler.getFunction("lt")(1.0, 0.0) == 0.0);
     assert(compiler.getFunction("lt")(0.0, 1.0) == 1.0);
     assert(compiler.getFunction("lt")(0.0, 0.0) == 0.0);
 
+
     assert(compiler.getFunction("lte")(2.0, 1.0) == 0.0);
     assert(compiler.getFunction("lte")(1.0, 1.0) == 1.0);
     assert(compiler.getFunction("lte")(0.0, 1.0) == 1.0);
 
+
     assert(compiler.getFunction("neq")(2.0, 1.0) == 1.0);
     assert(compiler.getFunction("neq")(1.0, 1.0) == 0.0);
     assert(compiler.getFunction("neq")(0.0, 1.0) == 1.0);
+
+    std::cout << compiler.getParameterCount("neq") << std::endl;
+
     compiler.close();
     return 0;
 }

@@ -58,6 +58,10 @@ int FunctionContext::getIndexOfParameter(std::string &name) {
     }
 }
 
+unsigned int FunctionContext::getParameterCount(){
+    return parameters.size();
+}
+
 int FunctionContext::getIndexOfVariable(std::string &name) {
     std::vector<std::string>::iterator it = std::find(variables.begin(), variables.end(), name);
     if (it == variables.end()) {

@@ -38,6 +38,13 @@ module impalajit
           type( c_funptr )                                      :: impalajit_compiler_get_function_c
         end function impalajit_compiler_get_function_c
 
+        function impalajit_compiler_get_parameter_count_c( handle, function_name ) bind( c, name="impalajit_compiler_get_parameter_count" )
+          use, intrinsic :: iso_c_binding
+          type( c_ptr ), value, intent(in)                             :: handle
+          character( kind=c_char ), dimension(*), intent(in)    :: function_name
+          type( c_int )                                      :: impalajit_compiler_get_parameter_count_c
+        end function impalajit_compiler_get_parameter_count_c
+
         subroutine impalajit_compiler_close( handle ) bind( c, name="impalajit_compiler_close" )
             use, intrinsic :: iso_c_binding
             type( c_ptr ), value, intent(in)                    :: handle
