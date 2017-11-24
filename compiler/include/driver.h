@@ -37,7 +37,7 @@ class Driver
 private:
     FunctionContext* functionContext;
 public:
-
+    Driver();
     ~Driver();
 
     class Scanner* lexer;

@@ -28,7 +28,7 @@ FunctionContext::FunctionContext(std::string &_name, std::vector<std::string> &_
 }
 
 FunctionContext::~FunctionContext() {
-    free(root);
+    delete root;
     parameters.clear();
     variables.clear();
     root = NULL;
