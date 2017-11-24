@@ -38,24 +38,24 @@ public:
      * Add additional function HERE
      */
     static void initialize_map() {
-            map["cos"] = reinterpret_cast<externalFunction>(cos);
-            map["sin"] = reinterpret_cast<externalFunction>(sin);
-            map["tan"] = reinterpret_cast<externalFunction>(tan);
-            map["acos"] = reinterpret_cast<externalFunction>(acos);
-            map["asin"] = reinterpret_cast<externalFunction>(asin);
-            map["atan"] = reinterpret_cast<externalFunction>(atan);
-            map["atan2"] = reinterpret_cast<externalFunction>(atan2);
-            map["cosh"] = reinterpret_cast<externalFunction>(cosh);
-            map["sinh"] = reinterpret_cast<externalFunction>(sinh);
-            map["tanh"] = reinterpret_cast<externalFunction>(tanh);
-            map["exp"] = reinterpret_cast<externalFunction>(exp);
-            map["log"] = reinterpret_cast<externalFunction>(log);
-            map["log10"] = reinterpret_cast<externalFunction>(log10);
-            map["pow"] = reinterpret_cast<externalFunction>(pow);
-            map["sqrt"] = reinterpret_cast<externalFunction>(sqrt);
-            map["min"] = reinterpret_cast<externalFunction>(fmin);
-            map["max"] = reinterpret_cast<externalFunction>(fmax);
-            map["abs"] = reinterpret_cast<externalFunction>(fabs);
+            map["cos"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(cos));
+            map["sin"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(sin));
+            map["tan"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(tan));
+            map["acos"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(acos));
+            map["asin"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(asin));
+            map["atan"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(atan));
+            map["atan2"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(atan2));
+            map["cosh"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(cosh));
+            map["sinh"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(sinh));
+            map["tanh"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(tanh));
+            map["exp"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(exp));
+            map["log"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(log));
+            map["log10"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(log10));
+            map["pow"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(pow));
+            map["sqrt"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(sqrt));
+            map["min"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(fmin));
+            map["max"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(fmax));
+            map["abs"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(fabs));
     }
 private:
     /**

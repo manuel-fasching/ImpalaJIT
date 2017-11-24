@@ -16,7 +16,7 @@
 # THE SOFTWARE.
 
 cmake_minimum_required(VERSION 2.6)
-link_directories(${LIBRARY_OUTPUT_PATH})
+link_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Add test executable
