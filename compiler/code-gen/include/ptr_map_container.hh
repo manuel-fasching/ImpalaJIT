@@ -56,6 +56,9 @@ public:
             map["min"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(fmin));
             map["max"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double,double)>(fmax));
             map["abs"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(fabs));
+            map["floor"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(floor));
+            map["ceil"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(ceil));
+            map["round"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(round));
     }
 private:
     /**
