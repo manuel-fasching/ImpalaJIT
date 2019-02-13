@@ -59,6 +59,8 @@ public:
             map["floor"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(floor));
             map["ceil"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(ceil));
             map["round"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(round));
+            map["erf"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(erf));
+            map["erfc"] = reinterpret_cast<externalFunction>(static_cast<double(*)(double)>(erfc));
     }
 private:
     /**
