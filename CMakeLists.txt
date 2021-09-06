@@ -16,32 +16,16 @@
 # THE SOFTWARE.
 
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.4)
 
-option( SHARED_LIB "Compile the shared library" OFF )
-option( STATIC_LIB "Compile the static library" ON )
+include (GNUInstallDirs)
+
+option( SHARED_LIB "Compile as shared library" OFF )
 option( TESTS "Enable Tests" OFF )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -O3")
 
 project(ImpalaJIT)
 
-set(include_dirs
-        include
-        include/impalajit
-        compiler/include
-        compiler/include/nodes
-        compiler/include/types
-        compiler/frontend/include
-        compiler/semantic_analysis/include
-        compiler/code-gen/include
-        compiler/code-gen/assembly/include
-        )
-
-include_directories(${include_dirs})
-
-
-set(source_files ${source_files}
+set(source_files
         compiler/frontend/parser.cc
         compiler/frontend/scanner.cc
         compiler/driver.cc
@@ -58,6 +42,38 @@ set(source_files ${source_files}
         compiler/code-gen/include/calculation_helper.hh
         compiler/code-gen/code_generator.cc
         compiler/code-gen/assembly/assembly__sse_4_1.cc)
+
+if (SHARED_LIB)
+    add_library(impalajit SHARED ${source_files})
+else ()
+    add_library(impalajit STATIC ${source_files})
+    set_target_properties(impalajit PROPERTIES OUTPUT_NAME impalajit)
+endif ()
+target_compile_features (impalajit PUBLIC cxx_std_98)
+target_include_directories (impalajit
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        include/impalajit
+        compiler/include
+        compiler/include/nodes
+        compiler/include/types
+        compiler/frontend/include
+        compiler/semantic_analysis/include
+        compiler/code-gen/include
+        compiler/code-gen/assembly/include
+)
+
+set(CONFIG_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/impalajit)
+
+install (TARGETS impalajit EXPORT impalajit-targets)
+install (DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install (EXPORT impalajit-targets
+    FILE impalajitConfig.cmake
+    NAMESPACE impalajit::
+    DESTINATION ${CONFIG_DESTINATION}
+)
 
 ##### pkg-config #####
 find_package( PkgConfig )
@@ -88,39 +104,11 @@ if( PKG_CONFIG_FOUND )
     install( FILES ${CMAKE_CURRENT_BINARY_DIR}/impalajit.pc	DESTINATION lib/pkgconfig )
 endif( PKG_CONFIG_FOUND )
 
-if( SHARED_LIB )
-    add_library( impalajit SHARED ${source_files})
-    target_link_libraries( impalajit ${math_library} )
-endif( SHARED_LIB )
-
-if( STATIC_LIB )
-    add_library( impalajit-static STATIC ${source_files} )
-    set_target_properties( impalajit-static
-            PROPERTIES OUTPUT_NAME impalajit )
-endif( STATIC_LIB )
-
 # Tests
 if( TESTS )
     enable_testing()
     add_subdirectory( tests )
 endif( TESTS )
-
-# install target
-if( SHARED_LIB )
-    install( TARGETS impalajit
-             DESTINATION lib )
-endif( SHARED_LIB )
-if( STATIC_LIB )
-    install( TARGETS impalajit-static
-             DESTINATION lib )
-endif( STATIC_LIB )
-install( FILES include/impalajit.hh
-         DESTINATION include )
-install( FILES include/impalajit.f90
-        DESTINATION include )
-install( FILES include/impalajit/types.hh
-         DESTINATION include/impalajit )
-
 
 
 # uninstall target
