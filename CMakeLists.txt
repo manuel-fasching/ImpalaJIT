@@ -18,12 +18,13 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-include (GNUInstallDirs)
-
 option( SHARED_LIB "Compile as shared library" OFF )
 option( TESTS "Enable Tests" OFF )
 
-project(ImpalaJIT)
+project(ImpalaJIT LANGUAGES CXX)
+
+include (GNUInstallDirs)
+
 
 set(source_files
         compiler/frontend/parser.cc
