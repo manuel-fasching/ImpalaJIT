@@ -16,7 +16,7 @@
 # THE SOFTWARE.
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.13)
 
 option( SHARED_LIB "Compile as shared library" OFF )
 option( TESTS "Enable Tests" OFF )
@@ -68,7 +68,10 @@ target_include_directories (impalajit
 
 set(CONFIG_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/impalajit)
 
-install (TARGETS impalajit EXPORT impalajit-targets)
+install (TARGETS impalajit EXPORT impalajit-targets
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 install (DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (EXPORT impalajit-targets
     FILE impalajitConfig.cmake
