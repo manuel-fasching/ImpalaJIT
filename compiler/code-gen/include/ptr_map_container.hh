@@ -20,7 +20,7 @@
 #ifndef IMPALAJIT_EXTERNAL_FUNCTION_DEFINITION_HH
 #define IMPALAJIT_EXTERNAL_FUNCTION_DEFINITION_HH
 
-#include <math.h>
+#include <cmath>
 #include <internal_types.hh>
 #include <calculation_helper.hh>
 
