@@ -27,8 +27,12 @@
 #include <semantic_analyzer.hh>
 
 namespace impalajit {
+Driver::Driver()
+  : functionContext(NULL) {
+}
+
 Driver::~Driver(){
-    free(functionContext);
+    delete functionContext;
 }
 
 std::map<std::string,dasm_gen_func> Driver::parse_stream(std::istream& in)
